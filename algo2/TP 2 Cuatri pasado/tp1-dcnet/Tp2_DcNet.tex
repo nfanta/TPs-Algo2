@@ -1,0 +1,3161 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[paper=a4paper, hmargin=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{xspace}
+\usepackage{xargs}
+\usepackage{ifthen}
+\usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage[]{algorithm2e}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{latexsym}
+\usepackage{lastpage}
+\usepackage{aed2-symb,aed2-itef,aed2-tad}
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+\usepackage{calc}
+\usepackage{caratula}
+\usepackage{amsmath}
+
+\newcommand{\f}[1]{\text{#1}}
+\renewcommand{\paratodo}[2]{$\forall~#2$: #1}
+
+\sloppy
+
+\newcommand{\moduloNombre}[1]{\textbf{#1}}
+
+\let\NombreFuncion=\textsc
+\let\TipoVariable=\texttt
+\let\ModificadorArgumento=\textbf
+\newcommand{\res}{$res$\xspace}
+\newcommand{\tab}{\hspace*{7mm}}
+
+\newcommandx{\TipoFuncion}[3]{%
+  \NombreFuncion{#1}(#2) \ifx#3\empty\else $\to$ \res\,: \TipoVariable{#3}\fi%
+}
+\newcommand{\In}[2]{\ModificadorArgumento{in} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Out}[2]{\ModificadorArgumento{out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Inout}[2]{\ModificadorArgumento{in/out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Aplicar}[2]{\NombreFuncion{#1}(#2)}
+
+\newlength{\IntFuncionLengthA}
+\newlength{\IntFuncionLengthB}
+\newlength{\IntFuncionLengthC}
+%InterfazFuncion(nombre, argumentos, valor retorno, precondicion, postcondicion, complejidad, descripcion, aliasing)
+\newcommandx{\InterfazFuncion}[9][4=true,6,7,8,9]{%
+  \hangindent=\parindent
+  \TipoFuncion{#1}{#2}{#3}\\%
+  \textbf{Pre} $\equiv$ \{#4\}\\%
+  \textbf{Post} $\equiv$ \{#5\}%
+  \ifx#6\empty\else\\\textbf{Complejidad:} #6\fi%
+  \ifx#7\empty\else\\\textbf{Descripción:} #7\fi%
+  \ifx#8\empty\else\\\textbf{Aliasing:} #8\fi%
+  \ifx#9\empty\else\\\textbf{Requiere:} #9\fi%
+}
+
+\newenvironment{Interfaz}{%
+  \parskip=2ex%
+  \noindent\textbf{\Large Interfaz}%
+  \par%
+}{}
+
+\newenvironment{Representacion}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Representación}%
+  \vspace*{2ex}%
+}{}
+
+\newenvironment{Algoritmos}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Algoritmos}%
+  \vspace*{2ex}%
+}{}
+
+
+\newcommand{\Titulo}[1]{
+  \vspace*{1ex}\par\noindent\textbf{\large #1}\par
+}
+
+\newenvironmentx{Estructura}[2][2={estr}]{%
+  \par\vspace*{2ex}%
+  \TipoVariable{#1} \textbf{se representa con} \TipoVariable{#2}%
+  \par\vspace*{1ex}%
+}{%
+  \par\vspace*{2ex}%
+}%
+
+\newboolean{EstructuraHayItems}
+\newlength{\lenTupla}
+\newenvironmentx{Tupla}[1][1={estr}]{%
+    \settowidth{\lenTupla}{\hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($}%
+    \addtolength{\lenTupla}{\parindent}%
+    \hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($%
+    \begin{minipage}[t]{\linewidth-\lenTupla}%
+    \setboolean{EstructuraHayItems}{false}%
+}{%
+    $)$%
+    \end{minipage}
+}
+
+\newcommandx{\tupItem}[3][1={\ }]{%
+    %\hspace*{3mm}%
+    \ifthenelse{\boolean{EstructuraHayItems}}{%
+        ,#1%
+    }{}%
+    \emph{#2}: \TipoVariable{#3}%
+    \setboolean{EstructuraHayItems}{true}%
+}
+
+\newcommandx{\RepFc}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{#3}%
+}%
+
+\newcommandx{\Rep}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{true \ssi #3}%
+}%
+
+\newcommandx{\esAvl}[3][1={estr},2={e}]{%
+  \tadOperacion{esAvl}{#1}{bool}{}%
+  \tadAxioma{esAvl($#2$)}{true \ssi #3}%
+}%
+
+\newcommandx{\Abs}[5][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \settominwidth{\hangindent}{Abs($#3$) \igobs #4: #2 $\mid$ }%
+  \addtolength{\hangindent}{\parindent}%
+  Abs($#3$) \igobs #4: #2 $\mid$ #5%
+}%
+
+\newcommandx{\AbsFc}[4][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \tadAxioma{Abs($#3$)}{#4}%
+}%
+
+
+\newcommand{\DRef}{\ensuremath{\rightarrow}}
+
+\hypersetup{%
+ % Para que el PDF se abra a página completa.
+ pdfstartview= {FitH \hypercalcbp{\paperheight-\topmargin-1in-\headheight}},
+ pdfauthor={Cátedra de Algoritmos y Estructuras de Datos II - DC - UBA},
+ pdfkeywords={TADs básicos},
+ pdfsubject={Tipos abstractos de datos básicos}
+}
+
+\parskip=5pt % 10pt es el tamaño de fuente
+
+% Pongo en 0 la distancia extra entre ítemes.
+\let\olditemize\itemize
+\def\itemize{\olditemize\itemsep=0pt}
+
+% Acomodo fancyhdr.
+\pagestyle{fancy}
+\thispagestyle{fancy}
+\addtolength{\headheight}{1pt}
+\lhead{Algoritmos y Estructuras de Datos II}
+\rhead{$1^{\mathrm{do}}$ cuatrimestre de 2015}
+\cfoot{\thepage /\pageref{LastPage}}
+\renewcommand{\footrulewidth}{0.4pt}
+\author{}
+\title{TP2:Ciudad Robotica}
+
+\begin{document}
+
+\thispagestyle{empty}
+\materia{Algoritmos y Estructura de Datos II}
+\submateria{Primer Cuatrimestre de 2015}
+\titulo{Reentrega Trabajo Práctico II}
+\subtitulo{Grupo14}
+\integrante{Ituarte Joaquín}{457/13}{joaquinituarte@hotmail.com}
+%\integrante{Rapoport Boris}{439/13}{br.borisrapoport@gmail.com}
+\integrante{Ledezma Rocha Alexander}{337/12}{lralexandr@gmail.com}
+\integrante{Zarate Eduardo Agustin}{587/02}{eazarate@yahoo.com.ar}
+\integrante{Ignacio Gaston Viana Courtial}{765/12}{ivianacourtial@gmail.com}
+
+%Pagina de titulo e indice
+\thispagestyle{empty}
+
+\maketitle 
+\tableofcontents
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\section{Modulo Red($\alpha$)}
+  \textbf{Usa}: \tadNombre{vector$(\alpha)$}, \tadNombre{Conjunto Lineal($\alpha$)}, \tadNombre{bool}, \tadNombre{nat}, \tadNombre{string}, \tadNombre{tupla}, \tadNombre{compu} .
+  
+\textbf{Se explica con}: \tadNombre{Red}
+  
+\textbf{géneros}: \TipoVariable{red}.
+
+\textbf{Operaciones básicas de red}.
+
+\begin{Interfaz}
+
+ 
+  \InterfazFuncion{IniciarRed}{}{red}%
+  {$res \igobs iniciarRed()$}%
+  [$O(1)$]
+  [Crea una nueva red vacia.]  
+  
+  \InterfazFuncion{AgregarComputadora}{\Inout{r}{red}, \In{c}{compu}}{}
+  [$r \igobs r_0$ $\wedge$ $\neg$ c $\in$ (computadoras(r))]
+  {$r \igobs agregarComputadora(r_0,c)$}
+  [$O(\#Computadoras(r) + long(c.IP))$]
+  [Agrega una computadora a la red.]
+  [Agrega la computadora c por copia.]
+  
+  
+  \InterfazFuncion{Conectar}{\Inout{r}{red}, \In{c_1}{compu}, \In{i_1}{interfaz}, \In{c_2}{compu}, \In{i_2}{interfaz}}{}
+  [$r \igobs r_0$ $\wedge$ $c_1 \in$ (computadoras(r)) $\wedge$ $c_2 \in$ (computadoras(r)) $\wedge$ $ip(c_1) \neq$ $ip(c_2)$ $\wedge$ $\neg$ conectadas?($r,c_1,c_2$) $\wedge$ $\neg$ usaInterfaz($r,c_1,i_1$) $\wedge$ $\neg$ usaInterfaz($r,c_2,i_2$)]
+  {$r \igobs conectar(r_0,c_1,i_1,c_2,i_2)$}
+  [$O(\#Computadoras(r) * max(long(c_1.IP), long(c_2.IP)) )$]
+  [Conecta las computadoras con las interfaces dadas.]
+  	
+  \InterfazFuncion{Computadoras}{\In{r}{red}}{conj(compu)}
+%  [def?(ds, s)]
+  {$res \igobs computadoras(r)$}
+  [$O(1)$]
+  [Devuelve el conjunto de computadoras de la red.]
+  [Devuelve una referencia al conjunto]
+  
+  \InterfazFuncion{Conectadas?}{\In{r}{red}, \In{c_1}{compu}, \In{c_2}{compu}}{bool}
+  [$c_1 \in$ Computadoras(r) $\wedge$  $c_2 \in$ Computadoras(r)]
+  {$res \igobs Conectadas?(r,c_1,c_2)$}%
+  [$O(\#Computadoras(r) * max(long(c_1.IP), long(c_2.IP)))$]
+  [Devuelve true si las computadoras estan conectadas entre si, en caso contrario false.]
+  []
+  
+  
+  \InterfazFuncion{InterfazUsada}{\In{r}{red}, \In{c_1}{compu}, \In{c_2}{compu}}{interfaz}
+  [$c_1 \in$ Computadoras(r) $\wedge$  $c_2 \in$ Computadoras(r) $\wedge$ Conectadas?($r,c_1,c_2$)]
+  {$res \igobs interfazUsada(r,c_1,c_2)$}%
+  [$O(\#Computadoras(r) * max(long(c_1.IP), long(c_2.IP)) )$]
+  [Devuelve la interfaz usada para conectar c1 con c2.]
+  [Devuelve una copia de la interfaz]
+ 
+  \InterfazFuncion{Vecinos}{\In{r}{red}, \In{c}{compu}}{conj(compu)}
+  [c $\in$ computadoras(r)]
+  {$res \igobs vecinos(r,c)$)}
+  [$O(\#Computadoras(r)^2 * ( max(long(c_1.IP), long(c_2.IP)) + "max. cantidad de interfaces de una Compu") )$]
+  [Devuelve el conjunto de las computadoras que son vecinas de c.]
+  [Devuelve una copia del conjunto de computadoras.]
+  
+  \newpage
+  \InterfazFuncion{UsaInterfaz?}{\In{r}{red}, \In{c}{compu}, \In{i}{interfaz}}{bool}
+  [c $\in$ computadoras(r)]
+  {$res \igobs usaInterfaz?(r,c,i)$}
+  [$O(\#Computadoras(r) * max(long(c_1.IP), long(c_2.IP)))$]
+  [Devuelve true si la interfaz esta siendo usada, en caso contrario false.]
+  
+  
+  \InterfazFuncion{Caminos}{\In{r}{red}, \In{c_1}{compu}, \In{c_2}{compu}}{conj(lista(compu))}
+  [$c_1 \in$ computadoras(r) $\wedge$ $c_2 \in$ computadoras(r)]
+  {$res \igobs caminos(r,c_1,c_2)$}
+  [$O( (L + Maximo\#Inter) * \#(Computadoras(r))! * \#(Computadoras(r))^2)$]
+  [Devuelve el conjunto de caminos entre dos computadoras.]
+  [Se devuelven copias de los caminos.]
+  
+  \InterfazFuncion{HayCamino?}{\In{r}{red}, \In{c_1}{compu}, \In{c_2}{compu}}{bool}
+  [$c_1 \in$ Computadoras(r) $\wedge$ $c_2 \in$ computadoras(r)]
+  {$res \igobs hayCamino?(r,c_1,c_2)$}
+  [$O( (L + Maximo\#Inter) * \#(Computadoras(r))! * \#(Computadoras(r))^2)$]
+  [Devuelve true si hay camino entre las computadoras, false en caso contrario.]
+
+  
+  \InterfazFuncion{CaminosMinimos}{\In{r}{red}, \In{c_1}{compu}, \In{c_2}{compu}}{conj(lista(compu))}
+  [$c_1 \in$ computadoras(r) $\wedge$ $c_2 \in$ computadoras(r)]
+  {$res \igobs caminosMinimos(r,c_1,c_2)$}
+  [$O( (L + Maximo\#Inter) * \#(Computadoras(r))! * \#(Computadoras(r))^2)$]
+  [Devuelve el conjunto de los caminos minimos entre dos computadoras.]
+  [Se devuelven copias de los caminos.]
+
+
+\end{Interfaz}
+
+\begin{Representacion}
+
+\textbf{Representación de Red}
+
+  \begin{Estructura}{red}[estr]
+
+    \begin{Tupla}[estr]
+      \tupItem{mapa}{vector(vector(tupla(conecta?: bool, interfaz: nat)))}
+      \tupItem{indexToString}{vector(string)}%
+      \tupItem{computadoras}{conj(compu)}%
+    \end{Tupla}
+    
+  \end{Estructura}	
+  
+ 
+  
+  Invariante de representacion en castellano:
+  \begin{enumerate}
+  
+  \item La longitud de todos los vectores y subvectores es igual al cardinal del conjunto e.Computadoras.
+  \item Todas las strings de e.IndexToString son algún IP de alguna compu de e.Computadoras y no se repiten. Como longitud = cardinal, se que son los mismos entre vector y conjunto.
+  \item En la matriz (e.mapa), si un elemento e.mapa[i][j] posee el valor conecta? en true, entonces e.mapa[j][i].conecta? == true y las interfaces usadas son válidas y usadas una sola vez para tuplas con el valor.conecta? == true.
+  
+  \end{enumerate}
+  
+  \Rep[red][e]{
+  \begin{enumerate}
+  
+  \item long(e.mapa) = long(e.indexToString)) $\wedge$ \\
+   long(e.mapa) = \#e.computadoras  $\wedge$ \\
+   ($\forall i$: nat) (i < long(e.mapa)) $\impluego$ long(e.mapa) = long(e.mapa[i])
+   
+   \item nombresValidos(e.indexToString, e.computadoras) $\wedge$ \\
+   long(sinRepetidos(e.indexToString)) = long(e.indexToString) 
+   
+   \item ($\forall i$: nat) (i < long(e.mapa)) $\impluego$ interfacesValidas(e.mapa[i], obtenerInterfaces(e.indexToString[i], e.computadoras)) $\wedge$ \\
+    ($\forall i$: nat, $j$: nat) (i <  long(e.mapa)) $\wedge$ (j <  long(e.mapa)) $\impluego$ 
+    \\e.mapa[i][j].conecta? = e.mapa[j][i].conecta?)
+  
+  \end{enumerate}
+  
+   }\mbox{}
+  
+  
+
+ 	 
+  \AbsFc[estr]{Red}[e]{r: red | computadoras(r) = e.computadoras $\wedge$
+  \\($\forall$  c1,c2: Compu) (c1 $\neq$ c2 $\wedge$ $c_1 \in$ (computadoras(r)) $\wedge$ $c_2 \in$ (computadoras(r)) $\impluego$ (conectadas?(r, c1, c2) $\leftrightarrow$
+  e.mapa[ubicar(c1,e.indexToString)][ubicar(c2,e.indexToString)].conecta? 
+  \\$\wedge$ ($\forall$  c1,c2: Compu) ($c_1 \in$ (computadoras(r)) $\wedge$ $c_2 \in$ (computadoras(r)) $\wedge$ conectadas?(r,c1,c2) ) $\impluego$ \\
+  interfazUsada(r,c1,c2) = e.mapa[ubicar(c1,e.indexToString)][ubicar(c2,e.indexToString)].interfaz}	
+  \BlankLine
+  
+  \BlankLine
+\textbf{Operaciones auxiliares de los TADS:} 
+ 
+  \tadOperacion{ubicar}{string \ s, secu(string) \ sc}{nat}{esta(sc, s)}
+  \tadAxioma{ubicar(s, sc)}{\IF s = prim(sc) THEN 1 ELSE 1 + ubicar(s, fin(sc)) FI}
+  
+  \BlankLine
+  \tadOperacion{nombresValidos}{secu(string), conj(tupla(string, conj(nat)))}{bool}{}
+  \tadAxioma{nombresValidos(s,c)}{nombresValidos2(s, soloString(s))}
+  %{\IF vacia(s) THEN true ELSE prim(s) $\in$ soloString(c) $\wedge$ nombresValidos(fin(s),c) FI}
+  
+  \BlankLine
+  \tadOperacion{nombresValidos2}{secu(string), conj(string)}{bool}{}
+  \tadAxioma{nombresValidos2(s, c)}{\IF vacia(s) THEN true ELSE prim(s) $\in$ c $\wedge$ nombresValidos(fin(s), c - \{prim(s)\}) FI}
+  
+  \BlankLine
+  \tadOperacion{soloString}{conj(tupla(string, conj(nat)))}{conj(string)}{}
+  \tadAxioma{soloString(c)}{\IF $\emptyset$?(c) THEN $\emptyset$ ELSE Ag($\Pi_1$(dameUno(c)),sinUno(c)) FI}
+  
+  \BlankLine
+  \tadOperacion{interfacesValidas}{secu(tupla(bool,nat)), conj(nat)}{bool}{}
+  \tadAxioma{interfacesValidas(s,c)}{\IF vacia?(s) THEN true ELSE 
+{\IF $\Pi_1$(prim(s)) THEN $\Pi_2$(prim(s)) $\in$ c $\wedge$ interfacesValidas(fin(s),c-($\Pi_1$(prim(s)))) ELSE interfacesValidas(fin(s),c) FI} FI}
+
+\BlankLine
+  \tadOperacion{obtenerInterfaces}{string, conj(tupla(string, conj(nat)))}{conj(nat)}{}
+  \tadAxioma{obtenerInterfaces(s,c)}{\IF $\emptyset$?(c) THEN $\emptyset$ ELSE {\IF s = $\Pi_1$(dameUno(c)) THEN $\Pi_2$(dameUno(c)) ELSE obtenerInterfaces(s,sinUno(c)) FI} FI}
+
+
+
+
+\end{Representacion}
+
+  \begin{Algoritmos}
+
+\textbf{Algoritmos de Red}
+
+	\text{iniciarRed() $\rightarrow$ res: estr}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+	res.computadoras $\leftarrow $ vacio() \hfill \textbf{//O(1)}\\
+	res.mapa $\leftarrow $ vacia() \hfill \textbf{//O(1)}\\
+	res.indexToString $\leftarrow $ vacia() \hfill \textbf{//O(1)}
+    }
+    \KwData{Complejidad es O(1)}    
+    \caption{iniciarRed}
+	\end{algorithm} 
+    
+	\newpage
+    \text{agregarComputadora(inout e: estr, in c: compu)}
+	\newline
+	\begin{algorithm}[H]
+    \Begin{
+     AgregarRapido(e.computadoras, c) \hfill \textbf{//O(Longitud(IP(c)) + Cardinal(Interfaces(c)) )}\\
+     nat i $\leftarrow 0$ \hfill \textbf{//O(1)}\\
+    \While {i < Longitud(e.mapa)}{
+     e.mapa[i] $\leftarrow$ AgregarAtras(e.mapa[i], <false, 0>) \hfill \textbf{//O(1)}\\
+     i++ \hfill \textbf{//O(1)} \\
+     }
+     \hfill \textbf{//While: O(longitud(e.mapa))}\\
+     e.mapa $\leftarrow$ AgregarAtras(e.mapa, vacia()) \hfill \textbf{//O(1)}\\
+     i $\leftarrow$ 0 \hfill \textbf{//O(1)}\\
+    \While {(i < Longitud(e.mapa))}{
+     AgregarAtras(ultimo(e.mapa), <false, 0>) \hfill \textbf{//O(1)}\\
+     i++ \\
+     }
+     \hfill \textbf{//While: O(Longitud(e.mapa))} \\
+     e.indexToString $\leftarrow$ AgregarAtras(e.indexToString, IP(c)) \hfill \textbf{//Pasaje por referencia: O(1)}\\
+    }
+    \KwData{Complejidad es O(Longitud(e.mapa) + Longitud(IP(c)))}
+    \caption{agregarComputadora}
+	\end{algorithm} 
+    
+    
+    \text{conectar(inout e:estr, in c1:compu, in i1:interfaz, in c2:compu, in i2:interfaz)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+     nat pcindex1, pcindex2 \hfill \textbf{//O(1)} \\
+     nat i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+     \While {i < Longitud(e.mapa)}{
+    \If{e.indexToString[i] == IP(c1) \hfill \textbf{//O(Longitud(IP(c1)))}}
+    {pcindex1 $\leftarrow$ i \hfill \textbf{//O(1)}}
+    \If{e.indexToString[i] == IP(c2) \hfill \textbf{//O(Longitud(IP(c2)))}}
+    {pcindex2 $\leftarrow$ i \hfill \textbf{//O(1)}}
+	i++ \hfill \textbf{//O(1)}\\
+	}
+    \hfill \textbf{//While: O(Longitud(e.mapa) * L)} \\
+    e.mapa[pcindex1][pcindex2] $\leftarrow$ <true, interfaz1> \hfill \textbf{//O(1)}\\
+    e.mapa[pcindex2][pcindex1] $\leftarrow$ <true, interfaz2> \hfill \textbf{//O(1)}\\
+    }
+
+   \KwData{Complejidad es O(Longitud(e.mapa) * L)}
+    \caption{conectar}
+   \end{algorithm}
+   
+   \text{Computadoras(in e:estr) $\rightarrow $ res: conj(compu)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow $ e.computadoras \hfill \textbf{//O(1)}
+    }
+    \KwData{Complejidad es O(1). Devuelve la referencia al conjunto}
+    \caption{computadoras}
+   \end{algorithm}
+        
+    
+    \newpage
+   \text{conectadas?(in e:estr, in c1:compu, in c2:compu) $\leftarrow$ res: bool}
+	\newline
+    \begin{algorithm}[H]
+    \Begin{
+	nat i,j \hfill \textbf{//O(1)}\\
+    nat k $\leftarrow$ 0 \hfill \textbf{//O(1)}\\
+    \While{k < Longitud(e.mapa)}{
+    \If{IP(c1) == e.indexToString[k] \hfill \textbf{//O(L)}}
+    {i $\leftarrow$ k \hfill \textbf{//O(1)}}
+    \If{IP(c2) = e.indexToString[k] \hfill \textbf{//O(L)}}
+    {j $\leftarrow$ k \hfill \textbf{//O(1)}}
+    k++ \hfill \textbf{//O(1)}\\
+    }
+    \hfill \textbf{//While: O(Longitud(e.mapa) * L)}\\
+    res $\leftarrow$ e.mapa[i][j].conecta? \hfill \textbf{//O(1)}
+	}
+    \KwData{Complejidad es O(Longitud(e.mapa) * L)}
+    \caption{conectadas?}
+   \end{algorithm}
+   
+   
+   \text{interfazUsada(in e:estr, in c1: compu, in c2: compu) $\leftarrow$ res: nat}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    nat i,j \hfill \textbf{//O(1)}\\
+    nat k $\leftarrow$ 0 \hfill \textbf{//O(1)}\\
+    \While{k < Longitud(e.mapa)}{
+    \If{IP(c1) == e.indexToString[k] \hfill \textbf{//O(L)}}
+    {i $\leftarrow$ k \hfill \textbf{//O(1)}}
+    \If{IP(c2) == e.indexToString[k] \hfill \textbf{//O(L)}}
+    {j $\leftarrow$ k \hfill \textbf{//O(1)}}
+    k++ \hfill \textbf{//O(1)}\\
+	}
+    \hfill \textbf{//While: O(Longitud(e.mapa) * L)}\\
+    res $\leftarrow$ e.mapa[i][j].interfaz \hfill \textbf{//Por copia. O(1)}    
+	}
+    \KwData{Complejidad es O(Longitud(e.mapa) * L). Devuelve una copia de la interfaz.}
+    \caption{interfazUsada}
+   \end{algorithm}
+      
+  
+   \text{vecinos(in e:estr, in c:compu) $\leftarrow$ res: conj(compu)}
+	\newline
+    \begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ vacio() \hfill \textbf{//O(1)} \\
+    itConj it $\leftarrow$ crearIt(e.computadoras) \hfill \textbf{//O(1)} \\
+    \While{haySiguiente(it) }{
+    \If{$\neg$(Siguiente(It) == c) \hfill \textbf{//O(L + "maxima Cantidad de Interfaces De Una Compu")}}
+    {
+    \If{conectadas?(e,c,siguienteIt(it)) \hfill \textbf{//O(Cardinal(e.Computadoras) * L)}}
+    {agregarRapido(res,siguiente(it)) 
+    \\ \hfill \textbf{//Agrega por copia: O(L + "maxima Cantidad de Interfaces De Una Compu")}}
+    }
+    avanzar(it) \hfill \textbf{//O(1)}\\
+    }
+    \hfill \textbf{//While: O(Cardinal(e.Computadoras)$^2$ * (L + "maxima Cantidad de Interfaces De Una Compu") )}
+    }
+    \KwData{Complejidad es O(Cardinal(e.Computadoras)$^2$ * (L + "maxima Cantidad de Interfaces De Una Compu") )}
+    \caption{vecinos}
+   \end{algorithm}
+   
+    
+    \newpage
+    \text{usaInterfaz?(in e:estr, in c:compu, in z:interfaz) $\rightarrow$ res: bool}
+	\newline
+    \begin{algorithm}[H]
+    \Begin{
+    nat j \hfill \textbf{//O(1)}\\
+    nat i $\leftarrow$ 0 \hfill \textbf{//O(1)}\\
+    \While{i < Longitud(e.mapa)}{
+    \If{IP(c) == e.indexToString[i] \hfill \textbf{//O(L)}}
+    {j $\leftarrow$ i\hfill \textbf{//O(1)}}
+    i++ \hfill \textbf{//O(1)}\\
+    } \hfill \textbf{//While: O(Longitud(e.mapa) * L)}\\
+    res $\leftarrow$ false \hfill \textbf{//O(1)}\\
+    i $\leftarrow$ 0 \hfill \textbf{//O(1)}\\
+    \While{i < longitud(e.mapa)}{
+    \If{e.mapa[j][i] == <true, z> \hfill \textbf{//O(1)}}
+    {res $\leftarrow$ true \hfill \textbf{//O(1)}}
+    i++ \\
+    }
+    \hfill \textbf{//O(Longitud(e.mapa))}\\
+    }
+    \KwData{Complejidad es O(Longitud(e.mapa) * L)}
+    \caption{usaInterfaz?}
+   \end{algorithm}
+   
+    \text{caminosMinimos(in e: estr, in c1:compu, c2:compu) $\rightarrow$ res: conj(Lista(compu))}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ vacio() \hfill \textbf{//O(1)}\\
+    itConj it $\leftarrow$ crearIt(caminos(e,c1,c2)) \\ \hfill \textbf{//O( (L + Maximo\#Inter) * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$)}\\
+    itConj it1 $\leftarrow$ crearIt(caminos(e,c1,c2)) \\ \hfill \textbf{//O( (L + Maximo\#Inter) * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$)}\\
+    nat i $\leftarrow$ 0 \hfill \textbf{//O(1)}\\
+    \While{HaySiguiente(it)}{
+    \If{i = 0 v Longitud(Siguiente(it)) < i}
+    {i $\leftarrow$ Longitud(Siguiente(it)) \hfill \textbf{//O(1)}}
+    avanzar(it) \hfill \textbf{//O(1)}\\
+    }
+    \hfill \textbf{//While: O(Cardinal(e.Computadoras)!)}\\
+    \While{HaySiguiente(it1)}{
+    \If{i = 0 v Longitud(Siguiente(it1)) < i}
+    {agregarRapido(res, Siguiente(it1))) \\ \hfill \textbf{//Por copia: O(Cardinal(e.Computadoras) * (L + Maximo\#Inter) )}}
+    Avanzar(it1) \hfill \textbf{//O(1)}\\
+    }
+    \hfill \textbf{//While: O(Cardinal(e.Computadoras)! * Cardinal(e.Computadoras) * (L + Maximo\#Inter))}\\
+    }
+    \KwData{Complejidad es O( (L + Maximo\#Inter) * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$)}
+    \caption{caminosMinimos}
+	\end{algorithm} 
+   
+   
+   
+    
+    
+   
+    \newpage
+    \text{caminos2(in e: estr, in c1:compu, in c2:compu, inout l:lista(compu)) $\rightarrow$ res: conj(lista(compu))}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    agregarAtras(l,c1) \hfill \textbf{//Agrega por copia: O(L + Cardinal(Interfaces(c1)))}\\
+    res $\leftarrow$ vacio() \hfill \textbf{//O(1)}\\
+    \eIf{c1 == c2 \hfill \textbf{//O(L + Maximo\#Inter)}}
+    {agregar(res,l) \hfill \textbf{//Agrega por copia la lista: O(L + Maximo\#Inter + Longitud(l))}}
+    {conj(compu) vecinos $\leftarrow$ vecinos(e,c1) \hfill \textbf{//O(Cardinal(e.Computadoras)$^2$ * (L + Maximo\#Inter) )}\\
+    itLista it $\leftarrow$ creartIt(l) \hfill \textbf{//O(1)}\\
+    \While{haySiguiente(it)}{
+    eliminar(vecinos,siguiente(it)) \hfill \textbf{//O(1)}\\
+    avanzar(it) \hfill \textbf{//O(1)}
+    }
+    \hfill \textbf{//While: O(Cardinal(e.computadoras))}\\
+    
+    itConjunto itVecinos $\leftarrow$ crearIt(vecinos) \hfill \textbf{//O(1)}\\
+    res $\leftarrow$ vacio() \hfill \textbf{//O(1)}\\
+    \While{haySiguiente(itVecinos)}{
+    conj(lista(compu)) caminosTemp $\leftarrow$ caminos2(e,siguiente(itVecinos),c2,l) 
+    \newline . \hfill \textbf{//Los caminos son solo aquellos que terminan en c2, si no es vacío.}
+    \newline \hfill \textbf{//O( (Cardinal(e.Computadoras)! * Cardinal(e.Computadora) * (L + Maximo\#Inter) )}\\
+    
+    \BlankLine 
+    itConjunto itCaminosTemp $\leftarrow$ crearIt(caminosTemp) \hfill \textbf{//O(1)}\\
+    
+    \While{haySiguiente(itCaminosTemp)}{
+    agregar(res, siguiente(itCaminosTemp)) 
+    \\ \hfill \textbf{//Por copia: O(Cardinal(e.computadoras)* (L + Maximo\#Inter) )}\\
+    avanzar(itCaminosTemp) \hfill \textbf{//O(1)}
+    }
+    \hfill \textbf{//O(While: Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$ * (L + Maximo\#Inter))} \\
+    avanzar(itVecinos) \hfill \textbf{//O(1)}\\
+    }
+    \hfill \textbf{//While: O( (L + Maximo\#Inter) * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$ )}
+    }
+    }
+    
+    \KwData{Operación auxiliar de caminos. Los caminos que no terminen en c2 no terminan en el conjunto solución, dado que nunca se agregan por no entrar por la condición true del If. La recursión se realiza a lo sumo (Cardinal(e.Computadoras))! = n! veces, ya que empieza pudiendo hacer n-1 llamados y cada vez tiene un elemento menos en el cual realizar la recursión. Complejidad O(L$^2$ * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$ )}
+    \caption{caminos2}
+	\end{algorithm} 
+    
+    \text{hayCaminos?(in e: estr, in c1:compu, c2:compu) $\rightarrow$ res: bool}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+     res $\leftarrow$ cardinal(caminosMinimos(e,c1,c2)) > 0 \\ \hfill \textbf{//O( (L + Maximo\#Inter) * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$)}
+    }
+    \KwData{Complejidad: O((L + Maximo\#Inter) * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$)}
+    \caption{hayCaminos?}
+	\end{algorithm} 
+   
+   
+    \text{caminos(in e:estr, in c1: compu, in c2: compu) $\rightarrow$ res:conj(lista(compu))} \\
+    \begin{algorithm}[H]
+    \Begin{
+     Lista(compu) l $\leftarrow$ Vacía() \hfill \textbf{//O(1)}\\
+     AgregarAtras(l, c1) \hfill \textbf{//Por copia: O(L)}\\
+     res $\leftarrow$ caminos2(e, c1, c2, l) \hfill \textbf{//O( (L + Maximo\#Inter) * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$)}
+     }
+    \KwData{Complejidad: O( (L + Maximo\#Inter) * Cardinal(e.Computadoras)! * Cardinal(e.Computadoras)$^2$)}
+    \caption{caminos}
+    \end{algorithm}
+    
+    
+    
+   
+    
+    \end{Algoritmos}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%% aca empieza el diccString
+\newpage
+\section{Módulo DiccString($\alpha$)}
+
+\begin{Interfaz}
+  
+  \textbf{parámetros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{géneros}} $\alpha$\\
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+    \InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
+    {$res \igobs a$}
+    [$\Theta(copy(a))$]
+    [función de copia de $\alpha$'s]
+  }
+  
+  \textbf{Usa}: \tadNombre{Bool}, \tadNombre{String}, \tadNombre{tupla}
+  
+  \textbf{Se explica con}: \tadNombre{Diccionario$(String,\alpha)$}, \tadNombre{Iterador Unidireccional($\alpha$)}.
+
+  \textbf{géneros}: \TipoVariable{diccStr$(\alpha)$}, \TipoVariable{itDiccStr($\alpha$)}.
+    
+  \textbf{Operaciones básicas de DiccString($\alpha$)}
+
+  \InterfazFuncion{Vacío}{}{diccStr$(\alpha)$}%
+  {$res \igobs vacio$}%
+  [$O(1)$]
+  [Genera un diccionario de strings vacío]  
+  
+  \InterfazFuncion{Definir}{\Inout{ds}{diccStr($\alpha$)},\In{s}{String}, \In{d}{$\alpha$}}{}
+  [$ds \igobs ds_0$ $\wedge$ s $\neq$ <>]
+  {$ds \igobs definir(ds0,s,d)$}
+  [$O(|s| + copy(d))$]
+  [Define la clave s con el significado d en el diccionario.]
+  [Copia la clave y el significado.]
+  
+  
+  \InterfazFuncion{Definido?}{\In{ds}{diccStr($\alpha$)},\In{s}{String}}{bool}
+  [s $\neq$ <>]
+  {$res \igobs def?(ds,s)$}
+  [$O(|s|)$]
+  [Devuelve true si y sólo si s está definido en el diccionario.]
+  	
+  \InterfazFuncion{Significado}{\In{ds}{diccStr($\alpha$)},\In{s}{String}}{$\alpha$}
+  [def?(ds, s)]
+  {$alias(res \igobs Significado(ds, s))$}
+  [$O(|s|)$]
+  [Devuelve el significado de la clave s en ds.]
+  [res es modificable si y sólo si ds es modificable.]
+  
+\textbf{Operaciones básicas del iterador($\alpha$)}
+
+  \InterfazFuncion{CrearIt}{\In{ds}{diccStr($\alpha$)}}{itDiccStr($\alpha$)}
+  {alias(res $\igobs$ crearItUni(significados(Diccionario(ds))) $\yluego$ res.actual $\igobs$ ds $\wedge$ vacia?(res.proximos))}%
+  [$O(1)$]
+  [Crea un iterador unidireccional del diccionario.]  
+  [El iterador se invalida si se modifica el diccionario original, res no es modificable]
+  
+  \InterfazFuncion{HayMas?}{\In{itds}{itDiccStr($\alpha$)}}{bool}
+  {$res \igobs hayMas?(itds)$}
+  [$O(1)$]
+  [Devuelve true si y solo si en el iterador todavía quedan elementos para avanzar]
+
+\newpage
+  \InterfazFuncion{Actual}{\In{itds}{itDiccStr($\alpha$)}}{tupla(clave: String, significado:$\alpha$)}
+  [HayMas?(it)]
+  {alias($res \igobs actual(itds)$)}
+  [$O(|max\_clave|)$]
+  [Devuelve el elemento actual del iterador]
+  [El iterador se invalida si se modifica el diccionario original, res no es modificable]
+  
+  \InterfazFuncion{Avanzar}{\Inout{itds}{itDiccStr($\alpha$)}}{}
+  [it = $it_0 \wedge$ HayMas?(itds)]
+  {$it \igobs Avanzar(it_0)$}
+  [$O(|max\_clave|)$]
+  [Avanza a la posición siguiente del iterador]
+   
+  
+ 
+  
+\end{Interfaz}
+
+\begin{Representacion}
+
+\textbf{Representación de DiccString}
+
+  \begin{Estructura}{diccStr$(\alpha)$}[dstr]
+  	donde dstr es puntero(nodo)
+    %\begin{Tupla}[dstr]
+    %  \tupItem{inicio}{puntero(nodo)}%
+    %   \tupItem{cantidadTotal}{nat}%
+    %\end{Tupla}
+
+    \begin{Tupla}[nodo]
+      \tupItem{letra}{char}
+      \tupItem{dato}{puntero($\alpha$)}%
+      \tupItem{sigLetra}{puntero(nodo)}%
+      \tupItem{restoPalabra}{puntero(nodo)}%
+    \end{Tupla}
+  \end{Estructura}	
+  
+ 
+  
+  Invariante de representacion en castellano:
+  
+  \begin{enumerate}
+  \item El orden de los nodos con respecto a sigLetra debe ser creciente en base a Ord()
+  \item Si un nodo no tiene restoPalabra, se asegura que ahí hay un dato
+  \item Si sigLetra o restoPalabra no son null, se deberá cumplir el invariante en ellos tambien respectivamente.
+  \item No se generan ciclos.
+  \item Un nodo no puede tener dos padres.
+  \end{enumerate}
+  
+  
+  \Rep[dstr][ds]{(ds $\neq$ NULL) $\impluego$ Rep(*ds)}\mbox{}
+  
+  \BlankLine
+  \Rep[nodo][n]{
+  \begin{enumerate}
+  	\item (n.sigLetra $\neq$ NULL) $\impluego$ (ord(n.letra) $<$ ord(n.sigLetra$\DRef$letra) $\land$
+    \item (n.restoPalabra $=$ NULL) $\impluego$ n.dato $\neq$ NULL $\land$
+    \item (n.sigLetra $\neq$ NULL) $\impluego$ Rep(n.sigLetra) $\land$ (n.restoPalabra $=$ NULL) $\impluego$ Rep(n.restoPalabra)
+  	\item --
+  	\item --
+  \end{enumerate}
+  }
+  
+  \BlankLine
+  
+    %Y para todos tres nodos cualesquiera A o B o C $\neq$ A que puedan ser accedidos desde ds con alguna combinacion de referencias de sigLetra y RestoPalabra o son el nodo que apunta ds: \\
+	%Ni A.sigLetra o A.RestoPalabra apuntan a A o al nodo que apunta ds, si A.sigLetra o A.RestoPalabra apuntan a B, ni B.sigLetra o B.RestoPalabra apuntan a A ni C.sigLetra o C.RestoPalabra apuntan a B.
+  
+  \BlankLine
+  %  \Rep[tr][l]{($l$.primero $=$ NULL) $=$ ($l$.longitud $=$ $0$) $\yluego$ ($l$.longitud $\neq$ $0$ 	\impluego \\
+  %   Nodo($l$, $l$.longitud) $=$ $l$.primero $\land$ \\
+  %  ($\forall i$: nat)(Nodo($l$,$i$)\DRef siguiente $=$ Nodo($l$,$i+1$)\DRef anterior) $\land$ \\
+  %  ($\forall i$: nat)($1 \leq i <$ $l$.longitud $\implies$ Nodo($l$,$i$) $\neq$ $l$.primero)}\mbox{}
+ 
+%  \AbsFc[dstr]{dicc(String,$\alpha$)}[ds]{\IF ds == NULL THEN vacio ELSE Diccionario(ds, <>) FI}	
+%  \BlankLine
+  
+%  \tadOperacion{Diccionario}{puntero(nodo),string}{dicc(String,$\alpha$)}{}%
+%  \tadAxioma{Diccionario(n,s)}{Fusionar(Fusionar(\IF nodo$\rightarrow$dato == NULL THEN vacio ELSE definir(\secuencia{s}[(nodo$\rightarrow$letra)], nodo$\rightarrow$dato, vacio) FI, \\ \IF nodo$\rightarrow$restoPalabra == NULL THEN vacio ELSE Diccionario(nodo$\rightarrow$restoPalabra, \secuencia{s}[(nodo$\rightarrow$letra)]) FI), \\ \IF nodo$\rightarrow$sigLetra == NULL THEN vacio ELSE Diccionario(nodo$\rightarrow$sigLetra, s) FI)}
+%  \BlankLine
+ 	 
+  \AbsFc[dstr]{dicc(String,$\alpha$)}[ds]{Diccionario(ds, <>)}	
+  \BlankLine
+  
+  \newpage
+  
+  \tadOperacion{Diccionario}{puntero(nodo),string}{dicc(String,$\alpha$)}{}
+  \tadAxioma{Diccionario(nodo, s)}
+  {\IF nodo == NULL THEN vacio ELSE Fusionar( \\	
+  {\IF nodo.dato == NULL THEN vacio ELSE definir(\secuencia{s}[(nodo$\rightarrow$letra)], nodo$\rightarrow$dato, vacio) FI}, \\ Fusionar(Diccionario(nodo$\rightarrow$restoPalabra, \secuencia{s}[(nodo$\rightarrow$letra)]),Diccionario(nodo$\rightarrow$sigLetra, s))) FI}
+  
+  \BlankLine
+  
+  \tadOperacion{Fusionar}{dicc(String,$\alpha$),dicc(String,$\alpha$)}{dicc(String,$\alpha$)}{}
+  \tadAxioma{Fusionar(d,definir(k,s,d')}{Fusionar(definir(k,s,d),d')}
+  \tadAxioma{Fusionar(d,vacio)}{d}
+
+\BlankLine
+
+Se llama a Fusionar(Caso1,Fusionar(Caso2,Caso3)) 
+
+ Caso1 abarca cuando se encuentra un dato definido \\ Caso2 es la recursion sobre el resto de la palabra (Por ejemplo, descubrimos que Caza esta definido, pero quizas esta Cazad definido tambien) \\ Caso3 es la recursion sobre el resto del diccionario (Por ejemplo, cuando llegamos al nodo Cazad, en sigLetra puede estar la r, que potencialmente indica que la clave Cazar esta definida)
+\newline
+
+\end{Representacion}
+
+
+
+\textbf{Representación del iterador}
+
+\begin{Estructura}{itDiccStr$(\alpha)$}[itdstr]
+    \begin{Tupla}[itdstr]
+      \tupItem{actual}{puntero(nodo)}
+      \tupItem{proximos}{Pila(puntero(nodo))}
+    \end{Tupla}
+  \end{Estructura}
+
+Donde nodo es el mismo definido anteriormente en el diccionario
+
+\Rep[itDiccStr($\alpha$)][it]{Rep(it.actual) $\wedge$ Rep(it.proximos)
+  }\mbox{}
+  
+\Rep[Pila(puntero(nodo))][pit]{\IF Vacia?(pit) THEN true ELSE Rep(tope(pit)) $\wedge$ Rep(desapilar(pit)) FI  }\mbox{}  %
+
+Y que para todo puntero A y B distintos pertenecientes a apilar(it.proximos,it.actual) ni A referencia a B ni B referencia a A, ni sucesivas referencias de sigLetra o restoPalabra de A referencian a ninguna sucesiva referencia de B y viceversa. \BlankLine
+
+\AbsFc[itDiccStr($\alpha$)]{itUni($\alpha$)}[it]{crearItUni(significados(Fusionar(Diccionario(it.actual, <>), DiccionarioPila(it.proximos, <>))))}	
+
+\tadOperacion{DiccionarioPila}{pila(diccString(string,$\alpha$)),string}{dicc(String,$\alpha$)}{}
+  \tadAxioma{DiccionarioPila(p,s)}{Fusionar(Diccionario(tope(p),s), DiccionarioPila(desapilar(p),s))}
+
+ \newpage
+  \begin{Algoritmos}
+    \textbf{Algoritmos de DiccString}
+
+	\text{iVacio() $\rightarrow$ res: DiccStr($\alpha$)}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+	{$res \leftarrow $ NULL}
+    }
+    \caption{iVacio}
+	\end{algorithm} 
+    
+   
+    \text{iSignificado(in ds: dstr, in s: string) $\rightarrow $ res: $\alpha$}
+	\newline
+	\begin{algorithm}[H]
+    \Begin{
+    $res \leftarrow $ iSignificadoAux(ds,s,0) \hfill O(|s| - 0) = O(|s|)
+    }
+    \KwData{Complejidad es O(|s|)}
+    \caption{iSignificado}
+	\end{algorithm} 
+    
+    \text{iSignificadoAux(in pn:puntero(nodo), in s:string, in n:nat) $\rightarrow $ res: $\alpha$}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    \eIf{pn $\rightarrow$ letra == s[n]}
+    {\eIf{n == longitud(s) - 1} 
+    {res $\leftarrow$ (pn $\rightarrow$ dato)}
+    {res $\leftarrow$ iSignificadoAux(pn $\rightarrow$ restoPalabra, s, n + 1)} }
+    {%\textit{Este bloque se ejecuta a lo sumo 256 veces por recursion, debido al orden estricto de las letras, es a lo sumo O(256), osea O(1) en encontrar la siguiente letra}\\ 
+    \If{ord(pn $\rightarrow$ letra) < ord(s[n])} 
+	{res $\leftarrow$ iSignificadoAux(pn $\rightarrow$ sigLetra, s, n)}
+ 	}
+    }
+    \KwData{Dado que la cantidad de letras distintas es acotada, recorrer horizontalmente la estructura tiene complejidad O(1). Por ende: Complejidad es O(|s| - n)}
+    \caption{iSignificadoAux}
+   \end{algorithm}
+   
+   \text{iDefinido?(in ds:dstr, in s:string) $\rightarrow $ res: $\alpha$}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    \emph{$res \leftarrow $ iDefinidoAux(ds,s,0)}
+    }
+    \KwData{Complejidad es O(|s|)}
+    \caption{iDefinido?}
+   \end{algorithm}
+        
+   \text{iDefinir(inout ds:dstr, in s:string, in d: $\alpha$)}
+	\newline
+    \begin{algorithm}[H]
+    \Begin{
+    iDefinirAux(ds, s, \& copy(d), 0) \hfill O(|s| - 0) = O(|s|)
+    }
+    \KwData{Complejidad es O(|s|)}
+    \caption{iDefinir}
+   \end{algorithm}
+   
+  \newpage
+   \text{iDefinidoAux(in pn:puntero(nodo), in s:string, in n:nat) $\rightarrow $ res: bool}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ false \\
+    \If{pn != NULL}
+    {
+    \eIf{pn $\rightarrow$ letra == s[n]}
+    {\eIf{n == longitud(s) - 1} 
+    {res $\leftarrow$ (pn $\rightarrow$ dato) $\neq$ NULL}
+    {res $\leftarrow$ iDefinidoAux(pn $\rightarrow$ restoPalabra, s, n + 1)}
+    }
+    {%\textit{Este bloque se ejecuta a lo sumo 256 veces por recursion, debido al orden estricto de las letras, es a lo sumo O(256), osea O(1) en encontrar la siguiente letra}\\ 
+    \If{ord(pn $\rightarrow$ letra) < ord(s[n])} 
+	{
+    res $\leftarrow$ iDefinidoAux(pn $\rightarrow$ sigLetra, s, n)}
+ 	}
+    }
+    }
+    \KwData{Dado que la cantidad de letras distintas es acotada, recorrer horizontalmente la estructura tiene complejidad O(1). Por ende: Complejidad es O(|s| - n).}
+    \caption{iDefinidoAux}
+   \end{algorithm}
+      
+ 
+   \text{iDefinirAux(inout pn:puntero(nodo), in s:string, in d:puntero($\alpha$), in n:nat)}
+	\newline
+    \begin{algorithm}[H]
+    \Begin{
+    \eIf{pn == NULL} 
+    {pn $\leftarrow$ crearDefinicion(s,d,n,pn)  \hfill O(|s| - n)}
+   	{\eIf {s[n] == pn$\rightarrow$letra}
+    {\eIf{n == longitud(s) - 1}
+    {pn$\rightarrow$dato $\leftarrow$ d}
+    {iDefinirAux(pn$\rightarrow$restoPalabra,s,d,n+1) \hfill O(|s| - n - 1)}
+    }
+    {%\textit{Este bloque se ejecuta a lo sumo 256 veces por recursion, debido al orden estricto de las letras, es a lo sumo O(256), osea O(1) en encontrar la siguiente letra} \\
+    \eIf {Ord(s[n]) < Ord(pn$\rightarrow$letra)}
+    {pn $\leftarrow$ crearDefinicion(s,d,n,pn) \hfill O(|s| - n)}
+    {iDefinirAux(pn$\rightarrow$sigLetra,s,d,n) \hfill O(|s| - n)}
+    }
+    }
+    }
+    \KwData{Dado que la cantidad de letras distintas es acotada, recorrer horizontalmente la estructura tiene complejidad O(1). Por ende: Complejidad es O(|s| - n). \newline Se itera recursivamente desde n inclusive hasta la longitud de s - 1 donde se corta la recursion y se devuelve el valor. Todas las operaciones menos crearDefinicion y los saltos recursivos son O(1).
+    La recursion para encontrar la letra correspondiente en la lista de letras asociada con un nodo es O(1), si no se encuentra la letra correspondiente se crea una rama nueva con crearDefinicion, como esta funcion tiene la misma complejidad que una llamada recursiva, se mantiene la complejidad de O(|s| - n)}
+    \caption{iDefinirAux}
+   \end{algorithm}
+   
+   
+    \newpage
+      \text{crearDefinicion(in s:string, in d:puntero($\alpha$), in n:nat, in pn:puntero(nodo)) $\rightarrow$ res: puntero(nodo)}
+	\newline
+    \begin{algorithm}[H]
+    \Begin{
+    res$\rightarrow$letra $\leftarrow$ s[n] \\
+    res$\rightarrow$sigLetra $\leftarrow$ pn \\
+    \eIf{n == longitud(s) - 1}
+    {
+    res$\rightarrow$dato $\leftarrow$ d \\
+    res$\rightarrow$restoPalabra $\leftarrow$ NULL \\
+    }
+    {
+    res$\rightarrow$dato $\leftarrow$ NULL \\
+    res$\rightarrow$restoPalabra $\leftarrow$ crearDefinicion(s, d, n+1, NULL) \hfill O(|s| - n - 1)
+    }  
+    }
+    \KwData{Complejidad es O(|s| - n), se itera recursivamente desde n inclusive hasta la longitud de s - 1, donde se corta la recursión, todas las operaciones son O(1).}
+    \caption{crearDefinicion}
+   \end{algorithm}
+   
+   %dato $\leftarrow$ \IF n == longitud(s) - 1 THEN d ELSE NULL FI \\
+   % resto $\leftarrow$ \IF THEN ELSE FI
+   % \eIf{n == longitud(s) - 1}
+   % {res $\leftarrow$ $\{$s[n], d, NULL, NULL$\}$}
+    %{res $\leftarrow$ $\{$s[n], NULL, NULL, crearDefinicion(s,d,n+1)$\}$}
+   
+   %\begin{algorithm}[H] 
+   %\text{BuscarComienzo(in pn:puntero(nodo), in s:string, in d:$\alpha$, in n:nat)}
+   %\BlankLine
+   % \eIf{pn $\rightarrow$ letra < s[n]}
+   % {}
+   % {}
+   % \eIf{pn $\rightarrow$ letra == s[n]}
+   % {BuscarComienzo(pn$\rightarrow$RestoPalabra, s, d, n + 1)}
+   % 
+   %\end{algorithm}
+   % \text{iTomarUltimos(in vo: vector($\alpha$)) $\rightarrow$ res :vector($\alpha$)}
+   % \BlankLine
+   % \begin{algorithm}
+   % \For{$i\leftarrow 1$ \KwTo $Longitud(vo)-1$}
+   % {
+   %     	\emph res[i-1] $\leftarrow$ vo[i]}
+   % \end{algorithm}
+   
+    \textbf{Algoritmos del Iterador}
+    
+    \text{iCrearIt(in: ds: DiccStr($\alpha$)) $\rightarrow$ res: itDiccStr($\alpha$)}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+	{
+    $res.actual \leftarrow $ ds \hfill O(1)	\\
+    $res.proximos \leftarrow $ vacia() \hfill O(1) \\
+    }
+    }
+    \KwData{Complejidad: O(1)}
+    \caption{iCrearIt}
+	\end{algorithm} 
+    
+  
+    \text{iHayMas?(in: itds: itdstr) $\rightarrow$ res: bool}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+	{
+    $res \leftarrow actual \neq NULL$
+    }
+    }
+    \KwData{Complejidad: O(1)}
+    \caption{iHayMas?}
+	\end{algorithm} 
+    
+    \text{iActual(inOut: itds: itdstr) $\rightarrow$ res: $\alpha$}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    \If {itds.actual$\rightarrow$dato = NULL}
+    {iAvanzar(itds)}
+    res = itds.actual$\rightarrow$dato
+    }
+    \KwData{Complejidad es O(Max(claves(itds.actual)))}
+    \caption{iActual}
+	\end{algorithm} 
+    
+  
+     \newpage
+    \text{iAvanzar(inOut: itds: itdstr)}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    \If {itds.actual$\rightarrow$sigLetra $\neq$ NULL}
+    {Apilar(itds.proximos, itds.actual$\rightarrow$sigLetra)}
+    \eIf {itds.actual$\rightarrow$restoPalabra $\neq$ NULL}
+    {
+    itds.actual $\leftarrow$ itds.actual$\rightarrow$restoPalabra \\
+    \If {itds.actual$\rightarrow$dato = NULL}
+    {iAvanzar(itds)}
+    }
+    {
+    \eIf {EsVacia?(itds.proximos)}
+    {itds.actual $\leftarrow$ NULL}
+    {itds.actual $\leftarrow$ Tope(itds.proximos) \\
+    Desapilar(itds.proximos)}
+    }
+    }
+    \KwData{El algoritmo busca el siguiente puntero con un dato no nulo. Buscar este dato tiene implica buscarlo horizontal (Complejidad O(1)) y verticalmente en el trie (Complejidad O(Longitud\_Palabra)). La complejidad del algoritmo es O(|s|), donde s es la string más larga del diccionario.}
+    \caption{iAvanzar}
+	\end{algorithm} 
+    
+    %\text{iAvanzarAux(inOut: itds: itDiccStr($\alpha$), in: s: String)}
+    %\newline
+	%\begin{algorithm}[H]
+    %\Begin{
+	%{
+    %\eIf {itds.actual$\rightarrow$restoPalabra $\neq$ NULL}
+    %{
+    %itds.actual $\leftarrow$ itds.actual$\rightarrow$restoPalabra \\
+    %\If {itds.actual$\rightarrow$dato = NULL}
+    %{iAvanzar(itds)}
+    %}
+    %{}
+    %}
+    %}
+    %\caption{iAvanzar}
+	%\end{algorithm} 
+    
+    \end{Algoritmos}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
+\section{Módulo DCNet}
+
+
+
+
+\begin{Interfaz}
+  
+  %\textbf{parámetros formales}\hangindent=2\parindent\\
+  %\parbox{1.7cm}{\textbf{géneros}} DCNet \\
+  
+  \textbf{se explica con}: \tadNombre{DCNet}.
+
+  \textbf{géneros}: \TipoVariable{DCNet}.
+  
+
+  \textbf{Usa}: \tadNombre{vector$(\alpha)$}, \tadNombre{ConjuntoRapido($\alpha$)},
+ \tadNombre{Red}, \tadNombre{bool}, \tadNombre{ColaPrior($\alpha$)}, \tadNombre{nat}, \tadNombre{string}, \tadNombre{tupla}, \tadNombre{compu}, \tadNombre{PaqPrior}, \\ \hspace{0.8mm}\tadNombre{DiccString}, \tadNombre{Lista(Compu)}.
+  
+\textbf{Se explica con}: \tadNombre{DCnet}
+  
+\textbf{géneros}: \TipoVariable{DCnet}.
+
+ 
+  
+    
+  \textbf{Operaciones básicas de DCNet}
+
+  \InterfazFuncion{IniciarDCNet}{\In{red}{red}}{DCNet}%
+  {$res \igobs IniciarDCNet(red)$}%
+  [$\#O(Computadoras(r)^2 * (L + Maximo\#Inter) * \#(Computadoras(r))! * \#(Computadoras(r))^2)$]
+  [Inicia una DCNet]  
+  
+  \InterfazFuncion{CrearPaquete}{\Inout{dc}{DCNet},\In{p}{paquete}}{}
+  [$dc \igobs dc_0$ $\wedge$ paquete.origen $\in$ Computadoras(Red(dc)) $\wedge$ paquete.destino Computadoras(Red(dc)) $\wedge$ paquete.id $\notin$ Ids(dc) $\yluego$ HayCamino?(red(dc), paquete.origen, paquete.destino) ]
+  {$dc \igobs crearPaquete(dc0, paquete.origen, paquete.destino)$}
+  [$O(L + log(k))$]
+  [Agrega un paquete a la DCNet]
+  [Agrega por referencia.]  
+  
+  \InterfazFuncion{AvanzarSegundo}{\Inout{dc}{DCNet}}{}
+  [$dc \igobs dc_0$]
+  {$dc \igobs avanzarSegundo(dc0)$}
+  [$O(n*(L + log(k)))$]
+  [Se envian los paquetes de mayor prioridad de cada computadora en caso de tenerlos]
+  	
+  \InterfazFuncion{Red}{\In{dc}{DCNet}}{Red}
+  {$res \igobs red(dc)$}
+  [$O(1)$]
+  [Devuelve la red de la DCNet]
+  [Devuelve la referencia de la Red.]  
+
+  \InterfazFuncion{CaminoRecorrido}{\In{dc}{DCNet},\In{p}{paquete}}{Lista($Compu$)}
+  [PaqueteEnTransito?(dc, p)]
+  {$res \igobs CaminoRecorrido(dc, p)$}%
+  [$O(n*log(k))$]
+  [Devuelve la lista del camino recorrido por el paquete]  
+  [Devuelve una referencia.]  
+  
+  
+  \InterfazFuncion{CantidadEnviados}{\In{dc}{DCNet},\In{pc}{Compu}}{nat}
+  [$pc \in Computadoras(red(dc))$]
+  {$res \igobs CantidadEnviados(dc, pc)$}
+  [$O(L)$]
+  [Devuelve la cantidad de envios que realizo la pc desde el inicio del DCNet]
+ 
+ \newpage
+  \InterfazFuncion{EnEspera}{\In{dc}{DCNet},\In{pc}{Compu}}{conjR(paquetes)}
+  [$pc \in Computadoras(red(dc))$]
+  {$res \igobs EnEspera(dc, pc)$}
+  [$O(Longitud(IP(pc)))$]
+  [Devuelve el conjunto de paquetes que tiene en espera la computadora.]
+  [Devuelve una referencia.]  
+  
+
+  \InterfazFuncion{PaqueteEnTransito?}{\In{dc}{DCNet}, \In{p}{paquete}}{bool}
+  {$res \igobs PaqueteEnTransito?(dc, p)$}
+  [$O(n*log(k))$]
+  [Devuelve si el paquete esta en la DCNet]
+
+  \InterfazFuncion{LaQueMasEnvio}{\In{dc}{DCNet}}{Compu}
+  {$res \igobs LaQueMasEnvio(dc)$}
+  [$O(1)$]
+  [Devuelve la computadora que más envios realizo]
+  [Devuelve una referencia.]  
+  
+%  \textbf{Operaciones del Iterador}
+   
+   
+%  \InterfazFuncion{HaySiguiente?}{\In{it}{itEnEspera}}{bool}
+%  {$res \igobs HaySiguiente?(it)$}
+%  [$O(1)$]
+%  [Devuelve si hay mas elementos]
+  
+%  \InterfazFuncion{Siguiente}{\In{it}{itEnEspera}}{Paquete}
+%  [HaySiguiente?(it)]
+%  {$res \igobs Siguiente(it)$}
+%  [$O(1)$]
+%  [Devuelve el siguiente Paquete del iterador]
+   
+%  \InterfazFuncion{Avanzar}{\Inout{it}{itEnEspera}}{}
+%  [HaySiguiente?(it)]
+%  {$res \igobs Avanzar(it)$}
+%  [$O(1)$]
+%  [Avanza el iterador]
+   
+  
+\end{Interfaz}
+
+\begin{Representacion}
+
+\textbf{Representación de DCNet}
+
+  \begin{Estructura}{DCNet}[estr]
+  	%donde estr es puntero(nodo)
+    \begin{Tupla}[estr]
+      \tupItem{Red}{Red}%
+      \tupItem{Paquetes}{Vector( DiccRapido(Paquete, Tupla(Camino: Lista(Compu), Posicion: nat)) )}%
+      \tupItem{ColaPC}{Vector(colaPrior(PaqPrior))}%
+      \tupItem{Caminos}{Vector(Vector(Vector(Compu)))}%
+      \tupItem{Contador}{Vector(nat)}
+      \tupItem{MasEnvios}{Compu}
+      \tupItem{IndexToPC}{Vector(Compu)}
+      \tupItem{PCToIndex}{DiccString(nat)}
+      \tupItem{EnEspera}{conjR(paquete)}
+    \end{Tupla}
+  \end{Estructura}	
+ 
+ \textbf{Rep en castellano:}
+  \begin{enumerate}
+  \item Las longitudes de todos los vectores y subvectores coincide con el cardinal del conjunto de computadoras de la red.
+  \item Las computadoras de IndexToPC son las mismas que las del conjunto de computadoras de red (y como se que vale el rep de red y las longitudes son iguales, la cantidad de computadoras tambien es equivalente y no se repiten). Ademas, el índice correspondiente a cada compu de ese vector, es el mismo que el significado del diccionario PCToIndex usando dicha PC como clave.
+  \item Los paquetes son los mismos para cada índice en Paquetes y ColaPC
+  \item No se repiten los IDs de los paquetes en toda la DCNet.
+  \item El camino en dc.Paquete es algún camino válido de la Red, y la posición es un valor entre 0 y la longitud del camino.
+  \end{enumerate}
+  
+  \newpage
+  \Rep[estr][dc]{
+  \begin{enumerate}
+  	\item long(dc.Paquetes) = long(dc.ColaPC) $\wedge$ long(dc.ColaPC) = long(dc.Caminos) $\wedge$ long(dc.caminos) = long(dc.Contador) $\wedge$ long(dc.Contador) = long(dc.IndexToPC) $\wedge$ long(dc.EnEspera) = long(dc.caminos) $\wedge$ long(dc.IndexToPC) = \#Computadoras(dc.Red) $\wedge$ \#Computadoras(dc.red) = \#Claves(dc.PCToIndex) $\wedge$ 
+  \newline ($\forall$i: nat | i < long(dc.ColaPC)) (long(dc.Caminos[i] = long(dc.Caminos)  $\wedge$ 
+  
+  \item ($\forall$i: nat | i < long(dc.ColaPC)) dc.IndextoPC[i] $\in$ Computadoras(dc.red) $\wedge$ i = Obtener(dc.PCToIndex, dc.IndexToPC[i].IP $\wedge$ 
+  \item ($\forall$i: nat | i < long(dc.ColaPC)) Claves(dc.Paquetes[i]) = Aconj(dc.ColaPC[i]) ) )
+  \item Cardinal( Unir(dc.EnEspera) ) = LongitudTotal(dc.EnEspera)
+  \item ($\forall$i: nat | i < long(dc.ColaPC))  ($\forall$p: Paquete | definido?(dc.Paquetes[i], p) Obtener(dc.Paquetes[i], p).camino $\in$ caminosMinimos(dc.Red)
+  \end{enumerate}
+  }\mbox{}
+  
+  
+\tadOperacion{LongitudTotal}{Secu(conj(paquete))}{nat}{}
+  \tadAxioma{Aconj(sec)}{\IF Vacia?(sec) THEN 0 ELSE \#(prim(sec)) + LongitudTotal(fin(sec)) FI}
+  
+  \tadOperacion{soloString}{conj(paquete)}{conj(string)}{}
+  \tadAxioma{soloString(c)}{\IF $\emptyset$?(c) THEN $\emptyset$ ELSE Ag($\Pi_1$(dameUno(c)),sinUno(c)) FI}
+  
+  \tadOperacion{Unir}{Secu(conj(Paquete))}{Conj(String)}{}
+  \tadAxioma{Unir(sec)}{\IF Vacia?(sec) THEN $\emptyset$ ELSE Ag($\pi1$(prim(sec)), Unir(fin(sec))) FI}
+  
+  \BlankLine 	 
+  
+  \AbsFc[estr]{DCNet}[dc]{net: dcNet | red(net) = dc.red $\wedge$ ( $\forall$  pc: Compu | pc $\in$ computadoras(red(net)) (CantidadEnviados(net, pc) = dc.contador[Obtener(dc.PCToIndex, pc.IP)] $\wedge$ EnEspera(net) = PasarAConj(dc.ColaPC[Obtener(dc.PCToIndex, pc.IP)]) ) $\wedge$ ($\forall$ p: Paquete | paqueteEntransito(net, p)) caminoRecorrido(net, p) = $\pi1$(Obtener(dc.Paquetes[Buscar(dc.Paquetes, p)])) }
+  
+  \tadOperacion{Buscar}{Secu(Dicc( Paquete, Tupla(Secu(Compu) ))) \ s, Paquete \ p}{nat}{EstaPaquete(s, p)}
+  \tadAxioma{Buscar(sec, paq)}{\IF $\pi1$(prim(sec)) = paq THEN 0 ELSE 1 + Buscar(fin(sec), paq) FI}
+  \BlankLine
+  \tadOperacion{EstaPaquete}{Secu(Dicc( Paquete, Tupla(Secu(Compu) ))) \ s, Paquete \ p}{bool}{}
+  \tadAxioma{EstaPaquete(sec, paq)}{\IF vacia?(sec) THEN False ELSE {\IF $\pi1$(prim(sec)) = paq THEN True ELSE EstaPaquete(fin(sec), paq) FI} FI}
+  \BlankLine
+  
+  
+  
+%  \textbf{Representación de itEnEspera}
+
+%  \begin{Estructura}{itEnEspera}[itestr]
+%  	donde itestr es itColaPrior(PaqPrior)
+%  \end{Estructura}	
+ 
+  
+%  \Rep[itestr][itEnespera]{}\mbox{True }
+ 	 
+%  \AbsFc[itestr]{itEnEspera}[it]{iter: itUni(Conj(Paquete)) | iter = crearItUni(ColaASecuDePaquetes)}	
+  \BlankLine
+  
+  
+\end{Representacion}
+
+  \begin{Algoritmos}
+    \textbf{Algoritmos de DCNet}
+     \newline Para los algoritmos, en cola de prioridad usamos el Tipo Paqprior para establecer el orden de prioridad entre las tuplas paquetes
+     \newline
+
+	\text{iRed(in e: estr) $\rightarrow$ res: Red}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+	{$res \leftarrow $ e.Red \hfill \textbf{//O(1)}}
+    }
+    \caption{red}
+    \KwData{Complejidad: O(1)}
+	\end{algorithm} 
+    
+   
+\newpage
+    \text{iCaminoRecorrido(in e: estr, in p: Paquete) $\rightarrow $ res: Lista(Compu)}
+	\newline
+	\begin{algorithm}[H]
+    \Begin{
+    nat i $\leftarrow$ 0  \hfill \textbf{//O(1)}
+    \newline nat n $\leftarrow$ longitud(e.Paquetes) \hfill \textbf{//O(1)} 
+	\newline \While{i < n}{
+    \If{ElemPertenece(e.Paquetes[i], p  \hfill \textbf{//O(log(\#Claves(e.Paquetes[i])))} )}
+    {res $\leftarrow$ $\pi1$( Obtener(e.Paquetes[i], p) )  \hfill \textbf{//El camino de la tupla <camino, posicion>}\\
+      \hfill \textbf{//O(1)} }
+    
+    i++   \hfill \textbf{//O(1)} 
+    }  
+     \hfill \textbf{//While: O(n*log(\#Claves(e.Paquetes[i])) )} 
+    }
+    \KwData{Complejidad: O(n*(log(k)), donde k es la cantidad mayor de paquetes en una cola.}
+    \caption{CaminoRecorrido}
+    \end{algorithm} 
+    
+    \text{iCantidadEnviados(in e: estr, in pc: Compu) $\rightarrow $ res: nat}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ e.Contador[Obtener(e.PCToIndex, IP(pc))]  \hfill \textbf{//O(Longitud(IP(pc)))} 
+    }
+    \KwData{Complejidad: O(Longitud(IP(pc)))}
+    \caption{CantidadEnviados}
+    \end{algorithm}
+   
+   \text{iEnEspera(in e: estr, in pc: Compu) $\rightarrow $ res: conjR(Paquetes)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    {res $\leftarrow $ e.EnEspera[Obtener(e.PCToIndex, pc.IP)]  \hfill \textbf{//O(Longitud(IP(pc)))} }
+    }
+    \KwData{Complejidad: O(L)}
+    \caption{EnEspera}
+   \end{algorithm}
+        
+ 
+   \text{iPaqueteEnTransito(in e: estr, in p: Paquete) $\rightarrow$ res: bool}
+	\newline
+    \begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ False
+    \newline nat i $\leftarrow$ 0  \hfill \textbf{//O(1)} 
+    \newline nat k $\leftarrow$ longitud(e.caminos) \hfill \textbf{//O(1)} 
+    \newline \While{(i<k)}{
+    \If{ElemPertenece(e.Paquetes[i], p)  \hfill \textbf{//O(log(\#claves(e.Paquetes[i])))} }{res $\leftarrow$ True}
+    i++ \hfill \textbf{//O(1)} 
+    }
+     \hfill \textbf{//O(n*log(k))} 
+    }
+    \KwData{Complejidad: O(n*log(k)), donde k es la cantidad mayor de paquetes en una cola.}
+    \caption{PaqueteEnTransito}
+    \end{algorithm}
+   
+   \text{iLaQueMasEnvio(in e: estr) $\rightarrow $ res: nat}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ e.MasEnvios
+    }
+    \KwData{Complejidad: O(1)}
+    \caption{LaQueMasEnvio}
+    \end{algorithm}
+      
+     
+    \newpage
+    \text{iIniciarRed(in red: Red) $\rightarrow$ res: estr}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    res.Red $\leftarrow$ Red \hfill \textbf{//O(1)} 
+    %\newline nat c $\leftarrow$ Cardinal(Computadoras(red))
+    \newline res.Paquetes $\leftarrow$ Vacio()  \hfill \textbf{//O(1)} 
+    \newline res.ColaPC $\leftarrow$ Vacio() \hfill \textbf{//O(1)} 
+    \newline res.Caminos $\leftarrow$ Vacio() \hfill \textbf{//O(1)} 
+    \newline res.Contador $\leftarrow$ Vacio() \hfill \textbf{//O(1)} 
+    \newline res.IndexToPC $\leftarrow$ Vacio() \hfill \textbf{//O(1)} 
+    \newline res.PCToIndex $\leftarrow$ CrearDicc() \hfill \textbf{//O(1)} 
+    \newline res.EnEspera $\leftarrow$ Vacio() \hfill \textbf{//O(1)} 
+    \newline itConj(Compu) itConj $\leftarrow$ CrearIt(computadoras(red)) \hfill \textbf{//O(1)} 
+    \newline nat i $\leftarrow$ 0 \hfill \textbf{//O(1)} 
+    \newline \While{HaySiguiente?(itConj)}
+    {
+    AgregarAtras(res.Paquetes, VacioAVL())  \hfill \textbf{//O(Long(res.Paquetes))} 
+    \newline AgregarAtras(res.ColaPC, CrearCola()) \hfill \textbf{//O(longitud(e.ColaPC))} 
+    \newline AgregarAtras(res.Contador, 0)  \hfill \textbf{//O(longitud(e.Contador))} 
+    \newline AgregarAtras(res.IndexToPC, siguiente(itConj))  \hfill \textbf{//O(Longitud(e.IndexToPC) + L)} 
+    \newline AgregarAtras(res.EnEspera, Vacio())  \hfill \textbf{//O(Longitud(e.EnEspera))} 
+    \newline Definir(res.PCToIndex(Siguiente(itConj).IP, i))  \hfill \textbf{//O(Longitud(IP(pc)))} 
+    \newline nat j $\leftarrow$ 0  \hfill \textbf{//O(1)} 
+    \newline \While{(j<i)}{AgregarAtras(res.Caminos[j], Siguiente(CrearIt(CaminosMinimos(res.Red, IndexToPC[j]))) 
+    \newline \hfill \textbf{//$O( (L + Maximo\#Inter) * \#(Computadoras(r))! * \#(Computadoras(r))^2)$} 
+    \newline j++
+    }
+     \hfill \textbf{//While: $O(i* (L + Maximo\#Inter) * \#(Computadoras(r))! * \#(Computadoras(r))^2)$} \\
+     i++
+    
+    }
+     \hfill \textbf{//While: $\#O(Computadoras(r)^2 * (L + Maximo\#Inter) * \#(Computadoras(r))! * \#(Computadoras(r))^2)$} \\
+    
+     res.MasEnvios $\leftarrow$ res.IndexToPC[0]  \hfill \textbf{//O(1)} 
+    
+    }
+    \KwData{Complejidad: $\#O(Computadoras(r)^2 * (L + Maximo\#Inter) * \#(Computadoras(r))! * \#(Computadoras(r))^2)$)}
+    \caption{IniciarRed}
+	\end{algorithm} 
+    
+    \text{iCrearPaquete(inout e: estr, in p: Paquete)}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    nat origen $\leftarrow$ Obtener(e.PCToIndex, p.Origen.IP) \hfill \textbf{//O(L)}
+    %\newline nat destino $\leftarrow$ Obtener(e.PCToIndex, p.Destino.IP) \hfill \textbf{//O(L)}
+    \newline Definir(e.Paquetes[origen], p, <Vacia(), 0>)  \hfill \textbf{//O(Log(\#Claves(e.Paquetes[origen])))}
+    \newline Encolar(e.ColaPC[origen], NuevoPaqPrior(p))  \hfill \textbf{//O(log(Longitud(e.ColaPC)))}
+    \newline AgregarElem(e.EnEspera[origen], p)  \hfill \textbf{//O(Cardinal(e.EnEspera[origen])}
+    }
+    \KwData{Complejidad: O(L + log(k)), donde k es la mayor cantidad de paquetes en una cola.}
+    \caption{CrearPaquete}
+	\end{algorithm}
+    
+    \newpage
+     \text{iAvanzarSegundo(inout e: estr)}
+    \newline 
+    \begin{algorithm}[H]
+    \Begin{
+    nat i $\leftarrow$ 0
+    \newline nat n $\leftarrow$ Longitud(e.Caminos)  \hfill \textbf{//O(1)}
+    \newline nat g $\leftarrow$ 0  \hfill \textbf{//O(1)}
+%    \newline Vector(Conj(Paquete)) Esperando $\leftarrow$ Vacio()  \hfill \textbf{//O(1)}
+    \newline \While{(i<n)}{
+    \If{!Vacio?(e.ColaPC[i])  \hfill \textbf{//O(1)}}
+    {
+    e.Contador[i]++  \hfill \textbf{//O(1)}
+    \newline Paquete p $\leftarrow$ Paquete(Desencolar(e.ColaPC[i]))  \hfill \textbf{//O(log(\#Claves(e.ColaPC[i]))}
+    \newline Compu actual $\leftarrow$ e.IndexToPC[i]  \hfill \textbf{//O(1)}
+    \newline nat origen $\leftarrow$ Obtener(e.PCToIndex(p.Origen.IP))  \hfill \textbf{//O(L)}
+    \newline nat destino $\leftarrow$ Obtener(e.PCToIndex(p.Destino.IP))  \hfill \textbf{//O(L)}
+    \newline Tupla(Lista(Compu), nat) temp $\leftarrow$ Obtener(p, e.Paquetes[i])  \hfill \textbf{//O(log(\#Claves(e.Paquetes[i])))}
+    \newline BorrarElem(p, e.Paquetes[i])  \hfill \textbf{//O(log(\#Claves(e.Paquetes[i])))}
+    \newline SacarElem(e.EnEspera[i], p) \hfill \textbf{//O(log(Cardinal(e.EnEspera[i])))} \\
+    
+	\eIf{$\pi2$(temp) + 1 < Longitud(e.Caminos[origen][destino])  \hfill \textbf{//O(1)}}{
+    Compu SiguientePC $\leftarrow$ e.Caminos[origen][destino][$\pi2$(temp) +1]  \hfill \textbf{//O(1)}
+    \newline nat SigIndex $\leftarrow$ Obtener(e.PCToIndex, SiguientePC.IP)  \hfill \textbf{//O(L)}
+    \newline Definir(e.Paquetes[SigIndex], p, Tupla(AgregarAtras($\pi1$(temp), actual), $\pi2$(temp) +1) )
+    \\  \hfill \textbf{//O(log(\#Claves(e.Paquetes[sigIndex]))}
+    \newline Encolar(e.ColaPC[SigIndex], NuevoPaqPrior(p))  \hfill \textbf{//O(\#Claves(e.ColaPC[SigIndex]))}
+    \newline AgregarElem(e.EnEspera[SigIndex], p)  \hfill \textbf{//O(log(Cardinal(e.EnEspera[SigIndex])))}
+	{
+	}
+	}
+	{
+	}
+    i++  \hfill \textbf{//O(1)}
+    }
+    i $\leftarrow$ 0  \hfill \textbf{//O(1)}
+    \newline nat max $\leftarrow$ 0  \hfill \textbf{//O(1)}
+    \newline \While{(i < n)}{
+    //Actualizo la pc que mas envios hizo
+    \newline \If{e.Contador[i] > e.Contador[max]}{max $\leftarrow$ i}{}
+    i++  \hfill \textbf{//O(1)}
+    }
+     \hfill \textbf{//While: O(Longitud(e.contador))}
+    \newline e.MasEnvios $\leftarrow$ e.IndexToPC[max]  \hfill \textbf{//O(1)}
+    }
+    }
+    \KwData{Complejidad: O(n*(L + log(k))), donde k es la mayor cantidad de paquetes de una cola, n es la cantidad de computadoras y L es la longitud maxima de un IP de compu}
+    \caption{AvanzarSegundo}
+    \end{algorithm}
+    
+    
+%    \textbf{Algoritmos del Iterador}
+ 
+%   \text{iCrearIt(in cola: ColaPrior(PaqPrior)) $\rightarrow$ res: itEnEspera }
+%	\newline
+%    \begin{algorithm}[H]
+%    \Begin{
+%    res.actual $\leftarrow$ CrearIt(cola)
+%    }
+   
+%   \KwData{Pre: True // Post: crea el iterador para el conjunto de paquetes de una Pc
+%   \newline Comlejidad: O(1)}
+%   \caption{CrearIt}
+ %  \end{algorithm}
+  
+%    \text{iHaySiguiente?(in iter: itColaPrior) $\rightarrow$ res: bool}%
+%	\newline
+%    \begin{algorithm}[H]
+%    \Begin{
+%    res $\leftarrow$ HaySiguiente?(iter)
+%    }
+%    \KwData{Complejidad: O(1)}
+%    \caption{haySiguiente}
+%    \end{algorithm}
+   
+  
+%    \text{iSiguiente(in iter: itColaPrior) $\rightarrow$ res: Paquete}
+%    \newline%
+%	\begin{algorithm}[H]
+%    \Begin{
+%	{
+%    res $\leftarrow$ Paquete(Siguiente(iter))
+%    }
+%    }
+%    \KwData{Complejidad: O(1)}
+%    \caption{Siguiente}%
+%	\end{algorithm} 
+ %   
+  %  \text{iAvanzar(inout iter: itColaPrior)}
+   % \newline
+	%\begin{algorithm}[H]
+%    \Begin{
+%	{
+ %   res $\leftarrow$ Avanzar(iter)
+  %  }
+   % }
+    %\KwData{Complejidad: O(1)}
+ %   \caption{Avanzar}
+%	\end{algorithm} 
+   
+    \end{Algoritmos}
+    
+    
+    
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
+\section{Módulo ColaDePrioridad($\alpha$)}
+
+\begin{Interfaz}
+  
+  \textbf{parámetros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{géneros}} $\alpha$ \\
+  \parbox{1.7cm}{\textbf{funciones}} \InterfazFuncion{\newline Menor}{\In{a}{$\alpha$},\In{b}{$\alpha$}}{bool}
+  {res $\igobs$ a < b}
+  [$O(menor(a,b))$]
+  
+  \textbf{se explica con}: \tadNombre{colaPrior(), Iterador Unidirecciconal().}.
+
+  \textbf{géneros}: \TipoVariable{colaDePrior(), itCola().}.
+    
+  \textbf{Operaciones básicas de ColaDePrioridad($\alpha$)}
+
+
+  \InterfazFuncion{Vacia}{}{colaDePrior($\alpha$)}%
+  {$res \igobs vacia$}%
+  [$O(1)$]
+  [Inicia una cola de prioridad vacia]  
+  
+  \InterfazFuncion{Vacia?}{\In{c}{colaDePrior($\alpha$)}}{bool}
+  {$res \igobs vacia?(c)$}
+  [$O(1)$]
+  [Devuelve si la cola de prioridad esta vacia o no]
+  
+  
+  \InterfazFuncion{Encolar}{\Inout{c}{colaDePrior($\alpha$)}, \In{a}{$\alpha$}}{}
+  [$c \igobs c_0$]
+  {$c \igobs Encolar(c0, a)$}
+  [$O(log(\#Claves(c)))$]
+  [Encola el elemento a la cola]
+  [Agrega por copia si $\alpha$ es primitivo y por referencia en caso contrario.]
+  	
+  \InterfazFuncion{Desencolar}{\In{c}{colaDePrior($\alpha$)}}{$\alpha$}
+  [$ !vacia?(c)$ $\wedge$ $c = c_0$]
+  {$res \igobs Proximo(c0)$ $\wedge$ $c \igobs desencolar(c0, a)$}
+  [$O(log(\#Claves(c)))$]
+  [Desencola y devuelve el elemento de mayor prioridad de la cola]
+  [Deuvelve una referencia.]    
+ 
+ %\textbf{Operaciones basicas del iterador}
+  
+  
+  %\InterfazFuncion{CrearIt}{\In{c}{colaDePrior($\alpha$)}}{itColaDePrior($\alpha$)}
+  %[$ !Vacia?(c) $]
+  %{ $res \igobs crearItUni(colaASecu(c)) $}
+  %[$ O(1) $]
+  %[ Crea un iterador de la cola de prioridad ]
+  
+  %\InterfazFuncion{HayMas?}{\In{it}{itColaDePrior($\alpha$)}}{bool}
+  %{ $res \igobs HayMas?(it) $}
+  %[$ O(1) $]
+  %[ Devuelve si hay mas elementos en la cola o no]
+  
+  %\InterfazFuncion{Actual}{\In{it}{itColaDePrior($\alpha$)}}{$\alpha$}
+  %[$ HayMas?(it) $]
+  %{ $res \igobs Siguiente(it) $}
+  %[$ O(1) $]
+  %[Devuelve el siguiente elemento del iterador]
+  
+  %\InterfazFuncion{Avanzar}{\Inout{it}{itColaDePrior($\alpha$)}}{}
+  %[ $ it \igobs it_0 $ ]
+  %{ $ it \igobs Avanzar(it0) $ }
+  %[ $ O(1) $ ]
+  %[ Avanza el iterador ]
+  
+\end{Interfaz}
+
+\begin{Representacion}
+
+\textbf{Representación de colaDePrior($\alpha$)}
+
+  \begin{Estructura}{colaDePrior($\alpha$)}[estr]
+  	%donde estr es puntero(nodo)
+    \begin{Tupla}[estr]
+      \tupItem{raiz}{puntero(nodo)}%
+      \tupItem{altura}{nat}%
+    \end{Tupla}
+    \begin{Tupla}[nodo]
+      \tupItem{valor}{$\alpha$}
+      \tupItem{padre}{puntero(nodo)}
+      \tupItem{izq}{puntero(nodo)}
+      \tupItem{der}{puntero(nodo)}
+      \tupItem{\#nodos}{nat}
+    \end{Tupla}
+  \end{Estructura}	
+  
+ % \textbf{Representación de colaDePrior($\alpha$)}
+
+%  \begin{Estructura}{itColaDePrior($\alpha$)}[itestr]
+  	%donde estr es puntero(nodo)
+ %   \begin{Tupla}[itestr]
+  %    \tupItem{nodos}{conj(puntero(nodo))}%
+      %\tupItem{elementos}{conj($\alpha$)}%
+   %   \tupItem{itConj}{itConj(nodo)}
+   % \end{Tupla}
+ % \end{Estructura}	
+ 
+  \newpage
+  \Rep[estr][colaDePrior(  \alpha  ) ]{
+  \newline Estr
+ \newline raiz: Apunta al nodo que tiene el valor con mayor prioridad. Si la cola de prioridad es vacia, el puntero raiz es nulo. El nodo que es apuntado por raiz, no tiene padre.
+\newline altura: La altura del árbol (considerando el 0 el nivel de las hojas y el máximo el de la raíz).
+\newline Nodo
+\newline valor: Almacena un valor . Si tiene padre el nodo, el  del nodo es menor al del padre.
+\newline izq: Puntero al nodo hijo izquierdo. No se pueden generar ciclos.
+\newline der: Puntero al nodo hijo derecho. No se pueden generar ciclos.
+\newline padre: Puntero al nodo padre. No se pueden generar ciclos.
+\newline \#nodos: Consideramos al nodo actual como la raiz de un árbol. Esta variable representa la cantidad de nodos en ese árbol.
+\newline Además, el árbol que representa a la cola de prioridad está perfectamente balanceado y es izquierdista.
+Es decir, el último nivel esta lleno desde la izquierda.  	 
+\newline No hay dos padres que apunten al mismo hijo.
+} \mbox{}
+
+   \AbsFc[estr]{colaDePrior( $\alpha$ )}[c]{IF (c.raiz = NULL) then vacia else EncolarSecu(Recorrer(c.raiz)) FI}
+   
+   \textbf{Operaciones auxiliares:}
+    \tadOperacion{EncolarSecu}{secu($\alpha$)}{colaDePrior($\alpha$)}{}
+  \tadAxioma{EncolarSecu(sec)}
+  {\IF vacia?(sec) THEN vacia ELSE encolar(prim(sec), EncolarSecu(fin(sec))) FI}
+  
+  
+  \tadOperacion{Recorrer}{nodo}{secu($\alpha$)}{}
+  \tadAxioma{Recorrer (nodo)}
+  {\IF nodo = NULL THEN < > ELSE nodo.valor \textbullet \ Recorrer(nodo.izq) \& Recorrer(nodo.der) FI}
+
+  %\Rep[itestr][itColaDePrior(  \alpha  ) ]{True} \mbox{}
+
+%   \AbsFc[itestr]{itColaDePrior( $\alpha$ )}[itc]{crearItUni(secu($\alpha$)), donde esta secuencia contiene a todos los elementos de los nodos y los de sus descendientes}	
+
+  \BlankLine
+  
+  
+\end{Representacion}
+
+
+  \begin{Algoritmos}
+  \newline
+    \textbf{Algoritmos de colaPrior($\alpha$)}
+
+
+	\text{iEncolar(inout c: estr, in a: $\alpha$)}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    \hfill \textbf{//Si $\alpha$ es no primitivo, el valor se agrega por referencia}
+	\eIf{c.raiz = NULL}{c.raiz $\leftarrow$ \& < a, NULL, NULL, NULL, 0 $>$ \hfill \textbf{//O(1)}}
+    {
+    puntero(nodo) n $\leftarrow$ ultPoner(c.raíz, c.altura) \hfill \textbf{//O(log(c.raiz.\#nodos))}
+    \newline puntero(nodo) nuevo $\leftarrow$ NULL \hfill \textbf{//O(1)}
+    \newline \eIf{n$\rightarrow$izq = NULL}{n$\rightarrow$izq $\leftarrow$ \& <a, NULL, NULL, NULL, 1 $>$ \hfill \textbf{//O(1)}
+    \newline nuevo $\leftarrow$ n$\rightarrow$izq \hfill \textbf{//O(1)}
+    }	
+    	{n$\rightarrow$der $\leftarrow$ \&<a, NULL, NULL, NULL, 1 $>$ \hfill \textbf{//O(1)}
+    \newline nuevo $\leftarrow$ n$\rightarrow$der \hfill \textbf{//O(1)}
+    	}
+    
+    }
+    aumentar\#Nodos(c, nuevo) \hfill \textbf{//O(log(c.raiz.\#nodos))}
+	\newline subir (c, nuevo) \hfill \textbf{//O(log(c.raiz.\#nodos))}
+    \newline c$\rightarrow$altura $\leftarrow$ calcularAltura(c) \hfill \textbf{//O(log(c.raiz.\#nodos))}
+    }
+    \KwData{Complejidad: O(log(c.raiz.\#nodos))}
+    \caption{Encolar}
+	\end{algorithm} 
+   
+\newpage
+    \text{iDesencolar(in c: estr)}{$\alpha$}
+	\newline
+	\begin{algorithm}[H]
+    \Begin{
+    res$\leftarrow$ c.raiz.valor \hfill \textbf{//O(1)}
+    \newline puntero(nodo) sacar = ultSacar(c) \hfill \textbf{//O(log(c.raiz.\#nodos))}
+    \newline swap(sacar, c.raiz) //Sacar queda arriba de todo y c.raiz es una hoja \hfill \textbf{//O(1)}
+    \newline \eIf{c.raiz$\rightarrow$padre$\rightarrow$izq = c.raiz}{c.raiz$\rightarrow$padre$\rightarrow$izq $\leftarrow$ NULL \hfill \textbf{//O(1)}}{c.raiz$\rightarrow$padre$\rightarrow$der $\leftarrow$ NULL\hfill \textbf{//O(1)}}
+    
+    borrar(c.raiz) \hfill //los punteros del nodo, no el valor
+    \newline c.raiz $\leftarrow$ sacar \hfill \textbf{//O(log(c.raiz.\#nodos))}
+	\newline bajar(sacar) \hfill \textbf{//O(Log(c.raiz.\#nodos))}
+    \newline \hfill //bajar no cambia los nodos, sino sus contenidos, por eso no debo actualizar la raiz de la cola
+    \newline calcularAltura(c) \hfill \textbf{//O(Log(c.raiz.\#nodos))}
+    }
+    \KwData{Complejidad: O(log(c.raiz.\#nodos))}
+    \caption{Desencolar}
+    \end{algorithm} 
+    
+    \text{iVacia()}{estr}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    res.raíz $\leftarrow$ NULL \hfill \textbf{//O(1)}
+    \newline res.altura $\leftarrow$ -1 \hfill \textbf{//O(1)}
+    }
+    \KwData{Complejidad: O(1)}
+    \caption{Vacia}
+    \end{algorithm}
+   
+   \text{iVacia?(in c:estr)}{bool}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    {res $\leftarrow $ c.raiz == NULL \hfill \textbf{//O(1)}}
+    }
+    \KwData{Complejidad: O(1)}
+    \caption{Vacia?}
+   \end{algorithm}
+   
+%   \text{iCrearIt(in c: estr)}{itestr}
+ %   \newline
+  %  \begin{algorithm}[H]
+   % \Begin{
+  %  res.nodos $\leftarrow $ Agregar(Vacio(), c.raiz)
+   % \newline res.itConj $\leftarrow$ crearIt(res.nodos)
+   % }
+    %\caption{CrearIt}
+  % \end{algorithm}
+   
+   
+ %  \newpage
+  % \text{iHayMas?(in it: itestr)}{bool}
+   % \newline
+    %\begin{algorithm}[H]
+    %\Begin{
+  % 	res $\leftarrow$ HaySiguiente?(it.itConj)
+   % }
+ %   \caption{HayMas?}
+  % \end{algorithm}
+        
+%    \text{iActual(in it: itestr)}{$\alpha$}
+ %   \newline
+  %  \begin{algorithm}[H]
+   % \Begin{
+    %Siguiente(it.itConj).Valor
+%   	}
+ %   \caption{Actual}
+  % \end{algorithm}
+    
+%    \text{iAvanzar(inout it: itestr)}
+ %   \newline
+  %  \begin{algorithm}[H]
+   % \Begin{
+    %nodo temp1 $\leftarrow$ Copy(Siguiente(it.itConj))$\rightarrow$izq
+%    \newline nodo temp2 $\leftarrow$ Copy(Siguiente(it.itConj))$\rightarrow$der
+ %   \newline EliminarSiguiente(it)
+  %  \newline Agregar(it.nodos, temp1)
+   % \newline Agregar(it.nodos, temp2)
+    %it.itConj $\leftarrow$ crearIt(it.nodos)
+    
+%   	}
+ %   \caption{Avanzar}
+  % \end{algorithm}
+    
+    
+    
+    \text{iUltPoner(inout n: nodo, in i: nat) $\rightarrow$ puntero(nodo)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    // Esta funcion no se exporta. . Al terminar la recursión, como recorre solamente una rama de nuestro arbol, su complejidad es de O(log(cantNodosCola))
+    \newline \eIf{i==0}{res $\leftarrow$ n \hfill \textbf{//O(1)}}{
+    nat cantNodosBalanceado $\leftarrow$ ($2^($$^k$$^+$$^1$$^)$ - 1)/2 \hfill \textbf{//O(1)}
+    \newline //El subarbol izq no esta lleno?
+    \newline \eIf{cantNodosBalanceado > n$\rightarrow$izq$\rightarrow$ \#nodos}{ultPoner(n$\rightarrow$izq, i-1)}{ultPoner(n$\rightarrow$der, i-1)}
+   	 }
+    }
+    \KwData{Busca el lugar donde se deberia colocar el siguiente nodo en la cola de prioridad, llamandose recursivamente solo sobre una rama del arbol. Complejidad: O(log(n.\#nodos))}
+    
+    \caption{UltPoner}
+   \end{algorithm}
+   
+   
+   \newpage
+   \text{iUltSacar(inout n: nodo, in i: nat) $\rightarrow$ puntero(nodo)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    // Esta funcion no se exporta. El valor i indica la altura del arbol.
+   \newline // El árbol es izquierdista, la recursión siempre recorre ramas para encontrar al nodo. Como las comparaciones
+son O(1) y recorrer una rama es log n, la complejidad es: log n (donde n es la cantidad de nodos del árbol)
+\newline \eIf{i == 0}{res $\leftarrow$ n }
+   {
+   //El arbol esta lleno?
+   \newline \eIf{$2^($$^i$$^+$$^1$$^)$ -1 == n$\rightarrow$\#nodos}{res $\leftarrow$ UltSacar(n$\rightarrow$der, i-1)}
+   {
+   //El subarbol izq no esta lleno?
+   \newline \eIf{$2^($$^i$$^)$ -1 < n$\rightarrow$izq$\rightarrow$\#nodos}{res $\leftarrow$ UltSacar(n$\rightarrow$izq, i-1)}
+   {
+   //Aca el derecho esta incompleto y quiero ver que tan incompleto esta
+   \newline \eIf{$2^($$^i$$^-$$^1$$^)$ -1 == n$\rightarrow$der$\rightarrow$\#nodos}{res$\leftarrow$ UltSacar(n$\rightarrow$izq, i-1)}{res$\leftarrow$ UltSacar(n$\rightarrow$der, i-1)}
+   }
+   }
+   }
+   }
+   \KwData{Complejidad: O(log(n.\#nodos))}
+   \caption{UltSacar}
+   \end{algorithm}
+   
+   
+   \text{iCalcularAltura(inout e: estr)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    // Esta funcion no se exporta.
+3: \newline \eIf{e.raiz == NULL}{e.altura $\leftarrow$ -1 \hfill \textbf{//O(1)}}
+	{
+    puntero(nodo) n $\leftarrow$ e.raiz \hfill \textbf{//O(1)}
+    \newline
+    \While{n != NULL}
+    {e.altura++ \hfill \textbf{//O(1)}
+    \newline n $\leftarrow$ n$\rightarrow$izq \hfill \textbf{//O(1)}
+    }
+    \hfill \textbf{//While: O(Log(\#Claves(e)))}
+    } 
+   	}
+    \KwData{Calcula y modifica la altura del arbol de la cola de prioridad. Complejidad: O(Log(e.raiz.\#nodos))}
+    \caption{CalcularAltura}
+   \end{algorithm}
+   
+   
+   
+   \newpage
+    \text{iSwap(inout n1: nodo, inout n2: nodo)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    \hfill \textbf{//Esta funcion no se exporta}
+    \newline SwapEntorno(n1, n2) \hfill \textbf{//O(1)}
+    \newline SwapEntorno(n2, n1) \hfill \textbf{//O(1)}
+
+    \hfill \textbf{//Procedo a swapear los datos de los nodos}
+    \newline puntero(nodo) temp $\leftarrow$ n1$\rightarrow$padre \hfill \textbf{//O(1)}
+    \newline n1$\rightarrow$padre $\leftarrow$ n2$\rightarrow$padre \hfill \textbf{//O(1)}
+    \newline n2$\rightarrow$padre $\leftarrow$ temp \hfill \textbf{//O(1)}
+	\newline temp $\leftarrow$ n1$\rightarrow$izq \hfill \textbf{//O(1)}
+    \newline n1$\rightarrow$izq $\leftarrow$ n2$\rightarrow$izq \hfill \textbf{//O(1)}
+	\newline n2$\rightarrow$izq $\leftarrow$ temp \hfill \textbf{//O(1)}
+    \newline temp $\leftarrow$ n1$\rightarrow$der \hfill \textbf{//O(1)}
+    \newline n1$\rightarrow$der $\leftarrow$ n2$\rightarrow$der \hfill \textbf{//O(1)}
+	\newline n2$\rightarrow$der $\leftarrow$ temp \hfill \textbf{//O(1)}
+    \newline nat temporal $\leftarrow$ n1$\rightarrow$\#nodos \hfill \textbf{//O(1)}
+    \newline n1$\rightarrow$\#nodos $\leftarrow$ n2$rightarrow$\#nodos \hfill \textbf{//O(1)}
+    \newline n2$\rightarrow$\#nodos $\leftarrow$ temporal \hfill \textbf{//O(1)}
+
+    
+    }
+    
+    \KwData{swapea la informacion y el entorno de dos nodos. Complejidad O(1)}
+    \caption{Swap}
+   \end{algorithm}
+   
+   
+   \text{iSwapEntorno(inout n1: nodo, inout n2: nodo)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+   \If{n1$\rightarrow$izq != NULL}{n1$\rightarrow$izq$\rightarrow$padre $\leftarrow$ n2  \hfill \textbf{//O(1)}}{}
+    \If{n1$\rightarrow$der != NULL}{n1$\rightarrow$der$\rightarrow$padre $\leftarrow$ n2  \hfill \textbf{//O(1)}}{}
+	\If{n1$\rightarrow$padre != NULL}{
+    \If{n1$\rightarrow$padre$\rightarrow$izq == n1}{n1$\rightarrow$padre$\rightarrow$izq $\leftarrow$ n2  \hfill \textbf{//O(1)}}{n1$\rightarrow$padre$\rightarrow$der $\leftarrow$ n2  \hfill \textbf{//O(1)}}
+	}
+   }
+    \KwData{swapea el entorno de dos nodos. Complejidad O(1)}
+    \caption{SwapEntorno}
+   \end{algorithm}
+   
+   
+   \text{iAumentar\#Nodos(inout n: nodo)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{// Esta funcion no se exporta.
+    \newline puntero(nodo) temp $\leftarrow$ n
+	\newline \While{n$\rightarrow$padre != NULL}
+    {
+    n $\leftarrow$ n$\rightarrow$padre
+    \newline n$\rightarrow$\#nodos++
+    }
+     \hfill \textbf{While: //O(log(nodosDelArbol))}
+   	}
+    \KwData{aumenta la variable \#nodos de un nodo y todos sus ascendientes en 1. Complejidad: O(log(nodosDelArbol))}
+    \caption{Aumentar\#nodos}
+   \end{algorithm}
+   
+   
+   
+   \newpage
+   \text{iSubir(inout n: nodo)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{// Esta funcion no se exporta. 
+    \newline \While{n$\rightarrow$padre != NULL $\yluego$ Menor(n$\rightarrow$padre$\rightarrow$valor, n$\rightarrow$valor)}{Swap(n, n$\rightarrow$padre) \hfill \textbf{//O(1)}
+    \newline //n queda ahora como el padre, entonces no debo actualizar el puntero para el ciclo}
+    \hfill \textbf{//While: O(log(CantidadNodosArbol))}
+   	}
+    \KwData{Se utiliza para corregir la posicion de un nodo en el arbol de la cola de prioridad, sube el nodo de posicion de ser necesario. Complejidad: O(log(CantidadNodosArbol))}
+    \caption{Subir}
+   \end{algorithm}
+   
+   \text{iBajar(inout n: nodo)}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{// Esta funcion no se exporta. 
+    \newline \eIf{n$\rightarrow$der != NULL}
+    {
+    \eIf{ Menor(n$\rightarrow$izq$\rightarrow$valor, n$\rightarrow$der$\rightarrow$valor)}{Swap(n$\rightarrow$der, n)
+    \newline Bajar(n)}{Swap(n$\rightarrow$izq, n) \hfill \textbf{//O(1)}
+    \newline Bajar(n)}
+    }
+    {
+    \If{n$\rightarrow$izq != NULL}{Swap(n$\rightarrow$izq, n)
+    \newline Bajar(n)}
+    }
+   	}
+    \KwData{Se utiliza para corregir la posicion de un nodo en el arbol de la cola de prioridad, baja el nodo de posicion de ser necesario. Complejidad: O(log(CantidadNodosArbol))}
+    \caption{Bajar}
+   \end{algorithm}
+   
+   
+   
+   
+    \end{Algoritmos}
+
+
+    
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
+\section{Módulo PaqPrior}
+
+\begin{Interfaz}
+  
+  \textbf{se explica con}: \tadNombre{Tupla}.
+
+  \textbf{géneros}: \TipoVariable{PaqPrior}.
+    
+  \textbf{Operaciones básicas}
+
+
+  \InterfazFuncion{NuevoPaqPrior}{\In{p}{paquete}}{PaqPrior}%
+  {$res \igobs Tupla(p, p.Prior) $}%
+  [$O(1)$]
+  [Crea un PaqPrior] 
+  [Crea por referencia.]  
+  
+  \InterfazFuncion{Paquete}{\In{pp}{PaqPrior}}{Paquete}
+  {$res \igobs pp.Paquete$}
+  [$O(1)$]
+  [Devuelve el paquete dentro de pp]
+  [Devuelve por referencia]
+  
+  
+  \InterfazFuncion{Menor}{\In{pp1}{PaqPrior}, \In{pp2}{PaqPrior}}{bool}
+  {$res \igobs pp1.Prior < pp2.Prior$}
+  [$O(1)$]
+  [Devuelve el si pp1 es menor a pp2]
+  
+  	
+  
+  
+\end{Interfaz}
+
+\begin{Representacion}
+
+\textbf{Representación de PaqPrior}
+
+  \begin{Estructura}{PaqPrior}[estr]
+  	%donde estr es puntero(nodo)
+    \begin{Tupla}[estr]
+      \tupItem{Paquete}{paquete}%
+      \tupItem{Prior}{nat}
+    \end{Tupla}
+  \end{Estructura}	
+    
+  \Rep[estr][PaqPrior]{ True  } \mbox{}
+
+   \AbsFc[estr]{PaqPrior}[pp]{t: Tupla(Paquete, nat) | $\pi1$(t) = pp.Paquete $\wedge$ $\pi2$(t) = pp.Prior }	
+
+\end{Representacion}
+
+  \begin{Algoritmos}
+    \textbf{Algoritmos de PaqPrior}
+    
+	\text{iNuevoPaqPrior(in p: Paquete)}{estr}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    res.Paquete $\leftarrow$ p
+    \newline res.Prior $\leftarrow$ p.Prioridad
+    }
+    \caption{NuevoPaqPrior}
+	\end{algorithm} 
+   
+\newpage
+    \text{iPaquete(in e: estr)}{Paquete}
+	\newline
+	\begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ e.Paquete
+    }
+    \caption{Paquete}
+    \end{algorithm} 
+    
+    \text{iMenor(in e1: estr, in e2: estr)}{bool}
+    \newline
+    \begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ e1.Prior < e2.Prior
+    }
+    \caption{Menor}
+    \end{algorithm}
+   
+   
+   
+   
+   
+   
+   
+    \end{Algoritmos}
+
+\newpage
+\section{Modulo diccRapido$(\alpha, \beta)$}
+
+\textbf{parámetros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{géneros}} $\alpha$\\
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+    \InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
+    {$res \igobs a$}
+    [$\Theta(copy(a))$]
+    [función de copia de $\alpha$'s]
+  }
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+    \InterfazFuncion{$\bullet$ < $\bullet$}{\In{a1}{$\alpha$}, \In{a2}{$\alpha$}}{bool}
+    {$res \igobs a1 < a2$}
+    [$\Theta(a1 < a2))$]
+    [Operador menor de $\alpha$'s]
+  }
+
+\textbf{se explica con:} \tadNombre{Diccionario$(\alpha, \beta)$}.
+
+\textbf{géneros:} \TipoVariable{diccRapido$(\alpha, \beta)$}.
+
+\textbf{usa:} \tadNombre{Bool}, \tadNombre{Nat} \tadNombre{Tupla}.
+
+\textbf{Operaciones Basicas de diccRapido}
+
+\begin{Interfaz}
+
+\InterfazFuncion{vacio}{}{diccRapido}
+{$res \igobs \emptyset$}
+[$O(1)$]
+[genera un conjunto vacio.]
+
+\InterfazFuncion{elemPertenece}{\In{e}{$\alpha$}, \In{c}{diccRapido}}{bool}
+{$res \igobs pertenece(e, c)$}
+[$O(Log(cantidad(c))$]
+[Verifica si un elemento esta en el conjunto.]
+
+
+%\InterfazFuncion{dameElem}{\In{e}{$\alpha$}, \In{c}{diccRapido}}{elem}
+%{$e\in c_0$}
+%[devuelve el contenido]
+
+\InterfazFuncion{borrarElem}{\In{e}{$\alpha$}, \Inout{c}{diccRapido}}{}
+[$pertenece(e,c) \land c \igobs c_0$]
+{$c \igobs claves(c_0)\$ \{e\}$}
+[$O(Log(cantidad(c))$]
+[Elimina un elemento(pasado por parametro) del diccionario.]
+[Borra la referencia del elemento.]
+
+\InterfazFuncion{definirElem}{\In{c}{$\alpha$},\In{s}{$\beta$}, \Inout{c}{diccRapido}}{}
+[$c \igobs c_0$]
+{$c \igobs definir(c, s, c_0) $}
+[$O(Log(cantidad(c))$]
+[Agrega un elemento al diccionario]
+[Define por referencia.]
+
+
+\InterfazFuncion{obtenerElem}{\In{e}{$\alpha$}, \In{c}{diccRapido}}{$\beta$}
+[$definido(e, c)$]
+{$res \igobs obtener(e,c)  $}
+[$O(Log(cantidad(c))$]
+[Devuelve el significado del elemento pasado porparametro]
+[Devuelve la referencia del elemento.]
+
+\newpage
+\InterfazFuncion{$\#$Defs}{\In{c}{diccRapido}}{nat}
+{$res \igobs cardinal(c)$}
+[$cardinal(c)$]
+[Devuelve el numero de elementos definidos en el diccionario]
+[Todos  los parametros se pasan por referencia.]
+
+\end{Interfaz}
+
+\begin{Representacion}
+
+\textbf{representacion de diccRapido}
+
+\begin{Estructura}{diccRapido$(\alpha, \beta)$}[str\_diccRapido]
+
+\begin{Tupla}[str\_diccRapido]
+\tupItem{raiz}{str\_nodo}
+\end{Tupla}
+
+\begin{Tupla}[str\_nodo]
+\tupItem{clave}{$\alpha$}
+\tupItem{significado}{$\beta$}
+\tupItem{izq}{str\_diccRapido}
+\tupItem{der}{str\_diccRapido}
+\tupItem{padre}{str\_diccRapido}
+\tupItem{factorDeBalanceo}{Nat}
+\tupItem{Altura}{Nat}
+\end{Tupla}\\ 
+
+\textbf{Inviariante de Representacion en castellano}\\
+\\
+1. El arbol puede ser vacio.\\
+2. Todos los hijos a la izquierda son menores al padre.\\
+3. Todos los hijos a la derecha son mas grandes que el padre.\\
+4. Los subarboles tambien son avl's.\\
+5. La diferencia de altura entre el hijo izquierdo y derecho\\      no 	es mayor a 1, es decir el factor de balanceo no es mayor a 1.
+
+\Rep[srt\_diccRapido][c]{esAvl?(c)}
+
+
+\esAvl[estr\_nodo][nodo]{(nodo == \textbf{Null}) \oluego \\ ($\forall$ c:{$\alpha$},(definido(c, nodo.izq)) \ssi c $<$ (nodo.clave)) $\wedge$ \\ ($\forall$ c:{$\alpha$}, (definido(c, nodo.der)) \ssi c $>$ (nodo.clave)) $\wedge$ \\ 
+nodo.izq.Altura + 1 $\leq$ nodo.der.Altura $\lor$ nodo.izq.Altura - 1 $\leq$ nodo.der.Altura $\land$ \\
+esAvl(nodo.izq) $\wedge$ esAvl(nodo.der)}
+\vspace{0.20cm}
+
+\textbf{Inviariante de Abstraccion}\\
+
+\AbsFc[estr ]{diccRapido}[c]{dicc:str\_diccRapido $/$ ($\forall$ m:$\alpha$) definido(m,dicc) \igobs elemPertenece(m,c) $\land$ obtener(m,dicc) \igobs obtenerElem(m,dicc)} 
+
+
+\end{Estructura}
+
+\end{Representacion}
+\newpage
+\begin{Algoritmos}
+
+\text{\textbf{iVacio} () $\rightarrow$ res:stru\_diccRapido}
+\newline
+\begin{algorithm} [H]
+res.raiz $\leftarrow$ Null\\
+\KwData{Complejidad es O(1)}
+     \caption{iVacio}
+\end{algorithm}
+
+\text{iElemPertenece(in n:$\alpha$, in e:str\_diccRapido)$\rightarrow$ res : Bool}
+\newline
+\begin{algorithm}[H]
+    \Begin{
+    {puntero(nodo) nodoActual $\leftarrow$ e.raiz \hfill O(1) \\}
+    \While{nodoActual $\neq$ null $\wedge$ n $\neq$ nodoActual$\rightarrow$clave }{
+    \eIf{n $>$ nodoActual$\rightarrow$clave}
+    {nodoActual $\leftarrow$ nodoActual$\rightarrow$der \hfill O(1)}
+    {nodoActual $\leftarrow$ nodoActual$\rightarrow$izq \hfill O(1)}
+    {}
+    }
+    {res $\leftarrow$ Igual(nodoActual$\rightarrow$clave, n) \hfill O(1)}
+    }
+    \KwData{Complejidad es O(Log(n)). }
+     \caption{iElemPertenece}
+\end{algorithm}
+
+\newpage
+
+
+
+%\end{algorithmic}
+
+\text{iBorrarElem(in e:str\_diccRapido, in n:$\alpha$)}
+
+\begin{algorithm}[H]
+    \Begin{
+    {puntero(nodo) nodoActual $\leftarrow$ e.raiz \hfill O(1) \\}
+    {puntero(nodo) padreActual $\leftarrow$ Null \hfill O(1) \\}
+    %busco elemento
+    \While{nodoActual $\neq$ null $\wedge$ n $\neq$ nodoActual$\rightarrow$clave }
+    {padreActual $\leftarrow$ nodoActual \hfill O(1)\\ \eIf{n $>$ nodoActual$\rightarrow$clave}
+    {nodoActual $\leftarrow$ nodoActual$\rightarrow$der \hfill O(1)}
+    {nodoActual $\leftarrow$ nodoActual$\rightarrow$izq \hfill O(1)}
+    %%estrategia a utilizar
+    {$\setminus$$\setminus$ complejidad del while: \textbf{(log(cardinal(e))} dado que en el peor de \\     $\setminus$$\setminus$los casos tengo q bajar toda una rama del arbol, y eso es la altura del       arbol \\
+    $\setminus$$\setminus$ la estrategia seria buscar el antecesor mas proximo( o el sucesor),\\
+    $\setminus$$\setminus$ una vez encontrado  se swappean el contenido de nodoActual y el antecesor(o predecesor)\\
+    $\setminus$$\setminus$ una hecho esto se elimina la hoja(si asi lo es) y voy rebalanceando el     arbol hacia arriba}
+    }
+    %% termine de buscar el lugar
+    {bool esHoja $\leftarrow$ nodoActual$\rightarrow$der==Null $\wedge$ nodoActual$\rightarrow$izq==Null \hfill O(1) \\}
+    {$\setminus$$\setminus$ si no es hoja busco su pre o antecesor mas proximo\\}
+    {puntero(nodo) nodoBuscador $\leftarrow$ Null \hfill O(1) \\
+    $\setminus$$\setminus$ nodoBuscador busca el pre/antecesor mas proximo}
+    
+    \eIf{$!$ esHoja}
+    {{padreActual $\leftarrow$ nodoActual \hfill O(1) \\}
+      %% vemos primero el lado derecho del nodo
+      \eIf{nodoActual$\rightarrow$der $\neq$ Null }
+      {{nodoBuscador$\leftarrow$ nodoActual$\rightarrow$der \hfill O(1) \\}
+      \While{nodoBuscador$\rightarrow$der $\neq$ Null}
+      {padreActual$\leftarrow$nodoBuscador \hfill O(1) \\ nodoBuscador$\leftarrow$               nodoBuscador$\rightarrow$izq \hfill O(1) \\ }
+      $\setminus$$\setminus$ complejidad del while: \textbf{(log(n)} donde n=cardinal(e), hasta q       se encuentre \\ 
+      $\setminus$$\setminus$ el ante/predecesor mas proximo
+       }
+       %% buscamos por el lado izquierdo ahora, esta seria la parte del else
+      {\eIf{nodoActual$\rightarrow$izq $\neq$ Null}
+      {{nodoBuscador$\leftarrow$ nodoActual$\rightarrow$izq \hfill O(1) \\}
+      \While{nodoBuscador$\rightarrow$der $\neq$ Null}
+      {padreActual$\leftarrow$nodoBuscador \hfill O(1) \\ nodoBuscador$\leftarrow$ nodoBuscador$\rightarrow$der \hfill O(1) \\ } 
+       }
+       {}
+      }
+      
+      }
+
+    
+    }
+    \KwData{la funcion todavia continua,pero hasta el momento la comlejidad es O(log(n))} 
+
+\end{algorithm}
+
+\newpage
+\begin{algorithm}[H]
+    {$\setminus$$\setminus$ complejidad de el If \textbf{O(log(n)+O(log(n)=2*O(log(n)=O(log(n)} \\
+    $\setminus$$\setminus$ encontre el nodo con el que voy a swappear \\}
+    {nodo\_clave tmpDato $\leftarrow$ nodoActual$\rightarrow$clave\\}
+    {nodoActual$\rightarrow$clave = nodoBuscador$\rightarrow$clave \\}
+    {nodoBuscador$\rightarrow$clave = tmpDato\\}
+    {nodoActual = nodoBuscador\\}
+    %% con esto terminaria el if(lo de arriba), arreglar por q no es un else
+    {$\setminus$$\setminus$ nodoActual sigue teniendo el clave a borrar, y ahora es hoja\\}
+    {\eIf{esHoja}
+    {$\setminus$$\setminus$puede ser q haya sido hoja de una, y ahora tengo q ver si tiene          padre.\\
+    \eIf{padreActual $\neq$ Null}
+    {\eIf{padreActual $\leftarrow$ der == nodoActual}
+    {padreActual$\leftarrow$ der = Null \hfill O(1)}
+    {padreActual$\leftarrow$ izq = Null \hfill O(1)}
+    }
+    {}
+    }
+    {\eIf{padreActual$\rightarrow$der == nodoActual}
+    {padreActual$\rightarrow$der = nodoActual$\rightarrow$der\\
+    nodoActual $\rightarrow$ der $\rightarrow$ padre = padreActual}
+    {padreActual$\rightarrow$izq = padreActual$\rightarrow$izq\\
+    nodoActual $\rightarrow$ izq $\rightarrow$ padre = padreActual}
+    }
+    {\eIf{raiz == nodoActual}
+    {raiz = null}
+    {}
+    }
+    {borrarNodo(nodoActual)\\}
+    {puntero(nodo) nodoDeArriba$\leftarrow$ padreActual\\}
+    \While{nodoDeArriba $\neq$ Null\\}
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\neq$ null $\wedge$ nodoDeArriba              $\rightarrow$ der $\neq$ null}
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura $<$ nodoDeArriba $\rightarrow$ der $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$ altura = nodoDeArriba $\rightarrow$ der $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$ altura = nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$factorDeBalanceo = (nodoDeArriba $\rightarrow$ der $\rightarrow$ altura) $-$ (nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura)}
+    }
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\neq$ Null}
+    {nodoDeArriba$\rightarrow$altura = (nodoDeArriba$\rightarrow$izq$\rightarrow$ altura) + 1 \\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = $-$(nodoDeArriba$\rightarrow$izq $\rightarrow$altura)}
+    {\eIf{nodoDeArriba $\rightarrow$der $\neq$ Null}
+    {nodoDeArriba$\rightarrow$altura = (nodoDeArriba$\rightarrow$der$\rightarrow$ altura) + 1 \\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = (nodoDeArriba$\rightarrow$der $\rightarrow$altura)}
+    {nodoDeArriba$\rightarrow$altura = 1\\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = 0}
+    }
+    }
+    {nodoDeArriba $\leftarrow$ nodoDeArriba$\rightarrow$padre}
+    }
+    }
+\end{algorithm}
+
+
+\newpage
+\begin{algorithm}[H]
+
+
+{nododeArriba $\leftarrow$ padreActual\\}
+\While{nodoDeArriba $\neq$ Null}
+{\eIf{nodoDeArriba$\rightarrow$factorDeBalanceo $\neq$ 0}
+{\eIf{nodoDeArriba$\rightarrow$factorDeBalanceo == 2}
+{\eIf{nodoDeArriba$\rightarrow$der$\rightarrow$factorDeBalanceo == -1}
+{rotacionDobleIzqAndDer(nodoDeArriba)}
+{rotacionSimpleDerAndDer(nodoDeArriba)}
+}
+{}
+{\eIf{nodoDeArriba$\rightarrow$factorDeBalanceo == -2}
+{\eIf{nodoDeArriba$\rightarrow$izq$\rightarrow$factorDeBalanceo ==1 }
+{rotacionesDobleDerAndIzq(nodoDeArriba)}
+{rotacionesSimpleIzqAndIzq(nodoDeArriba)}
+}
+{}
+}
+}
+{}
+}
+{$\setminus$$\setminus$ reajusto otra vez los factores de balanceo y altura de los nodo superiores}
+{$\setminus$$\setminus$el altorimo continua en la otra hoja}
+{nodoDeArriba $\leftarrow$ nodoDeArriba$\rightarrow$padre \\}
+{\eIf{nodoDeArriba $\neq$ Null}
+{\eIf{nodoDeArriba $\rightarrow$ izq $\neq$ null $\wedge$ nodoDeArriba              $\rightarrow$ der $\neq$ null}
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura $<$ nodoDeArriba $\rightarrow$ der $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$ altura = nodoDeArriba $\rightarrow$ der $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$ altura = nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$factorDeBalanceo = (nodoDeArriba $\rightarrow$ der $\rightarrow$ altura) $-$ (nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura)}
+    }
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\neq$ Null}
+    {nodoDeArriba$\rightarrow$altura = (nodoDeArriba$\rightarrow$izq$\rightarrow$ altura) + 1 \\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = $-$(nodoDeArriba$\rightarrow$izq $\rightarrow$altura)}
+    {\eIf{nodoDeArriba $\rightarrow$der $\neq$ Null}
+    {nodoDeArriba$\rightarrow$altura = (nodoDeArriba$\rightarrow$der$\rightarrow$ altura) + 1 \\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = (nodoDeArriba$\rightarrow$der $\rightarrow$altura)}
+    {nodoDeArriba$\rightarrow$altura = 1\\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = 0}
+    }
+    }
+    }
+    {}
+}    
+    \KwData{Aqui finaliza borrarElemto. La complejidad es O(Log(n)) por los while's q se tiene(los while son 2*O(log(n))=O(log(n))), y el resto son asiganciones}
+     \caption{iBorrarElem}
+
+\end{algorithm}
+\text{\textbf{iAgregarElem}(in c: $\alpha$, in s: $\beta$, in/out c:str\_diccRapido)\\}
+\newline
+\begin{algorithm}[H]
+{puntero(nodo) padreActual$\leftarrow$ Null\\}
+{puntero(nodo) nodoActual$\leftarrow$ c.raiz\\}
+{$\setminus$$\setminus$buscamos el lugar para insertar el nuevo nodo\\}
+\While{nodoActual $\neq$ null $\wedge$ c $\neq$ nodoActual$\rightarrow$clave }
+{padreActual $\leftarrow$ nodoActual\\
+{\eIf{c $>$ noddoActual$\rightarrow$ clave}
+{nodoActual $\leftarrow$ nodoActual$\rightarrow$der}
+{nodoActual $\leftarrow$ nodoActual$\rightarrow$izq}
+}
+}
+{$\setminus$$\setminus$ termine de buscar el lugar y ahora creo el nodo a insertar\\}
+{puntero(Nodo) nuedoNuevo$\leftarrow$ nodoCrear(c,s)\\}
+{$\setminus$$\setminus$lo insertamos...\\}
+{\eIf{padreActual == Null}
+{raiz $\leftarrow$ nuevoNodo\\}
+{$\setminus$$\setminus$ aca es donde hacemos diferentes tipos de inserciones, primero la insercion a derecha\\
+{\eIf{c $>$ padreActual$\rightarrow$clave}
+{padreActual$\rightarrow$der $\leftarrow$ nuevoNodo\\
+nodoNuevo$\rightarrow$padre $\leftarrow$ padreActual\\
+padreActual$\rightarrow$factorDeBalanceo $\leftarrow$ (padreActual$\rightarrow$factorDeBalanceo) + 1}
+{}
+}
+{$\setminus$$\setminus$ insercion a izquierda\\}
+{\eIf{c $<$ padreActual$\rightarrow$clave}
+{padreActual$\rightarrow$izq $\leftarrow$ nuevoNodo\\
+nodoNuevo$\rightarrow$padre $\leftarrow$ padreActual\\
+padreActual$\rightarrow$factorDeBalanceo $\leftarrow$ (padreActual$\rightarrow$factorDeBalanceo) + 1}
+{}
+}
+}
+{$\setminus$$\setminus$ reacomodo el factor de balanceo y la altura\\}
+{\textbf{If} {padreActual $\neq$ Null} \textbf{then}\\}
+{ puntero(Nodo) nodoDeArriba $\leftarrow$ padreActual\\
+\While{nodoDeArriba $\neq$ Null\\}
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\neq$ null $\wedge$ nodoDeArriba              $\rightarrow$ der $\neq$ null}
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura $<$ nodoDeArriba $\rightarrow$ der $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$ altura = nodoDeArriba $\rightarrow$ der $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$ altura = nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$factorDeBalanceo = (nodoDeArriba $\rightarrow$ der $\rightarrow$ altura) $-$ (nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura)}
+    }
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\neq$ Null}
+    {nodoDeArriba$\rightarrow$altura = (nodoDeArriba$\rightarrow$izq$\rightarrow$ altura) + 1 \\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = $-$(nodoDeArriba$\rightarrow$izq $\rightarrow$altura)}
+    {\eIf{nodoDeArriba $\rightarrow$der $\neq$ Null}
+    {nodoDeArriba$\rightarrow$altura = (nodoDeArriba$\rightarrow$der$\rightarrow$ altura) + 1 \\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = (nodoDeArriba$\rightarrow$der $\rightarrow$altura)}
+    {nodoDeArriba$\rightarrow$altura = 1\\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = 0}
+    }
+    }
+    {nodoDeArriba $\leftarrow$ nodoDeArriba$\rightarrow$padre}
+    }
+  }
+ {} 
+ 
+}
+\end{algorithm}
+
+\newpage
+
+\begin{algorithm}[H]
+{$\setminus$$\setminus$ empezamos el rebalanceo\\}
+{\eIf{padreActual $\neq$ Null}
+{nodoDeArriba $\leftarrow$ padreActual\\
+{\While{nodoDeArriba $\neq$ Null}
+{\eIf{nodoDeArriba$\rightarrow$factorDeBalanceo $\neq$ 0}
+{\eIf{nodoDeArriba$\rightarrow$factorDeBalanceo == 2}
+{\eIf{nodoDeArriba$\rightarrow$der$\rightarrow$factorDeBalanceo == -1}
+{rotacionDobleIzqAndDer(nodoDeArriba)}
+{rotacionSimpleDerAndDer(nodoDeArriba)}
+}
+{}
+{\eIf{nodoDeArriba$\rightarrow$factorDeBalanceo == -2}
+{\eIf{nodoDeArriba$\rightarrow$izq$\rightarrow$factorDeBalanceo ==1 }
+{rotacionDobleDerAndIzq(nodoDeArriba)}
+{rotacionSimpleIzqAndIzq(nodoDeArriba)}
+}
+{}
+}
+}
+{}
+}
+}
+}
+{}
+{$\setminus$$\setminus$ volvemos reajustar los factores de rebalanceo y la altura\\}
+{{nodoDeArriba $\leftarrow$ nodoDeArriba$\rightarrow$padre \\}
+{\eIf{nodoDeArriba $\neq$ Null}
+{\eIf{nodoDeArriba $\rightarrow$ izq $\neq$ null $\wedge$ nodoDeArriba              $\rightarrow$ der $\neq$ null}
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura $<$ nodoDeArriba $\rightarrow$ der $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$ altura = nodoDeArriba $\rightarrow$ der $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$ altura = nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura}
+    {nodoDeArriba $\rightarrow$factorDeBalanceo = (nodoDeArriba $\rightarrow$ der $\rightarrow$ altura) $-$ (nodoDeArriba $\rightarrow$ izq $\rightarrow$ altura)}
+    }
+    {\eIf{nodoDeArriba $\rightarrow$ izq $\neq$ Null}
+    {nodoDeArriba$\rightarrow$altura = (nodoDeArriba$\rightarrow$izq$\rightarrow$ altura) + 1 \\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = $-$(nodoDeArriba$\rightarrow$izq $\rightarrow$altura)}
+    {\eIf{nodoDeArriba $\rightarrow$der $\neq$ Null}
+    {nodoDeArriba$\rightarrow$altura = (nodoDeArriba$\rightarrow$der$\rightarrow$ altura) + 1 \\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = (nodoDeArriba$\rightarrow$der $\rightarrow$altura)}
+    {nodoDeArriba$\rightarrow$altura = 1\\
+    nodoDeArriba$\rightarrow$factorDeBalanceo = 0}
+    }
+    }
+    }
+    {}
+    }
+}
+}
+    \KwData{Aqui finaliza agregarElem. Complejidad es O(Log(n)) por lo while's que se tienen y elresto son asignaciones}
+     \caption{iAgregarElem}
+\end{algorithm}
+\newpage
+\text{iObtener(in e:str\_diccRapido, in n:$\alpha$)$\rightarrow$ res : $\alpha$}
+\newline
+\begin{algorithm}[H]
+    \Begin{
+    {puntero(nodo) nodoActual $\leftarrow$ e.raiz \hfill O(1) \\}
+    \While{nodoActual $\neq$ null $\wedge$ n $\neq$ nodoActual$\rightarrow$clave }{
+    \eIf{n $>$ nodoActual$\rightarrow$clave}
+    {nodoActual $\leftarrow$ nodoActual$\rightarrow$der \hfill O(1)}
+    {nodoActual $\leftarrow$ nodoActual$\rightarrow$izq \hfill O(1)}
+    {}
+    }
+    {res $\leftarrow$ nodoActual$\rightarrow$Significado \hfill O(1)}
+    }
+    \KwData{Complejidad es O(Log(n)). El algoritmo busca en la estructura del dicc (un AVL) el nodo cuya clave sea igual a e . Si el elem e es mayor a la clave de la raiz busca en el sub-arbol izquierdo, caso contrario (el elemento e es menor) busca en sub-arbol derecho. Eventualmente llega la caso donde el elem e es igual a la clave del nodo y devolvemos el significado.\\ \hspace{10.5mm}De esta forma evitamos compara cada uno de los nodos del arbol (Log(n)) y logramos optimizar la\\  \hspace{10.5mm}busqueda.}
+     \caption{iObtener}
+\end{algorithm}
+
+
+\text{i$\#$Defs(in e:str\_diccRapido)$\rightarrow$ res : nat}
+\newline
+\begin{algorithm}[H]
+     \Begin{
+
+     {puntero(nodo) nodoActual $\leftarrow$ e.raiz \hfill O(1) \\}
+
+     \eIf{nodoActual $\neq$ null}
+         {res $\leftarrow$ res + i$\#$Defs(nodoActual$\rightarrow$der)i$\#$Defs(nodoActual$\rightarrow$izq)\hfill O(n)}
+   		 {res $\leftarrow$ 0}
+    	 {}
+     
+	 }
+     \KwData{Complejidad es O(n). Se cuentan todos los elementos no nulos del dicc, uno por uno, de manera recursiva. De esta forma el algoritmo pasa por todos los nodos del la estructura (n) una vez. }
+      \caption{i$\#$Defs}
+\end{algorithm}
+
+\newpage
+
+\textbf{Algoritmos Auxiliares}
+\newline
+\text{\textbf{rotacionSimpleDerAndDer} (in/out nodoAbalancear :puntero(Nodo))}
+\newline
+\begin{algorithm}[H]
+{puntero(nodo) padreSuperior $\leftarrow$ nodoAbalancear$\rightarrow$padre\\}
+{puntero(nodo) F $\leftarrow$ nodoAbalancear\\}
+{puntero(nodo) d $\leftarrow$ F$\rightarrow$der\\}
+{puntero(nodo) i $\leftarrow$ d$\rightarrow$izq\\}
+{$\setminus$$\setminus$ burbujeamos nodo d por nodo F\\}
+{\eIf{padreSuperior $\neq$ Null}
+{\eIf{padreSuperior$\rightarrow$der == F}
+{padreSuperior$\rightarrow$der $\leftarrow$ d}
+{padreSuperior$\rightarrow$izq $\leftarrow$ d}
+}
+{raiz $\leftarrow$ d}
+}
+{$\setminus$$\setminus$ al hacer el burbujeo rompi cosas, por lo cual lo voy reconstruyendo...\\}
+{F$\rightarrow$der $\leftarrow$ i\\}
+{\eIf{i $\neq$ Null}
+{i$\rightarrow$padre $\leftarrow$ F}
+{}
+}
+{d$\rightarrow$izq $\leftarrow$ F\\}
+{$\setminus$$\setminus$ ahora voy a reacomodar a los padres\\}
+{F$\rightarrow$padre $\leftarrow$ d\\}
+{d$\rightarrow$padre $\leftarrow$ padreSuperior\\}
+{$\setminus$$\setminus$ ahora ``esta"\ balanceado\\}
+{\eIf{F$\rightarrow$izq $\neq$ Null}
+{\eIf{i $\neq$ Null}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ (i$\rightarrow$altura)$-($F$\rightarrow$izq$\rightarrow$altura) \\
+{\eIf{i$\rightarrow$altura $>$ (F$\rightarrow$izq$\rightarrow$altura)}
+{(F$\rightarrow$altura) $\leftarrow$ i$\rightarrow$altura}
+{(F$\rightarrow$altura) $\leftarrow$ (F$\rightarrow$izq$\rightarrow$altura)+1}
+}
+}
+{}
+}
+{\eIf{i $\neq$ Null}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ (i$\rightarrow$altura)\\
+(F$\rightarrow$altura) $\leftarrow$ (i$\rightarrow$altura)+1}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ 0\\
+ F$\rightarrow$altura $\leftarrow$ 1}
+}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$ (d$\rightarrow$der$\rightarrow$altura) $-$ (F$\rightarrow$altura\\}
+{\eIf{F$\rightarrow$altura $>$ d$\rightarrow$der$\rightarrow$altura}
+{d$\rightarrow$altura $\leftarrow$ F$\rightarrow$altura}
+{d$\rightarrow$altura $\leftarrow$ (d$\rightarrow$der$\rightarrow$altura)+1}
+}
+}
+\KwData{ complejidad \textbf{O(1)} son todas asignaciones}
+\caption{rotacionSimpleDerAndDer}
+\end{algorithm}
+
+\newpage
+\text{\textbf{rotacionSimmpleIzqAndIzq} (in/out nodoAbalancear : puntero(Nodo))}
+\newline
+\begin{algorithm}[H]
+{puntero(nodo) padreSuperior $\leftarrow$ nodoAbalancear$\rightarrow$padre\\}
+{puntero(nodo) F $\leftarrow$ nodoAbalancear\\}
+{puntero(nodo) i $\leftarrow$ F$\rightarrow$izq\\}
+{puntero(nodo) d $\leftarrow$ i$\rightarrow$der\\}
+{burbujeamos el nodo de i como padre de F\\}
+{\eIf{padreSuperior $\neq$ Null}
+{\eIf{padreSuperior$\rightarrow$der == F}
+{padreSuperior$\rightarrow$der $\leftarrow$ i}
+{padreSuperior$\rightarrow$izq $\leftarrow$ i}
+}
+{raiz $\leftarrow$ i}
+}
+{F$\rightarrow$izq $\leftarrow$ d\\}
+{i$\rightarrow$der $\leftarrow$ F\\}
+{F$\rightarrow$padre $\leftarrow$ i\\}
+{i$\rightarrow$padre $\leftarrow$ padreSuperior\\}
+{\eIf{d $\neq$ Null}
+{d$\rightarrow$padre $\leftarrow$ F}
+{}
+}
+{d$\rightarrow$izq $\leftarrow$ F\\}
+{ahora es balanceado\\}
+{\eIf{F$\rightarrow$der $\neq$ Null}
+{\eIf{d $\neq$ Null}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ (F$\rightarrow$izq$\rightarrow$altura) $-$ (d$\rightarrow$altura) \\
+{\eIf{d$\rightarrow$altura $>$ (F$\rightarrow$der$\rightarrow$altura)}
+{(F$\rightarrow$altura) $\leftarrow$ d$\rightarrow$altura}
+{(F$\rightarrow$altura) $\leftarrow$ (F$\rightarrow$der$\rightarrow$altura)+1}
+}
+}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ F$\rightarrow$der$\rightarrow$altura \\
+(F$\rightarrow$altura) $\leftarrow$ (F$\rightarrow$der$\rightarrow$altura)+1
+}
+}
+{\eIf{d $\neq$ Null}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ $-$(d$\rightarrow$altura)\\
+(F$\rightarrow$altura) $\leftarrow$ (d$\rightarrow$altura)+1}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ 0\\
+ F$\rightarrow$altura $\leftarrow$ 1}
+}
+{i$\rightarrow$factorDeBalanceo $\leftarrow$ (F$\rightarrow$altura $-$ (i$\rightarrow$izq$\rightarrow$altura) \\}
+{\eIf{F$\rightarrow$altura $>$ i$\rightarrow$izq$\rightarrow$altura}
+{i$\rightarrow$altura $\leftarrow$ F$\rightarrow$altura}
+{i$\rightarrow$altura $\leftarrow$ (i$\rightarrow$izq$\rightarrow$altura)+1}
+}
+}
+\KwData{ complejidad \textbf{O(1)} son todas asignaciones}
+\caption{irotacionSimpleIzqAndIzq}
+\end{algorithm}
+\newpage
+\text{\textbf{rotacionDobleIzqAndDer} (in/out nodoAbalancear : puntero(nodo))}
+\newline
+\begin{algorithm}[H]
+{puntero(nodo) padreSuperior $\leftarrow$ nodoAbalancear$\rightarrow$padre\\}
+{puntero(nodo) F $\leftarrow$ nodoAbalancear\\}
+{puntero(nodo) d $\leftarrow$ F$\rightarrow$der\\}
+{puntero(nodo) i $\leftarrow$ d$\rightarrow$izq\\}
+{puntero(nodo) B $\leftarrow$ i$\rightarrow$izq\\}
+{puntero(nodo) C $\leftarrow$ i$\rightarrow$der\\}
+
+{\eIf{padreSuperior $\neq$ Null}
+{\eIf{padreSuperior$\rightarrow$der == F}
+{padreSuperior$\rightarrow$der $\leftarrow$ i \\
+}
+{padreSuperior$\rightarrow$izq $\leftarrow$ i}
+}
+{raiz $\leftarrow$ i}
+}
+{i$\rightarrow$padre $\leftarrow$ padreSuperior\\}
+{F$\rightarrow$der $\leftarrow$ B\\}
+
+{\eIf{B $\neq$ Null}
+{B$\rightarrow$padre $\leftarrow$ F}
+{}
+}
+
+
+{d$\rightarrow$izq $\leftarrow$ C\\}
+{\eIf{C $\neq$ Null}
+{C$\rightarrow$padre $\leftarrow$ d}
+{}
+}
+{i$\rightarrow$der $\leftarrow$ d\\}
+{i$\rightarrow$izq $\leftarrow$ F\\}
+{d$\rightarrow$padre $\leftarrow$ i\\}
+{P$\rightarrow$padre $\leftarrow$ i\\}
+
+{\eIf{F$\rightarrow$izq $\neq$ Null}
+{\eIf{B $\neq$ Null}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ (B$\rightarrow$altura) $-$ (F$\rightarrow$izq$\rightarrow$altura)\\
+{\eIf{B$\rightarrow$altura $>$ (F$\rightarrow$der$\rightarrow$altura)}
+{(F$\rightarrow$altura) $\leftarrow$ B$\rightarrow$altura}
+{(F$\rightarrow$altura) $\leftarrow$ (F$\rightarrow$der$\rightarrow$altura)+1}
+}
+}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ $-$(F$\rightarrow$izq$\rightarrow$altura) \\
+(F$\rightarrow$altura) $\leftarrow$ (F$\rightarrow$izq$\rightarrow$altura)+1
+}
+}
+{\eIf{B $\neq$ Null}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ B$\rightarrow$altura)\\
+(F$\rightarrow$altura) $\leftarrow$ (B$\rightarrow$altura)+1}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ 0\\
+ F$\rightarrow$altura $\leftarrow$ 1}
+}
+}
+\end{algorithm}
+
+\newpage
+\begin{algorithm}[H]
+{\eIf{d$\rightarrow$der $\neq$ Null}
+{\eIf{C $\neq$ Null}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$  (d$\rightarrow$der$\rightarrow$altura) $-$ (d$\rightarrow$altura) \\
+{\eIf{C$\rightarrow$altura $>$ (d$\rightarrow$der$\rightarrow$altura)}
+{(d$\rightarrow$altura) $\leftarrow$ C$\rightarrow$altura}
+{(d$\rightarrow$altura) $\leftarrow$ (d$\rightarrow$der$\rightarrow$altura)+1}
+}
+}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$ (d$\rightarrow$der$\rightarrow$altura) \\
+(d$\rightarrow$altura) $\leftarrow$ (d$\rightarrow$der$\rightarrow$altura)+1
+}
+}
+{\eIf{C $\neq$ Null}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$ $-$(C$\rightarrow$altura)\\
+(d$\rightarrow$altura) $\leftarrow$ (C$\rightarrow$altura)+1}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$ 0\\
+ d$\rightarrow$altura $\leftarrow$ 1}
+}
+{\eIf{i$\rightarrow$izq$\rightarrow$altura $>$ i$\rightarrow$der$\rightarrow$altura}
+{i$\rightarrow$altura $\leftarrow$ i$\rightarrow$izq$\rightarrow$altura}
+{i$\rightarrow$altura $\leftarrow$ (i$\rightarrow$der$\rightarrow$altura)+1}
+}
+{i$\rightarrow$factorDeBalanceo $\leftarrow$ (i$\rightarrow$der$\rightarrow$altura) $-$ (i$\rightarrow$izq$\rightarrow$altura) \\}
+}
+\KwData{ complejidad \textbf{O(1)} son todas asignaciones}
+\caption{irotacionDobleIzqAndDer}
+\end{algorithm}
+
+
+\text{\textbf{rotacionDobleDerAndIzq} (in nodoDesbalanceado : puntero(nodo))}
+\newline
+\begin{algorithm}[H]
+{puntero(nodo) padreSuperior $\leftarrow$ nodoAbalancear$\rightarrow$padre\\}
+{puntero(nodo) F $\leftarrow$ nodoAbalancear\\}
+{puntero(nodo) d $\leftarrow$ F$\rightarrow$izq\\}
+{puntero(nodo) i $\leftarrow$ d$\rightarrow$der\\}
+{puntero(nodo) B $\leftarrow$ i$\rightarrow$izq\\}
+{puntero(nodo) C $\leftarrow$ i$\rightarrow$der\\}
+
+{\eIf{padreSuperior $\neq$ Null}
+{\eIf{padreSuperior$\rightarrow$der == F}
+{padreSuperior$\rightarrow$der $\leftarrow$ i \\
+}
+{padreSuperior$\rightarrow$izq $\leftarrow$ i}
+}
+{raiz $\leftarrow$ i}
+}
+{i$\rightarrow$padre $\leftarrow$ padreSuperior\\}
+{F$\rightarrow$izq $\leftarrow$ C\\}
+
+{\eIf{C $\neq$ Null}
+{C$\rightarrow$padre $\leftarrow$ F}
+{}
+}
+
+\end{algorithm}
+
+\newpage
+\begin{algorithm}[H]
+
+{d$\rightarrow$der $\leftarrow$ B\\}
+{\eIf{B $\neq$ Null}
+{B$\rightarrow$padre $\leftarrow$ d}
+{}
+}
+{i$\rightarrow$der $\leftarrow$ F\\}
+{i$\rightarrow$izq $\leftarrow$ d\\}
+{d$\rightarrow$padre $\leftarrow$ i\\}
+{P$\rightarrow$padre $\leftarrow$ i\\}
+
+{\eIf{F$\rightarrow$der $\neq$ Null}
+{\eIf{C $\neq$ Null}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$
+(F$\rightarrow$der$\rightarrow$altura) $-$ (C$\rightarrow$altura)\\
+{\eIf{C$\rightarrow$altura $>$ (F$\rightarrow$der$\rightarrow$altura)}
+{(F$\rightarrow$altura) $\leftarrow$ C$\rightarrow$altura}
+{(F$\rightarrow$altura) $\leftarrow$ (F$\rightarrow$der$\rightarrow$altura)+1}
+}
+}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ (F$\rightarrow$der$\rightarrow$altura) \\
+(F$\rightarrow$altura) $\leftarrow$ (F$\rightarrow$der$\rightarrow$altura)+1
+}
+}
+{\eIf{C $\neq$ Null}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ $-$(C$\rightarrow$altura)\\
+(F$\rightarrow$altura) $\leftarrow$ (C$\rightarrow$altura)+1}
+{F$\rightarrow$factorDeBalanceo $\leftarrow$ 0\\
+ F$\rightarrow$altura $\leftarrow$ 1}
+}
+}
+
+{\eIf{d$\rightarrow$izq $\neq$ Null}
+{\eIf{B $\neq$ Null}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$ (d$\rightarrow$altura) $-$  (d$\rightarrow$izq$\rightarrow$altura)  \\
+{\eIf{B$\rightarrow$altura $>$ (d$\rightarrow$izq$\rightarrow$altura)}
+{(d$\rightarrow$altura) $\leftarrow$ B$\rightarrow$altura}
+{(d$\rightarrow$altura) $\leftarrow$ (d$\rightarrow$izq$\rightarrow$altura)+1}
+}
+}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$ $-$(d$\rightarrow$izq$\rightarrow$altura) \\
+(d$\rightarrow$altura) $\leftarrow$ (d$\rightarrow$izq$\rightarrow$altura)+1
+}
+}
+{\eIf{B $\neq$ Null}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$ (B$\rightarrow$altura)\\
+(d$\rightarrow$altura) $\leftarrow$ (B$\rightarrow$altura)+1}
+{d$\rightarrow$factorDeBalanceo $\leftarrow$ 0\\
+ d$\rightarrow$altura $\leftarrow$ 1}
+}
+{\eIf{i$\rightarrow$izq$\rightarrow$altura $>$ i$\rightarrow$der$\rightarrow$altura}
+{i$\rightarrow$altura $\leftarrow$ i$\rightarrow$izq$\rightarrow$altura}
+{i$\rightarrow$altura $\leftarrow$   (i$\rightarrow$der$\rightarrow$altura)+1}
+}
+{i$\rightarrow$factorDeBalanceo $\leftarrow$ (i$\rightarrow$der$\rightarrow$altura) $-$ (i$\rightarrow$izq$\rightarrow$altura) \\}
+}
+\KwData{ complejidad \textbf{O(1)} son todas asignaciones}
+\caption{irotacionDobleDerAndIzq}
+\end{algorithm}
+
+\newpage
+\text{\textbf{iDameMaximo} (in c : str\_diccRapido) $\rightarrow$ elem:$\alpha$}
+\newline
+\begin{algorithm}[H]
+{ puntero(nodo) nodoActual $\leftarrow$ c.raiz\\}
+{puntero(nodo) maximo $\leftarrow$ Null\\}
+\While{nodoActual $\neq$ Null}
+{maximo $\leftarrow$ nodoActual\\
+nodoActual $\leftarrow$ (nodoActual$\rightarrow$der}
+{res $\leftarrow$ maximo$\rightarrow$clave \\}
+ \KwData{Complejidad es \textbf{O(log(n)} por que recorre toda la altura del arbol}
+ \caption{iDameMaximo}
+\end{algorithm}
+
+
+\text{\textbf{iCrearNodo} (in c:$\alpha$, in s:$\beta$ $\rightarrow$ stru$\_$nodo}
+\newline
+\begin{algorithm}[H]
+{nodoNuevo.clave $\leftarrow$ c\\}
+{nodoNuevo.significado $\leftarrow$ s\\}
+{nodoNuevo.padre $\leftarrow$ Null\\}
+{nodoNuevo.der $\leftarrow$ Null\\}
+{nodoNuevo.izq $\leftarrow$ Null\\}
+{nodoNuevo.altura $\leftarrow$ 0\\}
+{nodoNuevo.factorDeBalanceo $\leftarrow$ 0\\}
+\end{algorithm}
+
+Observacion!\\
+para usar este avl como queremos, vamos a extender el tad tupla con la operacion Menor
+
+  \tadOperacion{[] $<\_Tupla$ []}{p :Tupla,d:Tupla}{bool}{}
+  \tadAxioma{$<\_Tupla$ (p,d)}
+  {\IF $\Pi_1$(p) $<$ $\Pi_1$(d) THEN True ELSE false FI}
+
+a la hora de meter tuplas en un avl, siepre se va meter esta comparacion, esto tambien serviria para comparar paquetes, ya tomaria el primer clave del paquete, osea el Id.
+
+
+
+\end{Algoritmos}
+
+
+
+
+\newpage
+\section{Modulo ConjuntoRapido$(\alpha)$}
+
+\textbf{parámetros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{géneros}} $\alpha$\\
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+    \InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
+    {$res \igobs a$}
+    [$\Theta(copy(a))$]
+    [función de copia de $\alpha$'s]
+  }
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+    \InterfazFuncion{$\bullet$ < $\bullet$}{\In{a1}{$\alpha$}, \In{a2}{$\alpha$}}{bool}
+    {$res \igobs a1 < a2$}
+    [$\Theta(a1 < a2))$]
+    [Operador menor de $\alpha$'s]
+  }
+
+
+\textbf{se explica con:} \tadNombre{conjunto$(\alpha)$}.
+
+\textbf{géneros:} \TipoVariable{conjR$(\alpha)$}.
+
+\textbf{usa:} \tadNombre{Bool}, \tadNombre{diccRapido($\alpha$, bool)}
+
+\textbf{Operaciones Basicas de conjR$(\alpha)$}
+
+\begin{Interfaz}
+
+\InterfazFuncion{conjVacio}{}{conjR$(\alpha)$}
+{$res \igobs \emptyset$}
+[$O(1)$]
+[genera un conjunto vacio.]
+
+\InterfazFuncion{agregarElem}{\In{e}{$\alpha$}, \Inout{c}{conjR$(\alpha)$}}{}
+% [$e\in c$]
+{$c \igobs agregar(e, c) $}
+[$O(Log(\#(c))$]
+[agrega un elemento al conjunto]
+[Agrega por referencia.]
+
+\InterfazFuncion{ePertenece}{\In{e}{$\alpha$}, \In{c}{conjR$(\alpha)$}}{bool}
+{$res \igobs e\in c$}
+[$O(Log(\#(c))$]
+[Verifica si un elemento esta en el conjunto.]
+
+
+%\InterfazFuncion{dameElem}{\In{e}{$\alpha$}, \In{c}{diccRapido}}{elem}
+%{$e\in c_0$}
+%[devuelve el contenido]
+
+\InterfazFuncion{sacarElem}{\In{e}{$\alpha$}, \Inout{c}{conjR$(\alpha)$}}{}
+[$e\in c$]
+{$c \igobs c_- \{e\}$}
+[$O(Log(\#(c))$]
+[elimina un el elemento $e$ del conjunto.]
+[Elimina la referencia.]
+
+\InterfazFuncion{$\#$Elem}{\In{c}{conjR$(\alpha)$}}{nat}
+{$res \igobs \#(c)$}
+[$\#(c)$]
+[Devuelve el numero de elemtos del conjunto]
+
+
+
+% \InterfazFuncion{Elems}{\in{c}{conjR($\alpha$)}}{}
+% [$true$]
+% {$res \igobs cadinal(c)$}
+% [$O(cardinal(c))$]
+% [devuelve la cantidad de elemtos del conjunto]
+% [res, hacer dsp de def algoritmos]
+
+% \InterfazFuncion{obtenerElem}{\In{e}{$\alpha$}, \In{c}{diccRapido}}{$\beta$}
+% [$definido(e, c)$]
+% {$res \igobs obtener(e,c)  $}
+% [$O(Log(cantidad(c))$]
+% [Devuelve el significado del elemento pasado porparametro]
+
+
+\end{Interfaz}
+
+\newpage
+\begin{Representacion}
+
+\begin{Estructura}{conjR$(\alpha)$}[str\_conjR$(\alpha)$]
+\hspace{3.0mm}donde \textbf{str\_conjR$(\alpha)$} es \textbf{diccRapido($\alpha$, bool)} \\ 
+
+% \begin{Tupla}[str\_conjR$(\alpha)$]
+% diccRapido($\alpha$, $\beta$)
+% \end{Tupla}
+
+% \begin{Tupla}[str\_nodo]
+% \tupItem{elem}{$\alpha$}
+% \tupItem{izq}{str\_conjR$(\alpha)$}
+% \tupItem{der}{str\_conjR$(\alpha)$}
+% \tupItem{padre}{str\_conR}
+% \tupItem{factorDeBalanceo}{Nat}
+% \tupItem{Altura}{Nat}
+% \end{Tupla}
+
+
+\Rep[srt\_conjR$(\alpha)$]{true}
+\vspace{0.8cm}
+
+% \esAvl[estr\_nodo][nodo]{(nodo == \textbf{Null}) \oluego \\ ($\forall$ c:{$\alpha$},(definido(c, nodo.izq)) \ssi c $<$ (nodo.clave)) $\wedge$ \\ ($\forall$ c:{$\alpha$}, (definido(c, nodo.der)) \ssi c $>$ (nodo.clave)) $\wedge$ \\ 
+% esAvl(nodo.izq) $\wedge$ esAvl(nodo.der)}
+
+\AbsFc[srt\_conjR$(\alpha)$]{conjunto$(\alpha)$}[c]{c: conjunto$(\alpha)$ |  
+
+\text{($\#c \igobs \#$Elem(c))}\hspace{0.7cm} $\land$\\
+\text{($\forall$a: $\alpha$)(a$\in$ c\ $\Longleftrightarrow$ ePertenece(a, c))}\ $\land$\\
+\text{($\forall$a: $\alpha$)(c - {a} \ \igobs sacarElem(a, c))}\ $\land$\\
+\text{($\forall$a: $\alpha$)(Ag(a,c) \ \igobs agregarElem(a, c))}\ 
+
+  }
+
+
+\end{Estructura}
+
+\end{Representacion}
+
+\begin{Algoritmos}
+
+\text{\textbf{iconjVacio} () $\rightarrow$ res: str\_conjR($\alpha$)}\\ 
+\begin{algorithm}[H]
+    \Begin{
+		{res $\leftarrow$ vacio() \hfill O(1)}
+    }
+    \KwData{Complejidad: O(1). Ver complejidad de vacio()}
+\end{algorithm}
+\vspace{0.15cm}
+
+\text{\textbf{iagregarElem}(in e:$\alpha$ in/out co: str\_conjR($\alpha$))}\\ 
+\begin{algorithm} [H]
+	\Begin{
+			{definirElem(e, true ,co) \hfill O(Log(\#(c)))}
+     }       
+\KwData{Complejidad: O(Log(\#(c))). Ver complejidad de definirElem()}
+\end{algorithm}
+\vspace{0.15cm}
+
+\text{\textbf{iePertenece}(in e:$\alpha$, co: str\_conjR($\alpha$)) $\rightarrow$ res: bool}\\ 
+\begin{algorithm} [H]
+	\Begin{
+			{res $\leftarrow$ elemPertenece(e, co) \hfill O(Log(\#(c)))}
+     }       
+\KwData{Complejidad: O(Log(\#(c))). Ver complejidad de elemPertenece()}
+\end{algorithm}
+\vspace{0.15cm}
+
+\text{\textbf{isacarElem}(in e:$\alpha$ in/out co: str\_conjR($\alpha$))}\\ 
+\begin{algorithm} [H]
+	\Begin{
+			{borrarElem(e, co) \hfill  \hfill O(Log(\#(c)))}
+     }       
+\KwData{Complejidad: O(Log(\#(c))). Ver complejidad de borrarElem()}
+\end{algorithm}
+\vspace{0.15cm}
+
+\text{\textbf{i$\#$Elem}(in co: str\_conjR($\alpha$)) $\rightarrow$ res: nat}\\ 
+\begin{algorithm} [H]
+	\Begin{
+			{res $\leftarrow$ $\#$Defs(e, co) \hfill O(\#(c))}
+     }       
+\KwData{Complejidad: O(\#(c)). Ver complejidad de $\#$Defs()}
+\end{algorithm}
+\vspace{0.15cm}
+
+
+\end{Algoritmos}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
+\section{Módulo Compu}
+
+\begin{Interfaz}
+
+  \textbf{usa}: \tadNombre{String}, \tadNombre{nat}, \tadNombre{Conjunto Lineal($\alpha$)}.
+  
+  \textbf{se explica con}: \tadNombre{Compu}.
+
+  \textbf{géneros}: \TipoVariable{compu}.
+    
+  \textbf{Operaciones básicas}
+
+
+  \InterfazFuncion{NuevaCompu}{\In{IP}{String}, \In{Inter}{conj(nat)}}{compu}%
+  {$res \igobs Tupla(IP, Inter) $}%
+  [$O(Long(IP) + \#Inter)$]
+  [Crea una compu nueva.]
+  [Crea una pc por copia.]
+  
+  
+  \InterfazFuncion{IP}{\In{pc}{compu}}{String}
+  {$res \igobs pc.IP$}
+  [$O(1)$]
+  [Devuelve el IP de la compu.]
+  [Devuelve una referencia al IP.]
+  
+  
+  \InterfazFuncion{Interfaces}{\In{pc}{compu}}{conj(nat)}
+  {$res \igobs pc.Interfaces$}
+  [$O(1)$]
+  [Devuelve el conjunto de interfaces.]
+  [Devuelve una referencia al conjunto.]
+  
+  
+  \InterfazFuncion{Copiar}{\In{pc}{compu}}{compu}
+  {$res \igobs pc$}
+  [$O(Long(IP(pc)) + \#Interfaces(pc))$]
+  [Devuelve el conjunto de interfaces.]
+  [Devuelve una copia de la pc.]
+  	
+  
+  
+\end{Interfaz}
+
+\begin{Representacion}
+
+\textbf{Representación de compu}
+
+  \begin{Estructura}{compu}[estr]
+  	%donde estr es puntero(nodo)
+    \begin{Tupla}[estr]
+      \tupItem{IP}{String}%
+      \tupItem{Interfaces}{conj(nat)}
+    \end{Tupla}
+  \end{Estructura}	
+    
+  \Rep[estr][compu]{ True  } \mbox{}
+
+   \AbsFc[estr]{compu}[pc]{compu: Compu | compu.IP = pc.IP $\wedge$ compu.Interfaces = pc.Interfaces }	
+
+\end{Representacion}
+
+\newpage
+  \begin{Algoritmos}
+    \textbf{Algoritmos de compu}
+    
+    
+	\text{iNuevaCompu (in IP: String, in Interfaces: conj(nat))}{estr}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    res.IP $\leftarrow$ Copy(IP) \hfill \textbf{//O(Long(IP))}\\
+    res.Interfaces $\leftarrow$ Copy(Interfaces) \hfill \textbf{//O(Cardinal(Interfaces))}
+    
+    }
+    \caption{NuevaCompu}
+	\end{algorithm} 
+   
+
+    \text{iIP (in pc: estr)}{String}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ pc.IP \hfill \textbf{//Referencia: O(1))}
+    }
+    \caption{IP}
+	\end{algorithm} 
+    
+    \text{iInterfaces (in pc: estr)}{conj(nat)}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ pc.Interfaces \hfill \textbf{//Referencia: O(1))}
+    }
+    \caption{Interfaces}
+	\end{algorithm} 
+    
+    
+    \text{iCopiar (in pc: estr)}{estr}
+    \newline
+	\begin{algorithm}[H]
+    \Begin{
+    res $\leftarrow$ NuevaCompu(pc.IP, pc.Interfaces) \hfill \textbf{O(Long(pc.IP) + Cardinal(pc.Interfaces) )}
+    }
+    \caption{Copiar}
+	\end{algorithm} 
+    
+    
+ % \end{algorithm}
+   
+\end{Algoritmos}
+
+
+
+
+\end{document}
