@@ -193,9 +193,9 @@
   [Devuelve un conjunto de las posiciones que rodean a $p$ en el campus $c$]
   []
 
-  \InterfazFuncion{Distancia}{\In{$p_{0}$}{pos}, \In{$p_{1}$}{pos}, \In{c}{campus}}{nat}
+  \InterfazFuncion{Distancia}{ \In{p_{0}}{pos}, \In{p_{1}}{pos}, \In{c}{campus}}{nat}
   [true]
-  {$res \igobs$ distancia($p_{0}, p_{1}, c$)}
+  {$res \igobs$ distancia($p_{0}$, $p_{1}$, $c$)}
   []
   [Devuelve la distancia, en casilleros, desde la posicion $p_{0}$ a la posicion $p_{1}$.]
   []
@@ -209,10 +209,10 @@
 
   \InterfazFuncion{Obstaculos}{\In{c}{campus}}{conj($pos$)}
   [true]
-  {$res \igbos$ obstaculos($c$)}
+  {$res \igobs$ obstaculos($c$)}
   []
   [Devuelve un conjunto que contiene todas las posiciones ocupadas por obstaculos en el campus $c$. EXTENDER TAD.]
-  []
+
 
 \end{Interfaz}
 
