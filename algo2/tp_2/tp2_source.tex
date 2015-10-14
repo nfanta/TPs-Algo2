@@ -214,20 +214,6 @@
   [Devuelve un conjunto que contiene todas las posiciones ocupadas por obstaculos en el campus $c$. EXTENDER TAD.]
   []
 
-  \Titulo{Operaciones del iterador}
-
-  \InterfazFuncion{CrearIt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
-  {$res$ $\igobs$ crearItBi(\secuencia{}, $l$) $\land$ alias(SecuSuby($it$) $=$ $l$)}
-  [$\Theta(1)$]
-  [crea un iterador bidireccional de la lista, de forma tal que al pedir \NombreFuncion{Siguiente} se obtenga el primer elemento de $l$.]
-  [el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
-
-  \InterfazFuncion{CrearItUlt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
-  {$res$ $\igobs$ crearItBi($l$, \secuencia{}) $\land$ alias(SecuSuby($it$) $=$ $l$)}
-  [$\Theta(1)$]
-  [crea un iterador bidireccional de la lista, de forma tal que al pedir \NombreFuncion{Anterior} se obtenga el último elemento de $l$.]  
-  [el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
-
 \end{Interfaz}
 
 \begin{Representacion}
