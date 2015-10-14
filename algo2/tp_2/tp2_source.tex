@@ -220,75 +220,36 @@
   
   \Titulo{Representación de la lista}
 
-  \begin{Estructura}{lista$(\alpha)$}[lst]
-    \begin{Tupla}[lst]
-      \tupItem{primero}{puntero(nodo)}%
-      \tupItem{longitud}{nat}%
+  \begin{Estructura}{campus}[estr]
+    \begin{Tupla}[estr]
+      \tupItem{alto}{nat}%
+      \tupItem{ancho}{nat}%
+      \tupItem{obstaculos}{cong(pos)}%
     \end{Tupla}
 
-    \begin{Tupla}[nodo]
-      \tupItem{dato}{$\alpha$}%
-      \tupItem{anterior}{puntero(nodo)}%
-      \tupItem{siguiente}{puntero(nodo)}%
-    \end{Tupla}
-  \end{Estructura}
-
-  \Rep[lst][l]{($l$.primero $=$ NULL) $=$ ($l$.longitud $=$ $0$) $\yluego$ ($l$.longitud $\neq$ $0$ \impluego \\
-    Nodo($l$, $l$.longitud) $=$ $l$.primero $\land$ \\
-    ($\forall i$: nat)(Nodo($l$,$i$)\DRef siguiente $=$ Nodo($l$,$i+1$)\DRef anterior) $\land$ \\
-    ($\forall i$: nat)($1 \leq i <$ $l$.longitud $\implies$ Nodo($l$,$i$) $\neq$ $l$.primero)}\mbox{}
-
-  ~      
-
-  \tadOperacion{Nodo}{lst/l,nat}{puntero(nodo)}{$l$.primero $\neq$ NULL}
-  \tadAxioma{Nodo($l$,$i$)}{\IF $i = 0$ THEN $l$.primero ELSE Nodo(FinLst($l$), $i-1$) FI}
-
-  ~
-
-  \tadOperacion{FinLst}{lst}{lst}{}
-  \tadAxioma{FinLst($l$)}{Lst($l$.primero\DRef siguiente, $l$.longitud $-$ $\min$\{$l$.longitud, $1$\})}
-
-  ~
-
-  \tadOperacion{Lst}{puntero(nodo),nat}{lst}{}
-  \tadAxioma{Lst($p,n$)}{$\langle p, n\rangle$}
-
-  ~
- 
-  \AbsFc[lst]{secu($\alpha$)}[l]{\IF $l$.longitud $=$ $0$ THEN \secuencia{} ELSE \secuencia{$l$.primero\DRef dato}[Abs(FinLst($l$))] FI}
-
-  \Titulo{Representación del iterador}
-
-  \begin{Estructura}{itLista($\alpha$)}[iter]
-    \begin{Tupla}[iter]
-      \tupItem{siguiente}{puntero(nodo)}%
-      \tupItem{lista}{puntero(lst)}%
+    \begin{Tupla}[pos]
+      \tupItem{fila}{nat}%
+      \tupItem{columna}{nat}%
     \end{Tupla}
   \end{Estructura}
 
-  \Rep[iter][it]{Rep($\ast$($it$.lista)) $\yluego$ ($it$.siguiente $=$ NULL $\oluego$ ($\exists i$: nat)(Nodo($\ast it$.lista, $i$) $=$ $it$.siguiente)}
+  \Rep[estr][e]{
+  ($\forall$ $p$ : pos) $p$ $\in$ campus.obstaculos $\implies$ ( $\Pi_{1}$($p$) $\leq$ c.alto $\land$ $\Pi_{2}$($p$) $\leq$ c.ancho )
+  }\mbox{}
 
-  ~
+  
+  \AbsFc[estr]{campus}[e]{c : campus / \\
+    obstaculos($c$) $\igobs$ e.obstaculos $\land$
+    alto($c$) $\igobs$ e.alto $\land$
+    ancho($c$) $\igobs$ e.ancho \\}
 
-  \Abs[iter]{itBi($\alpha$)}[it]{b}{Siguientes($b$) $=$ Abs(Sig($it$.lista, $it$.siguiente)) $\land$\\
-    Anteriores($b$) $=$ Abs(Ant($it$.lista, $it$.siguiente))}
+  Segunda version (con observadores)
+  \newline
 
-  ~
-
-  \tadOperacion{Sig}{puntero(lst)/l,puntero(nodo)/p}{lst}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Sig($i, p$)}{Lst($p$, $l$\DRef longitud $-$ Pos($\ast l$, $p$))}
-
-  ~
-
-  \tadOperacion{Ant}{puntero(lst)/l,puntero(nodo)/p}{lst}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Ant($i, p$)}{Lst(\IF $p$ $=$ $l$\DRef primero THEN NULL ELSE $l$\DRef primero FI, Pos($\ast l$, $p$))}
-
-  ~
-
-  {\small Nota: cuando $p$ $=$ NULL, Pos devuelve la longitud de la lista, lo cual está bien, porque significa que el iterador no tiene siguiente.}
-  \tadOperacion{Pos}{lst/l,puntero(nodo)/p}{puntero(nodo)}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Pos($l$,$p$)}{\IF $l$.primero $=$ $p$ $\lor$ $l$.longitud $=$ $0$ THEN $0$ ELSE $1$ $+$ Pos(FinLst($l$), $p$) FI}
-
+  \AbsFc[estr]{campus}[e]{c : campus / \\
+    ($\forall$ $p$ : pos) ocupada?($p, c$) $\igobs$ ocupada?($p, e$) $\land$
+    alto($c$) $\igobs$ e.alto $\land$
+    ancho($c$) $\igobs$ e.ancho}
 
 \end{Representacion}
 
