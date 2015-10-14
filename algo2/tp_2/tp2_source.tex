@@ -120,39 +120,100 @@
 
 \begin{document}
 
-\section{Módulo Lista Enlazada($\alpha$)}
+\section{Módulo Campus}
 
 
 \begin{Interfaz}
   
-  \textbf{parámetros formales}\hangindent=2\parindent\\
-  \parbox{1.7cm}{\textbf{géneros}} $\alpha$\\
-  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
-    \InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
-    {$res \igobs a$}
-    [$\Theta(copy(a))$]
-    [función de copia de $\alpha$'s]
-  }
+  \textbf{se explica con}: \tadNombre{Campus}
 
-  \textbf{se explica con}: \tadNombre{Secuencia$(\alpha)$}, \tadNombre{Iterador Bidireccional($\alpha$)}.
+  \textbf{géneros}: \TipoVariable{campus}
 
-  \textbf{géneros}: \TipoVariable{lista$(\alpha)$}, \TipoVariable{itLista($\alpha$)}.
+  \Titulo{Operaciones básicas de campus}
 
-  \Titulo{Operaciones básicas de lista}
-
-  \InterfazFuncion{Vacía}{}{lista$(\alpha)$}%
-  {$res \igobs \secuencia{}$}%
+  \InterfazFuncion{NuevoCampus}{\In{al}{nat}, \In{an}{nat}}{campus}%
+  [true]
+  {$res \igobs$ crearCampus($al, an$)}%
   [$\Theta(1)$]
-  [genera una lista vacía.]
+  [Crea un nuevo campus vacio de alto $al$ x ancho $an$.]
 
-  \InterfazFuncion{AgregarAdelante}{\Inout{l}{lista($\alpha$)}, \In{a}{$\alpha$}}{itLista($\alpha$}
-  [$l \igobs l_0$]
-  {$l \igobs \secuencia{a}[l_0]$ $\land$ $res$ $=$ CrearItBi(\secuencia{}, $l$) $\land$ alias(SecuSuby($res$) $=$ $l$)}
-  [$\Theta(copy(a))$]
-  [agrega el elemento $a$ como primer elemento de la lista.  Retorna un iterador a $l$, de forma tal que Siguiente devuelva $a$.]
-  [el elemento $a$ agrega por copia. El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  \InterfazFuncion{AgregarObstaculo}{\In{p}{pos)}, \Inout{c}{campus}}{}
+  [posValida($p, c$) $\land$ $\neg$ocupada?($p,c$) $\land$ $c \igobs c_{0}$ ]
+  {$c$ $\igobs$ agregarObstaculo($p, c_{0}$)}
+  []
+  [Agrega un obstaculo al campus $c$ en la posicion $p$.]
+  []
 
- 
+  \InterfazFuncion{Filas}{\In{c}{campus}}{nat}
+  [true]
+  {$res \igobs$ filas($c$}
+  []
+  [Devuelve el alto (filas) del campus $c$.]
+  []
+
+  \InterfazFuncion{Columnas}{\In{c}{campus}}{nat}
+  [true]
+  {$res \igobs$ columnas($c$}
+  []
+  [Devuelve el ancho (columnas) del campus $c$.]
+  []
+
+  \InterfazFuncion{Ocupada?}{\In{p}{pos}, \In{c}{campus}}{bool}
+  [true]
+  {$res \igobs$ posValida?($p, c$)}
+  []
+  [Devuelve $true$ si la posicion $p$ es valida en el campus $c$, sino retorna $false$.]
+  []
+
+  \InterfazFuncion{EsIngreso?}{\In{p}{pos}, \In{c}{campus}}{bool}
+  [true]
+  {$res \igobs$ esIngreso?($p, c$)}
+  []
+  [Verifica si la posicion $p$ es una entrada del campus $c$.]
+  []
+
+  \InterfazFuncion{IngresoSuperior?}{\In{p}{pos}, \In{c}{campus}}{bool}
+  [true]
+  {$res \igobs$ ingresoSuperior?($p, c$)}
+  []
+  [Verifica si la posicion $p$ es una entrada superior del campus $c$.]
+  []
+
+  \InterfazFuncion{IngresoInferior?}{\In{p}{pos}, \In{c}{campus}}{bool}
+  [true]
+  {$res \igobs$ ingresoInferior?($p, c$)}
+  []
+  [Verifica si la posicion $p$ es una entrada inferior del campus $c$.]
+  []
+
+  \InterfazFuncion{Vecinos}{\In{p}{pos}, \In{c}{campus}}{conj($pos$)}
+  [posValida($p, c$)]
+  {$res \igobs$ vecinos($p, c$)}
+  []
+  [Devuelve un conjunto de las posiciones que rodean a $p$ en el campus $c$]
+  []
+
+  \InterfazFuncion{Distancia}{\In{$p_{0}$}{pos}, \In{$p_{1}$}{pos}, \In{c}{campus}}{nat}
+  [true]
+  {$res \igobs$ distancia($p_{0}, p_{1}, c$)}
+  []
+  [Devuelve la distancia, en casilleros, desde la posicion $p_{0}$ a la posicion $p_{1}$.]
+  []
+
+  \InterfazFuncion{ProxPosicion}{\In{p}{pos}, \In{d}{dir}, \In{c}{campus}}{pos}
+  [posValida($p, c$)]
+  {$res \igobs$ proxPosicion($p, d, c$)}
+  []
+  [Indica la posicion que se encuentra al lado de $p$, en la direccion $d$.]
+  []
+
+  \InterfazFuncion{Obstaculos}{\In{c}{campus}}{conj($pos$)}
+  [true]
+  {$res \igbos$ obstaculos($c$)}
+  []
+  [Devuelve un conjunto que contiene todas las posiciones ocupadas por obstaculos en el campus $c$. EXTENDER TAD.]
+  []
+
   \Titulo{Operaciones del iterador}
 
   \InterfazFuncion{CrearIt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
