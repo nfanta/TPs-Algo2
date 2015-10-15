@@ -224,7 +224,7 @@
     \begin{Tupla}[estr]
       \tupItem{alto}{nat}%
       \tupItem{ancho}{nat}%
-      \tupItem{obstaculos}{cong(pos)}%
+      \tupItem{obstaculos}{matriz(bool)}%
     \end{Tupla}
 
     \begin{Tupla}[pos]
@@ -233,21 +233,23 @@
     \end{Tupla}
   \end{Estructura}
 
+  Invariante de representacion en castellano:
+  \begin{enumerate}
+  
+  \item Para toda $p$ de tipo $pos$, si $p$ esta definida en obstaculos, entonces tanto la fila como la columna de $p$ son menores o iguales a $alto$ y $ancho$ respectivamente.
+  
+  \end{enumerate}
+
   \Rep[estr][e]{
-  ($\forall$ $p$ : pos) $p$ $\in$ campus.obstaculos $\implies$ ( $\Pi_{1}$($p$) $\leq$ c.alto $\land$ $\Pi_{2}$($p$) $\leq$ c.ancho )
+  
+  \begin{enumerate}
+  \item ($\forall$ $p$ : pos) $p$ $\in$ claves(e.obstaculos) $\implies$ ( p.fila $\leq$ c.alto $\land$ p.columna $\leq$ c.ancho )
+  \end{enumerate}
+  
   }\mbox{}
 
-  
   \AbsFc[estr]{campus}[e]{c : campus / \\
-    obstaculos($c$) $\igobs$ e.obstaculos $\land$
-    alto($c$) $\igobs$ e.alto $\land$
-    ancho($c$) $\igobs$ e.ancho \\}
-
-  Segunda version (con observadores)
-  \newline
-
-  \AbsFc[estr]{campus}[e]{c : campus / \\
-    ($\forall$ $p$ : pos) ocupada?($p, c$) $\igobs$ ocupada?($p, e$) $\land$
+    ($\forall$ $p$ : pos) def?($p$, e.obstaculos) $\igobs$ ocupada?($p$, c) $\land$ 
     alto($c$) $\igobs$ e.alto $\land$
     ancho($c$) $\igobs$ e.ancho}
 
