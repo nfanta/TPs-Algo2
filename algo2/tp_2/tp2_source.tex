@@ -7,7 +7,11 @@
 \usepackage{xargs}
 \usepackage{ifthen}
 \usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage[]{algorithm2e}
 
+\SetKwInput{KwData}{Complejidad}
+\SetAlgorithmName{Algoritmo}{Algoritmo}{Lista de algoritmos}
+\SetAlCapSkip{1em}
 
 \newcommand{\moduloNombre}[1]{\textbf{#1}}
 
@@ -254,5 +258,36 @@
     ancho($c$) $\igobs$ e.ancho}
 
 \end{Representacion}
+
+  \begin{Algoritmos}
+
+\textbf{Algoritmos de Campus}
+  \listofalgorithms
+    
+  \begin{algorithm}[h]
+    \text{$i$NuevoCampus(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
+
+    \Begin{
+      res.computadoras $\leftarrow $ vacio() \hfill \textbf{//O(1)}\\
+      res.mapa $\leftarrow $ vacia() \hfill \textbf{//O(1)}\\
+      res.indexToString $\leftarrow $ vacia() \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+
+    \caption{NuevoCampus}    
+  \end{algorithm}
+
+  \begin{algorithm}[h]
+    \text{$i$AgregarObstaculo(\In{p}{pos}, \Inout{e}{estr})}
+
+    \Begin{
+      Colocar($p$, $true$, e.obstaculos) \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+
+    \caption{AgregarObstaculo}
+  \end{algorithm}
+
+  \end{Algoritmos}
 
 \end{document}
