@@ -337,10 +337,10 @@
 
   \begin{Estructura}{agentes}[estr]
     \begin{Tupla}[estr]
-      \tupItem{info}{DiccRapido(datos)}%
+      \tupItem{as}{DiccRapido(datos)}%
       \tupItem{masVig}{nat}%
       \tupItem{huboSanciones}{bool}%
-      \tupItem{mismSanciones}{ListaEnlazada(NodoAgente)}%
+      \tupItem{mismSanciones}{lista(conj(nat))}%
       \tupItem{kSanciones}{Arreglo(tuplaK)}%
     \end{Tupla}
 
@@ -348,12 +348,7 @@
       \tupItem{sanciones}{nat}%
       \tupItem{pos}{posicion}%
       \tupItem{capturas}{nat}%
-      \tupItem{conMismSanciones}{Iterador(ListaEnlazada)}%
-    \end{Tupla}
-
-    \begin{Tupla}[NodoAgente]
-      \tupItem{mismos}{Conj(nat)}%
-      \tupItem{sig}{Puntero(NodoAgente)}%
+      \tupItem{conMismSanciones}{itLista(conj(nat))}%
     \end{Tupla}
 
     \begin{Tupla}[tuplaK]
@@ -366,7 +361,7 @@
       \tupItem{columna}{nat}%
     \end{Tupla}
 
-    {\small La idea de la lista enlazada mismSanciones es que guarde en cada nodo a todos aquellos agentes que comparten sanciones, con rapido acceso gracias al Iterador en los datos del agente. El arreglo kSanciones se utiliza para ordenar a los agentes por su cantidad de sanciones en tiempo O(N), y poder buscar a alguno con $K$ sanciones para acceder a aquellos que tienen la misma cantidad via mismSanciones}
+    {\small La idea de la lista enlazada mismSanciones es que guarde en cada posicion a todos aquellos agentes que comparten sanciones, con rapido acceso gracias al Iterador en los datos del agente. El arreglo kSanciones se utiliza para ordenar a los agentes por su cantidad de sanciones en tiempo O(N), y poder buscar a alguno con $K$ sanciones en O(log(N)) para acceder a aquellos que tienen la misma cantidad via mismSanciones}
 
 
   \end{Estructura}
@@ -374,14 +369,20 @@
   Invariante de representacion en castellano:
   \begin{enumerate}
   
-  \item Para toda $p$ de tipo $pos$, si $p$ esta definida en obstaculos, entonces tanto la fila como la columna de $p$ son menores o iguales a $alto$ y $ancho$ respectivamente.
+  \item masVigilante esta definido en agentes.
+  \item masVigilante es el agente con menor numero de placa entre aquellos que tienen mas capturas en el diccionario de agentes.
+  \item Si no hubo sanciones ($\neg$huboSanciones), entonces el arreglo kSanciones representa fielmente a todos los agentes con sus respectivas sanciones segun el diccionario.
+  \item Los agentes de la lista mismSanciones son exactamente los definidos en diccionario de agentes.
+  \item No se repiten los agentes en conjuntos de distintos items de la lista.
+  \item Para todo item de la lista mismSanciones, y para todo agente dentro del conjunto del item, la cantidad de sanciones es igual al resto del conjunto, y diferente a otros items de la lista.
   
   \end{enumerate}
 
   \Rep[estr][e]{
   
   \begin{enumerate}
-  \item ($\forall$ $p$ : pos) $p$ $\in$ claves(e.obstaculos) $\implies$ ( p.fila $\leq$ c.alto $\land$ p.columna $\leq$ c.ancho )
+  \item def?(e.masVigilante, e.as) $\yluego$
+  \item ($\forall$ $a$ : nat) def?($a$, e.as) $\impluego$ 
   \end{enumerate}
   
   }\mbox{}
