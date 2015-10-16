@@ -333,19 +333,42 @@
 
 \begin{Representacion}
   
-  \Titulo{Representación de la lista}
+  \Titulo{Representación de los Agentes}
 
-  \begin{Estructura}{campus}[estr]
+  \begin{Estructura}{agentes}[estr]
     \begin{Tupla}[estr]
-      \tupItem{alto}{nat}%
-      \tupItem{ancho}{nat}%
-      \tupItem{obstaculos}{matriz(bool)}%
+      \tupItem{info}{DiccRapido(datos)}%
+      \tupItem{masVig}{nat}%
+      \tupItem{huboSanciones}{bool}%
+      \tupItem{mismSanciones}{ListaEnlazada(NodoAgente)}%
+      \tupItem{kSanciones}{Arreglo(tuplaK)}%
     \end{Tupla}
 
-    \begin{Tupla}[pos]
+    \begin{Tupla}[datos]
+      \tupItem{sanciones}{nat}%
+      \tupItem{pos}{posicion}%
+      \tupItem{capturas}{nat}%
+      \tupItem{conMismSanciones}{Iterador(ListaEnlazada)}%
+    \end{Tupla}
+
+    \begin{Tupla}[NodoAgente]
+      \tupItem{mismos}{Conj(nat)}%
+      \tupItem{sig}{Puntero(NodoAgente)}%
+    \end{Tupla}
+
+    \begin{Tupla}[tuplaK]
+      \tupItem{sanciones}{nat}%
+      \tupItem{placa}{nat}%
+    \end{Tupla}
+
+    \begin{Tupla}[posicion]
       \tupItem{fila}{nat}%
       \tupItem{columna}{nat}%
     \end{Tupla}
+
+    {\small La idea de la lista enlazada mismSanciones es que guarde en cada nodo a todos aquellos agentes que comparten sanciones, con rapido acceso gracias al Iterador en los datos del agente. El arreglo kSanciones se utiliza para ordenar a los agentes por su cantidad de sanciones en tiempo O(N), y poder buscar a alguno con $K$ sanciones para acceder a aquellos que tienen la misma cantidad via mismSanciones}
+
+
   \end{Estructura}
 
   Invariante de representacion en castellano:
