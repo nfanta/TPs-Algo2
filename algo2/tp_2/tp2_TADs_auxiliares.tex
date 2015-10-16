@@ -1,0 +1,133 @@
+\documentclass[8pt, a4paper]{article}
+\usepackage[paper=a4paper, left=1cm, right=1cm, bottom=1cm, top=3cm]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{indentfirst}
+\usepackage{fancyhdr}
+\usepackage{latexsym}
+\usepackage{lastpage}
+\usepackage{aed2-symb,aed2-itef,aed2-tad}
+\usepackage[colorlinks=true, linkcolor=blue]{hyperref}
+\usepackage{calc}
+\usepackage{ascii}
+
+\newcommand{\f}[1]{\text{#1}}
+\renewcommand{\paratodo}[2]{$\forall~#2$: #1}
+
+\sloppy
+
+\hypersetup{%
+ % Para que el PDF se abra a página completa.
+ pdfstartview= {FitH \hypercalcbp{\paperheight-\topmargin-1in-\headheight}},
+ pdfauthor={Cátedra de Algoritmos y Estructuras de Datos II - DC - UBA},
+ pdfkeywords={TADs básicos},
+ pdfsubject={Tipos abstractos de datos básicos}
+}
+
+\parskip=5pt % 10pt es el tama\textbf{?}ño de fuente
+
+% Pongo en 0 la distancia extra entre ítemes.
+\let\olditemize\itemize
+\def\itemize{\olditemize\itemsep=0pt}
+
+% Acomodo fancyhdr.
+\pagestyle{fancy}
+\thispagestyle{fancy}
+\addtolength{\headheight}{1pt}
+\lhead{Algoritmos y Estructuras de Datos II}
+\rhead{$2^{\mathrm{do}}$ cuatrimestre de 2015}
+\cfoot{\thepage /\pageref{LastPage}}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\author{Algoritmos y Estructuras de Datos II, DC, UBA.}
+\date{}
+\title{Trabajo Practico II, Alta Seguridad nos cuida}
+
+\begin{document}
+
+%Pagina de titulo e indice
+\thispagestyle{empty}
+
+\maketitle
+\tableofcontents
+
+\newpage
+
+
+\section{TAD \tadNombre{Agentes}}
+
+TAD \tadNombre{posicion} ES \tadNombre{$\langle $nat$, $nat$ \rangle$}
+~
+
+\begin{tad}{\tadNombre{Agentes}}
+
+\tadGeneros{agentes}
+\tadExporta{agentes, Generadores, Observadores Basicos, masVigilante, conMismasSanciones, conKSanciones, estaAgente}
+\tadUsa{\tadNombre{Nat, Conj($\alpha$), Bool, Tupla($\alpha_1, \ldots, \alpha_n$), placa, Diccionario(clave, significado)}}
+
+\tadObservadores
+
+\tadOperacion{agentes?}{agentes}{conj(placa)}{}
+\tadOperacion{posicionAgente}{placa \ $a$, agentes \ $as$}{posicion}{$a$ $\in$ agentes?($as$)}
+\tadOperacion{sancionesAgente}{placa \ $a$, agentes \ $as$}{nat}{$a$ $\in$ agentes?($as$)}
+\tadOperacion{capturasAgente}{placa \ $a$, agentes \ $as$}{nat}{$a$ $\in$ agentes?($as$)}
+
+\tadGeneradores
+
+\tadOperacion{nuevoAgentes}{dicc(placa {,} posicion) \ $d$}{agentes}{$\neg$$\emptyset$?(claves($d$))}
+\tadOperacion{agregarSancion}{placa \ $a$, agentes \ $as$}{posicion}{$a$ $\in$ agentes?($as$)}
+\tadOperacion{cambiarPos}{placa \ $a$, posicion \ $p$, agentes \ $as$}{posicion}{$a$ $\in$ agentes?($as$)}
+\tadOperacion{agregarCaptura}{placa \ $a$, agentes \ $as$}{posicion}{$a$ $\in$ agentes?($as$)}
+
+\tadOtrasOperaciones
+
+\tadOperacion{masVigilante}{agentes}{placa}{}
+\tadOperacion{conMismasSanciones}{placa \ $a$, agentes \ $as$}{conj(placa)}{$a$ $\in$ agentes?($as$)}
+\tadOperacion{conKSanciones}{nat, agentes}{conj(placa)}{}
+\tadOperacion{estaAgente}{placa \ $a$, agentes \ $as$}{bool}{}
+
+\tadAxiomas[
+\paratodo{agentes}{as}
+\paratodo{placa}{a}
+\paratodo{nat}{k}
+\paratodo{diccionario(placa, posicion)}{d}
+\paratodo{posicion}{p}
+\paratodo{conj(placa)}{cAs}
+]
+
+\tadAxioma{agentes?(nuevoAgentes($d$))}{claves($d$)}
+\tadAxioma{agentes?(agregarSancion($a$, $as$))}{agentes?($as$)}
+\tadAxioma{agentes?(cambiarPos($a$, $p$, $as$))}{agentes?($as$)}
+\tadAxioma{agentes?(agregarCaptura($a$, $as$))}{agentes?($as$)}
+
+\tadAxioma{posicionAgente($a$, nuevoAgentes($d$))}{obtener($a$, $d$)}
+\tadAxioma{posicionAgente($a$, agregarSancion($a$, $as$))}{posicionAgente($a$, $as$)}
+\tadAxioma{posicionAgente($a$, cambiarPos($a$, $p$, $as$))}{$p$}
+\tadAxioma{posicionAgente($a$, agregarCaptura($a$, $as$))}{posicionAgente($a$, $as$)}
+
+\tadAxioma{sancionesAgente($a$, nuevoAgentes($d$))}{0}
+\tadAxioma{sancionesAgente($a$, agregarSancion($a$, $as$))}{1 + sancionesAgente($a$, $as$)}
+\tadAxioma{sancionesAgente($a$, cambiarPos($a$, $p$, $as$))}{sancionesAgente($a$, $as$)}
+\tadAxioma{sancionesAgente($a$, agregarCaptura($a$, $as$))}{sancionesAgente($a$, $as$)}
+
+\tadAxioma{capturasAgente($a$, nuevoAgentes($d$))}{0}
+\tadAxioma{capturasAgente($a$, agregarSancion($a$, $as$))}{capturasAgente($a$, $as$)}
+\tadAxioma{capturasAgente($a$, cambiarPos($a$, $p$, $as$))}{capturasAgente($a$, $as$)}
+\tadAxioma{capturasAgente($a$, agregarCaptura($a$, $as$))}{1 + capturasAgente($a$, $as$)}
+
+\tadAxioma{masVigilante($as$)}{conMenorPlaca(conKCapturas( maxCapturas(agentes?($as$), $as$), agentes?($as$), $as$), $as$)}
+\tadAxioma{conMismasSanciones($a$, $as$)}{agentesConKSanciones(sancionesAgente($a$, $as$), agentes?($as$), $as$)}
+\tadAxioma{conKSanciones($k$, $as$)}{agentesConKSanciones($k$, agentes?($as$), $as$)}
+\tadAxioma{estaAgente($a$, $as$)}{$a$ $\in$ agentes?($as$)}
+
+\tadAxioma{conMenorPlaca($cAs, as$)}{\IF $\#(cAs)$ = 1 THEN dameUno($cAs$) ELSE min(dameUno($cAs$), conMenorPlaca(sinUno($cAs$), $as$)) FI}
+\tadAxioma{maxCapturas($cAs, as$)}{\IF $\emptyset$?($as$) THEN 0 ELSE max(capturasAgente(dameUno($cAs$), $as$), maxCapturas(sinUno($cAs$), $as$)) FI}
+\tadAxioma{conKCapturas($k, cAs, as$)}{\IF $\emptyset$?($as$) THEN $\emptyset$ ELSE {\IF capturasAgente(dameUno($cAs$), $as$) $= k$ THEN Ag(dameUno($as$), conKCapturas($k$, sinUno($cAs$), $as$)) ELSE conKCapturas($k$, sinUno($cAs$), $as$) FI} FI}
+
+\tadAxioma{agentesConKSanciones($k, cAs, as$)}{\IF $\emptyset$?($as$) THEN $\emptyset$ ELSE {\IF sancionesAgente(dameUno($cAs$), $as$) $= k$ THEN Ag(dameUno($as$), agentesConKSanciones($k$, sinUno($cAs$), $as$)) ELSE agentesConKSanciones($k$, sinUno($cAs$), $as$) FI} FI}
+
+\end{tad}
+
+
+\end{document}
