@@ -7,6 +7,11 @@
 \usepackage{xargs}
 \usepackage{ifthen}
 \usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage[]{algorithm2e}
+
+\SetKwInput{KwData}{Complejidad}
+\SetAlgorithmName{Algoritmo}{Algoritmo}{Lista de algoritmos}
+\SetAlCapSkip{1em}
 
 
 \newcommand{\moduloNombre}[1]{\textbf{#1}}
@@ -244,5 +249,157 @@
 
 
 \end{Representacion}
+
+
+\section{Módulo Agentes}
+
+
+\begin{Interfaz}
+  
+  \textbf{se explica con}: \tadNombre{Agentes}
+
+  \textbf{géneros}: \TipoVariable{agentes}
+
+  \Titulo{Operaciones básicas de agentes}
+
+  \InterfazFuncion{NuevoAgentes}{\In{as}{dicc(placa, posicion)}}{agentes}%
+  [true]
+  {$res \igobs$ nuevo($as$)}%
+  [O(N$a$) //Revisar al hacer algoritmo]
+  [Crea un nuevo contenedor de Agentes con los agentes contenidos en $as$. N$a$ es la cantidad de agentes definidos en $as$]
+
+  \InterfazFuncion{AgregarSancion}{\In{a}{placa}, \Inout{as}{agentes}}{}%
+  [estaAgente($a, as$) $\land$ as = $as_{0}$]
+  {$as \igobs$ agregarSancion($a, as_{0}$)}%
+  [$\Theta(1)$]
+  [Agrega una sancion al agente $a$]
+
+  \InterfazFuncion{AgregarSancion}{\In{a}{placa}, \In{p}{posicion}, \Inout{as}{agentes}}{}%
+  [estaAgente($a, as$) $\land$ as = $as_{0}$]
+  {$as \igobs$ cambiarPos($a, p, as_{0}$)}%
+  [$\Theta(1)$]
+  [Modifica la posicion del agente $a$, para que sea $p$]
+
+  \InterfazFuncion{AgregarCaptura}{\In{a}{placa}, \Inout{as}{agentes}}{}%
+  [estaAgente($a, as$) $\land$ as = $as_{0}$]
+  {$as \igobs$ agregarCaptura($a, as_{0}$)}%
+  [$\Theta(1)$]
+  [Agrega una captura al agente $a$]
+
+  \InterfazFuncion{PosAgente}{\In{a}{placa}, \In{as}{agentes}}{posicion}%
+  [estaAgente($a, as$)]
+  {$res \igobs$ posicionAgente($a, as$)}%
+  [$\Theta(1)$]
+  [Devuelve la posicion actual del agente $a$]
+
+  \InterfazFuncion{PosAgente}{\In{a}{placa}, \In{as}{agentes}}{posicion}%
+  [estaAgente($a, as$)]
+  {$res \igobs$ posicionAgente($a, as$)}%
+  [$\Theta(1)$]
+  [Devuelve la posicion actual del agente $a$]
+
+  \InterfazFuncion{SancionesAgente}{\In{a}{placa}, \In{as}{agentes}}{nat}%
+  [estaAgente($a, as$)]
+  {$res \igobs$ sancionesAgente($a, as$)}%
+  [$\Theta(1)$]
+  [Devuelve las sanciones actuales del agente $a$]
+
+  \InterfazFuncion{CapturasAgente}{\In{a}{placa}, \In{as}{agentes}}{nat}%
+  [estaAgente($a, as$)]
+  {$res \igobs$ capturasAgente($a, as$)}%
+  [$\Theta(1)$]
+  [Devuelve la cantidad de capturas actuales del agente $a$]
+
+  \InterfazFuncion{MasVigilante}{\In{as}{agentes}}{placa}%
+  [true]
+  {$res \igobs$ masVigilante($as$)}%
+  [$\Theta(1)$]
+  [Devuelve el agente que mas capturas tiene en $as$. Si hubiera mas de uno, devuelve el de menor placa.]
+
+  \InterfazFuncion{ConMismasSanciones}{\In{a}{placa}, \In{as}{agentes}}{conj(placa)}%
+  [estaAgente($a, as$)]
+  {$res \igobs$ conMismasSanciones($a, as$)}%
+  [$\Theta(1)$]
+  [Devuelve el conjunto de agentes que tienen la misma cantidad de sanciones que el agente $a$]
+
+  \InterfazFuncion{ConKSanciones}{\In{k}{nat}, \In{as}{agentes}}{conj(placa)}%
+  [true]
+  {$res \igobs$ conKSanciones($k, as$)}%
+  [O(N$a$) la primera vez, O(log(N$a$)) en siguientes llamadas mientras no ocurran sanciones.]
+  [Devuelve el conjunto de agentes que tienen exactamente $k$ sanciones. N$a$ es la cantidad de agentes definidos en $as$]
+
+
+\end{Interfaz}
+
+\begin{Representacion}
+  
+  \Titulo{Representación de la lista}
+
+  \begin{Estructura}{campus}[estr]
+    \begin{Tupla}[estr]
+      \tupItem{alto}{nat}%
+      \tupItem{ancho}{nat}%
+      \tupItem{obstaculos}{matriz(bool)}%
+    \end{Tupla}
+
+    \begin{Tupla}[pos]
+      \tupItem{fila}{nat}%
+      \tupItem{columna}{nat}%
+    \end{Tupla}
+  \end{Estructura}
+
+  Invariante de representacion en castellano:
+  \begin{enumerate}
+  
+  \item Para toda $p$ de tipo $pos$, si $p$ esta definida en obstaculos, entonces tanto la fila como la columna de $p$ son menores o iguales a $alto$ y $ancho$ respectivamente.
+  
+  \end{enumerate}
+
+  \Rep[estr][e]{
+  
+  \begin{enumerate}
+  \item ($\forall$ $p$ : pos) $p$ $\in$ claves(e.obstaculos) $\implies$ ( p.fila $\leq$ c.alto $\land$ p.columna $\leq$ c.ancho )
+  \end{enumerate}
+  
+  }\mbox{}
+
+  \AbsFc[estr]{campus}[e]{c : campus / \\
+    ($\forall$ $p$ : pos) def?($p$, e.obstaculos) $\igobs$ ocupada?($p$, c) $\land$ 
+    alto($c$) $\igobs$ e.alto $\land$
+    ancho($c$) $\igobs$ e.ancho}
+
+\end{Representacion}
+
+  \begin{Algoritmos}
+
+\textbf{Algoritmos de Campus}
+  \listofalgorithms
+    
+  \begin{algorithm}[h]
+    \text{$i$NuevoCampus(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
+
+    \Begin{
+      res.computadoras $\leftarrow $ vacio() \hfill \textbf{//O(1)}\\
+      res.mapa $\leftarrow $ vacia() \hfill \textbf{//O(1)}\\
+      res.indexToString $\leftarrow $ vacia() \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+
+    \caption{NuevoCampus}    
+  \end{algorithm}
+
+  \begin{algorithm}[h]
+    \text{$i$AgregarObstaculo(\In{p}{pos}, \Inout{e}{estr})}
+
+    \Begin{
+      Colocar($p$, $true$, e.obstaculos) \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+
+    \caption{AgregarObstaculo}
+  \end{algorithm}
+
+  \end{Algoritmos}
+
 
 \end{document}
