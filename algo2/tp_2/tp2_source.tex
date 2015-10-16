@@ -337,7 +337,7 @@
 
   \begin{Estructura}{agentes}[estr]
     \begin{Tupla}[estr]
-      \tupItem{as}{DiccRapido(datos)}%
+      \tupItem{as}{DiccRapido(placa, datos)}%
       \tupItem{masVig}{nat}%
       \tupItem{huboSanciones}{bool}%
       \tupItem{mismSanciones}{lista(conj(nat))}%
@@ -413,10 +413,13 @@
   \tadAxioma{MSCadaItemTieneDifSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i+1$])) $\impluego$ obtener($a$, e.as) $<$ obtener($a'$, e.as)}
   ~
   
-  \AbsFc[estr]{agentes}[e]{c : agentes / \\
-    ($\forall$ $p$ : pos) def?($p$, e.obstaculos) $\igobs$ ocupada?($p$, c) $\land$ 
-    alto($c$) $\igobs$ e.alto $\land$
-    ancho($c$) $\igobs$ e.ancho}
+  \AbsFc[estr]{agentes}[e]{$as$ : agentes / \\
+    ($\forall$ $a$ : placa) def?($a$, e.as) $\iff$ $a$ $\in$ agentes?($as$) $\yluego$ \\
+    ($\forall$ $a$ : placa) def?($a$, e.as) $\impluego$ \\
+    ( obtener($a$, e.as).sanciones $\igobs$ sancionesAgente($a$, $as$) $\land$ \\
+    obtener($a$, e.as).capturas $\igobs$ capturasAgente($a$, $as$) $\land$ \\
+    obtener($a$, e.as).pos $\igobs$ posicionAgente($a$, $as$) $\land$ )
+    }
 
 \end{Representacion}
 
