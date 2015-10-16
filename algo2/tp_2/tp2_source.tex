@@ -372,9 +372,9 @@
   \item masVigilante esta definido en agentes.
   \item masVigilante es el agente con menor numero de placa entre aquellos que tienen mas capturas en el diccionario de agentes.
   \item Si no hubo sanciones ($\neg$huboSanciones), entonces el arreglo kSanciones representa fielmente a todos los agentes con sus respectivas sanciones segun el diccionario.
-  \item Los agentes de la lista mismSanciones son exactamente los definidos en diccionario de agentes.
-  \item No se repiten los agentes en conjuntos de distintos items de la lista.
-  \item Para todo item de la lista mismSanciones, y para todo agente dentro del conjunto del item, la cantidad de sanciones es igual al resto del conjunto, y diferente a otros items de la lista.
+  \item Los agentes de la lista mismSanciones no estan repetidos, y son exactamente los definidos en diccionario de agentes.
+  %\item No se repiten los agentes en conjuntos de distintos items de la lista.
+  \item Para todo item de la lista mismSanciones, y para todo agente dentro del conjunto del item, la cantidad de sanciones es igual al resto del conjunto, y menor al de todos los agentes de items siguientes.
   
   \end{enumerate}
 
@@ -382,12 +382,38 @@
   
   \begin{enumerate}
   \item def?(e.masVigilante, e.as) $\yluego$
-  \item ($\forall$ $a$ : nat) def?($a$, e.as) $\impluego$ 
+  \item (($\forall$ $a$ : nat) def?($a$, e.as) $\impluego$ (obtener($a$, e.as).capturas $=$ obtener(e.masVigilante, e.as).capturas $\land$ $a$ $>$ e.masVigilante) $\lor$ (obtener($a$, e.as).capturas $<$ obtener(e.masVigilante, e.as).capturas) $\lor$ ($a$ $=$ e.masVigilante)) $\land$
+  \item ($\neg$(e.huboSanciones) $\implies$ CorrespondenSanciones(e) $\land$ SancionesOrdenadas(e) $\land$ PlacasValidas(e)) $\land$
+  \item ( \ (($\forall$ $i$ : nat) $i <$ Longitud(e.mismSanciones) $\impluego$ MSDefinidosEnDicc(e,$i$)) $\land$ DiccDefinidosEnMSYNoRepetidos(e) \ ) $\yluego$
+  \item ( \ ($\forall$ $i$ : nat) ($i <$ Longitud(e.mismSanciones) $\impluego$ MSTieneMismSanciones(e, $i$)) $\land$ \\ ($i <$ (Longitud(e.mismSanciones) $- 1$) $\impluego$ MSCadaItemTieneDifSanciones(e,$i$)) \ )
   \end{enumerate}
   
   }\mbox{}
-
-  \AbsFc[estr]{campus}[e]{c : campus / \\
+  {Reemplazos sintacticos: }
+  ~      
+  % \tadOperacion{CorrespondenSanciones}{estr/e}{bool}{}
+  \tadAxioma{CorrespondenSanciones($e$)}{($\forall$ $i$ : nat) $i$ $<$ Tam(e.kSanciones) $\impluego$ e.kSanciones[$i$].sanciones $=$ obtener(e.kSanciones[$i$].placa, e.as).sanciones}
+  ~      
+  % \tadOperacion{SancionesOrdenadas}{estr/e}{bool}{}
+  \tadAxioma{SancionesOrdenadas($e$)}{($\forall$ $i$ : nat) $i$ $<$ (Tam(e.kSanciones)$-1$) $\impluego$ e.kSanciones[$i$].sanciones $\leq$ e.kSanciones[$i+1$].sanciones}
+  ~      
+  % \tadOperacion{PlacasValidas}{estr/e}{bool}{}
+  \tadAxioma{PlacasValidas($e$)}{($\forall$ $i$ : nat) $i$ $<$ Tam(e.kSanciones) $\impluego$ (($\forall$ $i'$ : nat) $i'$ $<$ Tam(e.kSanciones) $\land$ $\neg$($i = i'$) $\impluego$ $\neg$(e.kSanciones[$i$].placa = e.kSanciones[$i'$].placa))}
+  ~      
+  % \tadOperacion{MSDefinidosEnDicc}{estr/e, nat/i}{bool}{}
+  \tadAxioma{MSDefinidosEnDicc($e$, $i$)}{($\forall$ $a$ : nat) En($a$, e.mismSanciones[$i$]) $\implies$ def?($a$, e.as)}
+  ~      
+  %\tadOperacion{DiccDefinidosEnMSYNoRepetidos}{estr/e}{bool}{}
+  \tadAxioma{DiccDefinidosEnMSYNoRepetidos($e$)}{($\forall$ $a$ : nat) def?($a$, e.as) $\implies$ (($\exists!$ $i$ : nat) i $<$ Longitud(e.mismSanciones) $\impluego$ En($a$, e.mismSanciones[$i$]))}
+  ~      
+  %\tadOperacion{MSTieneMismSanciones}{estr/e, nat/i}{bool}{}
+  \tadAxioma{MSTieneMismSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i$]) $\land$ $\neg$($a = a'$)) $\impluego$ obtener($a$, e.as) $=$ obtener($a'$, e.as)}
+  ~      
+  %\tadOperacion{MSCadaItemTieneDifSanciones}{estr/e, nat/i}{bool}{}
+  \tadAxioma{MSCadaItemTieneDifSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i+1$])) $\impluego$ obtener($a$, e.as) $<$ obtener($a'$, e.as)}
+  ~
+  
+  \AbsFc[estr]{agentes}[e]{c : agentes / \\
     ($\forall$ $p$ : pos) def?($p$, e.obstaculos) $\igobs$ ocupada?($p$, c) $\land$ 
     alto($c$) $\igobs$ e.alto $\land$
     ancho($c$) $\igobs$ e.ancho}
