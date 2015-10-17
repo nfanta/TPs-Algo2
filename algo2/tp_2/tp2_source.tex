@@ -145,11 +145,12 @@
   [O(N$a$) //Revisar al hacer algoritmo]
   [Crea un nuevo contenedor de Agentes con los agentes contenidos en $as$. N$a$ es la cantidad de agentes definidos en $as$]
 
-  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{itConj(placa)}%
+  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{conj(placa)}%
   [true]
   {$res \igobs$ agentes?($as$)}%
   [$\Theta(1)$]
   [Me devuelve un conjunto de todos los agentes definidos en $as$]
+  [$res$ es una referencia constante a un conj(placa).]
 
   \InterfazFuncion{AgregarSancion}{\In{a}{placa}, \Inout{as}{agentes}}{}%
   [estaAgente($a, as$) $\land$ as = $as_{0}$]
@@ -349,10 +350,10 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: itConj}
+    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: conj(nat)}
   
     \Begin{
-      res $\leftarrow$ CrearIt(as.claves) \hfill \textbf{//O(1)}
+      res $\leftarrow$ as.claves \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
   
