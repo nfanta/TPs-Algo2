@@ -12,6 +12,7 @@
 \SetKwInput{KwData}{Complejidad}
 \SetKwInput{KwComm}{Comentarios}
 \SetKw{ret}{return}
+\SetKw{var}{var \normalfont}
 \SetAlgorithmName{Algoritmo}{Algoritmo}{\large Lista de algoritmos}
 \SetAlCapSkip{1em}
 
@@ -283,9 +284,10 @@
 
   \bigskip
   \AbsFc[estr]{campus}[e]{c : campus / \\
-    ($\forall$ $p$ : pos) def?($p$, e.obstaculos) $\igobs$ ocupada?($p$, c) $\land$ 
+    ($\forall$ $p$ : pos) ocupada?($p$, e.obstaculos) $\igobs$ ocupada?($p$, c) $\land$ 
     alto($c$) $\igobs$ e.alto $\land$
     ancho($c$) $\igobs$ e.ancho}
+  \textit{\tiny El primer $ocupada?$ es de modulo Matriz, el segundo es de TAD Campus}
   \bigskip
 
 \end{Representacion}
@@ -303,9 +305,9 @@
     \Begin{
       res.alto $\leftarrow$ al \hfill \textbf{//O(1)}\\
       res.ancho $\leftarrow$ an \hfill \textbf{//O(1)}\\
-      res.obstaculos $\leftarrow$ vacio() \hfill \textbf{//O($n^{2}$)}
+      res.obstaculos $\leftarrow$ vacio() \hfill \textbf{//O(al * an)}
     }
-    \KwData{$O(n^{2})$}
+    \KwData{$O(al * an)$}
   
     \caption{nombre}
   \end{algorithm}
@@ -455,12 +457,33 @@
     \text{$i$Vecinos(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(bool)}
   
     \Begin{
-      res $\leftarrow$ vecinos($p$, e.obstaculos) \hfill \textbf{//O(1)}
+      \var{\normalfont v1, v2, v3, v4 : pos}\\
+      v1 $\leftarrow$ <p.fila - 1, p.columna> \hfill \textbf{//O(1)}\\
+      v2 $\leftarrow$ <p.fila + 1, p.columna> \hfill \textbf{//O(1)}\\
+      v3 $\leftarrow$ <p.fila, p.columna - 1> \hfill \textbf{//O(1)}\\
+      v4 $\leftarrow$ <p.fila, p.columna + 1> \hfill \textbf{//O(1)}\\
+      res $\leftarrow$ Vacio() \hfill \textbf{//O(1)}\\
+
+      \If(\hfill \textbf{//O(1)}){PosValida?(v1, e)}
+      {Agregar(v1, e)  \hfill \textbf{//O(1)}}
+      \\
+
+      \If(\hfill \textbf{//O(1)}){PosValida?(v2, e)}
+      {Agregar(v2, e)  \hfill \textbf{//O(1)}}
+      \\
+
+      \If(\hfill \textbf{//O(1)}){PosValida?(v3, e)}
+      {Agregar(v3, e)  \hfill \textbf{//O(1)}}
+      \\
+
+      \If(\hfill \textbf{//O(1)}){PosValida?(v4, e)}
+      {Agregar(v4, e)  \hfill \textbf{//O(1)}}
+      
 
       \ret{res}
     }
+
     \KwData{$O(1)$}
-    \KwComm{La funcion vecinos que se llama, es la perteneciente al modulo matriz}
   
     \caption{Vecinos}
   \end{algorithm}
@@ -472,13 +495,10 @@
     \text{$i$Distancia(\In{p_{0}}{pos}, \In{p_{1}}{pos}, \In{e}{estr}) $\rightarrow$ res: nat}
   
     \Begin{
-      res $\leftarrow$ distancia($p_{0}, p_{1}$, e.obstaculos) \hfill \textbf{//O(1)}\\
-      
-      \ret{res}
+      \ret{\normalfont |p_{1}.fila - p_{2}.fila| + |p_{1}.columna - p_{2}.columna| \hfill \textbf{//O(1)}\\}
     }
     \KwData{$O(1)$}
-    \KwComm{La funcion distancia que se llama, es la perteneciente al modulo matriz}
-  
+    
     \caption{Distancia}
   \end{algorithm}
   \rule{17.5cm}{0.4pt}
@@ -489,12 +509,27 @@
     \text{$i$ProxPosicion(\In{p}{pos}, \In{d}{dir}, \In{e}{estr}) $\rightarrow$ res: pos}
   
     \Begin{
-      res $\leftarrow$ proxPosicion($p, d$, e.obstaculo) \hfill \textbf{//O(1)}
-
-      \ret{res}
+      \If(\hfill \textbf{//O(1)}){d == $izq$}
+      {
+        \ret{<p.fila - 1, p.columna>}\hfill \textbf{//O(1)}\\ 
+        \Else{
+          \If(\hfill \textbf{//O(1)}){d == $izq$}
+          {
+            \ret{<p.fila + 1, p.columna>}\hfill \textbf{//O(1)}\\
+            \Else{
+              \If(\hfill \textbf{//O(1)}){d == $arriba$}
+              {
+                \ret{<p.fila, p.columna - 1>}\hfill \textbf{//O(1)}\\
+                \Else{
+                  \ret{<p.fila, p.columna + 1>}\hfill \textbf{//O(1)}
+                }
+              }
+            }
+          }
+        }
+      }
     }
     \KwData{$O(1)$}
-    \KwComm{La funcion proxPosicion que se llama, es la perteneciente al modulo matriz}
 
     \caption{ProxPosicion}
   \end{algorithm}
@@ -506,12 +541,23 @@
     \text{$i$ingresosMasCercano(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(pos)}
   
     \Begin{
-      res $\leftarrow$ ingresosMasCercano($p$, e.obstaculos) \hfill \textbf{//O(1)}
+      res $\leftarrow$ Vacio()\\
+
+      \If(\hfill \textbf{//O(1)}){distancia($p, <p.fila, 1>$) $<$ distancia($p, <p.fila, e.alto>$) }
+      {\ret{Agregar($<p.fila, 1>$, res)} \hfill \textbf{//O(1)} \\
+        \Else{
+         \If(\hfill \textbf{//O(1)}){distancia($p, <p.fila, 1>$) $>$ distancia($p, <p.fila, e.alto>$) }
+         {\ret{ Agregar($<p.fila, e.alto>$, res)} \hfill \textbf{//O(1)}\\
+          \Else{Agregar($<p.fila, 1>$, res) \hfill \textbf{//O(1)}\\
+                Agregar($<p.fila, alto>$, res) \hfill \textbf{//O(1)}\\
+          }
+         }
+        }
+      }
 
       \ret{res}
     }
     \KwData{$O(1)$}
-    \KwComm{La funcion ingresosMasCercano que se llama, es la perteneciente al modulo matriz}
   
     \caption{ingresosMasCercano}
   \end{algorithm}
