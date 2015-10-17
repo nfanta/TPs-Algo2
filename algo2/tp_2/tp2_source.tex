@@ -290,231 +290,234 @@
 
 \end{Representacion}
 
-  \begin{Algoritmos}
+\begin{Algoritmos}
 
-    % \textbf{Algoritmos de Campus}
-    \listofalgorithms
-    \newpage
+  % \textbf{Algoritmos de Campus}
+  \listofalgorithms
+  \newpage
+  
+
+  \begin{algorithm}[H]
+    \text{$i$NuevoCampus(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
+  
+    \Begin{
+      res.alto $\leftarrow$ al \hfill \textbf{//O(1)}\\
+      res.ancho $\leftarrow$ an \hfill \textbf{//O(1)}\\
+      res.obstaculos $\leftarrow$ vacio() \hfill \textbf{//O($n^{2}$)}
+    }
+    \KwData{$O(n^{2})$}
+  
+    \caption{nombre}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$AgregarObstaculo(\In{p}{pos}, \Inout{e}{estr})}
     
+    \Begin{
+      Colocar($p$, $true$, e.obstaculos) \hfill \textbf{//O(1)}
+    }
+    \KwData{$O(1)$}
 
-    \begin{algorithm}[H]
-      \text{$i$NuevoCampus(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
+    \caption{AgregarObstaculo}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$Filas(\In{e}{estr}) $\rightarrow$ res: nat}
     
-      \Begin{
-        res.alto $\leftarrow$ al \hfill \textbf{//O(1)}\\
-        res.ancho $\leftarrow$ an \hfill \textbf{//O(1)}\\
-        res.obstaculos $\leftarrow$ vacio() \hfill \textbf{//O($n^{2}$)}
-      }
-      \KwData{$O(n^{2})$}
+    \Begin{
+      res $\leftarrow$ e.alto \hfill \textbf{//O(1)}\\
+      \ret{res}
+    }
+    \KwData{$O(1)$}
     
-      \caption{nombre}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
+    \caption{Filas}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
 
 
-    \begin{algorithm}[H]
-      \text{$i$AgregarObstaculo(\In{p}{pos}, \Inout{e}{estr})}
+  \begin{algorithm}[H]
+    \text{$i$Columnas(\In{e}{estr}) $\rightarrow$ res: nat}
+    
+    \Begin{
+      res $\leftarrow$ e.ancho \hfill \textbf{//O(1)}\\
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+    
+    \caption{Columnas}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$Ocupada?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
+  
+    \Begin{
+      res $\leftarrow$ Ocupada?($p$, e.obstaculos) \hfill \textbf{//O(1)}\\
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+    \KwComm{La funcion ocupada? que se llama, es la perteneciente al modulo matriz}
+  
+    \caption{Ocupada?}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$PosValida(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
+  
+    \Begin{
+      res $\leftarrow$ true \hfill \textbf{//O(1)}
+
+      \If(\hfill \textbf{//O(1)}){p.fila > e.alto $\lor$ p.columna > e.ancho}
+        {res $\leftarrow$ false \hfill \textbf{//O(1)}}
+      \If(\hfill \textbf{//O(1)}){0 < p.fila $\lor$ 0 < p.columna}
+        {res $\leftarrow$ false \hfill \textbf{//O(1)}}
+
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+  
+    \caption{PosValida}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$EsIngreso?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
+  
+    \Begin{
+      res $\leftarrow$ false \hfill \textbf{//O(1)}
+
+      \If(\hfill \textbf{//O(1)}){ingresoSuperior($p, e$) $\lor$ ingresoInferior($p, e$)}
+        {res $\leftarrow$ true \hfill \textbf{//O(1)}}
+
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+  
+    \caption{EsIngreso?}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$IngresoSuperior?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
+  
+    \Begin{
+      res $\leftarrow$ false \hfill \textbf{//O(1)}
+
+      \If(\hfill \textbf{//O(1)}){p.fila == 1}
+        {res $\leftarrow$ true}
+
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+  
+    \caption{IngresoSuperior?}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$IngresoInferior?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
+  
+    \Begin{
+      res $\leftarrow$ false \hfill \textbf{//O(1)}
+
+      \If(\hfill \textbf{//O(1)}){p.fila == e.alto}
+        {res $\leftarrow$ true}
+
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+  
+    \caption{IngresoInferior?}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$Vecinos(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(bool)}
+  
+    \Begin{
+      res $\leftarrow$ vecinos($p$, e.obstaculos) \hfill \textbf{//O(1)}
+
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+    \KwComm{La funcion vecinos que se llama, es la perteneciente al modulo matriz}
+  
+    \caption{Vecinos}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$Distancia(\In{p_{0}}{pos}, \In{p_{1}}{pos}, \In{e}{estr}) $\rightarrow$ res: nat}
+  
+    \Begin{
+      res $\leftarrow$ distancia($p_{0}, p_{1}$, e.obstaculos) \hfill \textbf{//O(1)}\\
       
-      \Begin{
-        Colocar($p$, $true$, e.obstaculos) \hfill \textbf{//O(1)}
-      }
-      \KwData{$O(1)$}
-
-      \caption{AgregarObstaculo}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-    \begin{algorithm}[H]
-      \text{$i$Filas(\In{e}{estr}) $\rightarrow$ res: nat}
-      
-      \Begin{
-        res $\leftarrow$ e.alto \hfill \textbf{//O(1)}\\
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-      
-      \caption{Filas}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+    \KwComm{La funcion distancia que se llama, es la perteneciente al modulo matriz}
+  
+    \caption{Distancia}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
 
 
-    \begin{algorithm}[H]
-      \text{$i$Columnas(\In{e}{estr}) $\rightarrow$ res: nat}
-      
-      \Begin{
-        res $\leftarrow$ e.ancho \hfill \textbf{//O(1)}\\
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-      
-      \caption{Columnas}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
+  \begin{algorithm}[H]
+    \text{$i$ProxPosicion(\In{p}{pos}, \In{d}{dir}, \In{e}{estr}) $\rightarrow$ res: pos}
+  
+    \Begin{
+      res $\leftarrow$ proxPosicion($p, d$, e.obstaculo) \hfill \textbf{//O(1)}
+
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+    \KwComm{La funcion proxPosicion que se llama, es la perteneciente al modulo matriz}
+
+    \caption{ProxPosicion}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
 
 
-    \begin{algorithm}[H]
-      \text{$i$Ocupada?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
-    
-      \Begin{
-        res $\leftarrow$ Ocupada?($p$, e.obstaculos) \hfill \textbf{//O(1)}\\
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-      \KwComm{La funcion Ocupada que se llama, es la del modulo matriz}
-    
-      \caption{Ocupada?}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
+  \begin{algorithm}[H]
+    \text{$i$ingresosMasCercano(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(pos)}
+  
+    \Begin{
+      res $\leftarrow$ ingresosMasCercano($p$, e.obstaculos) \hfill \textbf{//O(1)}
 
+      \ret{res}
+    }
+    \KwData{$O(1)$}
+    \KwComm{La funcion ingresosMasCercano que se llama, es la perteneciente al modulo matriz}
+  
+    \caption{ingresosMasCercano}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
 
-    \begin{algorithm}[H]
-      \text{$i$PosValida(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
-    
-      \Begin{
-        res $\leftarrow$ true \hfill \textbf{//O(1)}
-
-        \If(\hfill \textbf{//O(1)}){p.fila > e.alto $\lor$ p.columna > e.ancho}
-          {res $\leftarrow$ false \hfill \textbf{//O(1)}}
-        \If(\hfill \textbf{//O(1)}){0 < p.fila $\lor$ 0 < p.columna}
-          {res $\leftarrow$ false \hfill \textbf{//O(1)}}
-
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-    
-      \caption{PosValida}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-    \begin{algorithm}[H]
-      \text{$i$EsIngreso?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
-    
-      \Begin{
-        res $\leftarrow$ false \hfill \textbf{//O(1)}
-
-        \If(\hfill \textbf{//O(1)}){ingresoSuperior($p, e$) $\lor$ ingresoInferior($p, e$)}
-          {res $\leftarrow$ true \hfill \textbf{//O(1)}}
-
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-    
-      \caption{EsIngreso?}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-    \begin{algorithm}[H]
-      \text{$i$IngresoSuperior?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
-    
-      \Begin{
-        res $\leftarrow$ false \hfill \textbf{//O(1)}
-
-        \If(\hfill \textbf{//O(1)}){p.fila == 1}
-          {res $\leftarrow$ true}
-
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-    
-      \caption{IngresoSuperior?}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-    \begin{algorithm}[H]
-      \text{$i$IngresoInferior?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
-    
-      \Begin{
-        res $\leftarrow$ false \hfill \textbf{//O(1)}
-
-        \If(\hfill \textbf{//O(1)}){p.fila == e.alto}
-          {res $\leftarrow$ true}
-
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-    
-      \caption{IngresoInferior?}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-    \begin{algorithm}[H]
-      \text{$i$Vecinos(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(bool)}
-    
-      \Begin{
-        res $\leftarrow$ vecino($p$, e.obstaculos) \hfill \textbf{//O(1)}
-
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-    
-      \caption{Vecinos}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-    \begin{algorithm}[H]
-      \text{$i$Distancia(\In{p_{0}}{pos}, \In{p_{1}}{pos}, \In{e}{estr}) $\rightarrow$ res: nat}
-    
-      \Begin{
-        res $\leftarrow$ distancia($p_{0}, p_{1}$, e.obstaculos) \hfill \textbf{//O(1)}\\
-        
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-    
-      \caption{Distancia}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-    \begin{algorithm}[H]
-      \text{$i$ProxPosicion(\In{p}{pos}, \In{d}{dir}, \In{e}{estr}) $\rightarrow$ res: pos}
-    
-      \Begin{
-        res $\leftarrow$ proxPosicion($p, d$, e.obstaculo) \hfill \textbf{//O(1)}
-
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-    
-      \caption{ProxPosicion}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-    \begin{algorithm}[H]
-      \text{$i$ingresosMasCercano(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(pos)}
-    
-      \Begin{
-        res $\leftarrow$ ingresosMasCercano($p$, e.obstaculos) \hfill \textbf{//O(1)}
-
-        \ret{res}
-      }
-      \KwData{$O(1)$}
-    
-      \caption{ingresosMasCercano}
-    \end{algorithm}
-    \rule{17.5cm}{0.4pt}
-    \bigskip
-
-
-  \end{Algoritmos}
+\end{Algoritmos}
 
 \end{document}
