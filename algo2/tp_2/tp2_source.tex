@@ -7,7 +7,11 @@
 \usepackage{xargs}
 \usepackage{ifthen}
 \usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage[]{algorithm2e}
 
+\SetKwInput{KwData}{Complejidad}
+\SetAlgorithmName{Algoritmo}{Algoritmo}{Lista de algoritmos}
+\SetAlCapSkip{1em}
 
 \newcommand{\moduloNombre}[1]{\textbf{#1}}
 
@@ -35,7 +39,7 @@
   \textbf{Pre} $\equiv$ \{#4\}\\%
   \textbf{Post} $\equiv$ \{#5\}%
   \ifx#6\empty\else\\\textbf{Complejidad:} #6\fi%
-  \ifx#7\empty\else\\\textbf{Descripción:} #7\fi%
+  \ifx#7\empty\else\\\textbf{DescripciÃ³n:} #7\fi%
   \ifx#8\empty\else\\\textbf{Aliasing:} #8\fi%
   \ifx#9\empty\else\\\textbf{Requiere:} #9\fi%
 }
@@ -48,7 +52,7 @@
 
 \newenvironment{Representacion}{%
   \vspace*{2ex}%
-  \noindent\textbf{\Large Representación}%
+  \noindent\textbf{\Large RepresentaciÃ³n}%
   \vspace*{2ex}%
 }{}
 
@@ -120,129 +124,225 @@
 
 \begin{document}
 
-\section{Módulo Lista Enlazada($\alpha$)}
+\section{MÃ³dulo Campus Seguro}
 
 
 \begin{Interfaz}
   
-  \textbf{parámetros formales}\hangindent=2\parindent\\
-  \parbox{1.7cm}{\textbf{géneros}} $\alpha$\\
-  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
-    \InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
-    {$res \igobs a$}
-    [$\Theta(copy(a))$]
-    [función de copia de $\alpha$'s]
-  }
+  \textbf{se explica con}: \tadNombre{Campus Seguro}
 
-  \textbf{se explica con}: \tadNombre{Secuencia$(\alpha)$}, \tadNombre{Iterador Bidireccional($\alpha$)}.
+  \textbf{gÃ©neros}: \TipoVariable{campseg}
 
-  \textbf{géneros}: \TipoVariable{lista$(\alpha)$}, \TipoVariable{itLista($\alpha$)}.
+  \Titulo{Operaciones bÃ¡sicas de Campus Seguro}
 
-  \Titulo{Operaciones básicas de lista}
+  \InterfazFuncion{NuevoCampus}{\In{C}{campus}, \In{dA}{dicc(Ag$X$ pos)}}{campseg}%
+  [($\forall $a$ \in Agente $) (def?(a,dA)  $\implicaluego$ (PosValida?(obtener(a,dA)) $\land$ $\neg$ ocupada?(obtener(a,dA),c) $\land$ ($\forall $a_{0},a_{1}$ \in Agente $) (def?(a_{0},dA) $\land$ def?(a_{1},dA) $\implicaluego$ obtener((a_{0},dA)) !$\equal$ obtener((a_{1},dA))] 
+  {$res \igobs$ comenzarRastrillaje(c,dA)}%
+  [$\Theta(1)$ -poner todos los agentes en el hash O(Na) y asignar campus O(1) ]
+  [Crea un nuevo campus seguro con un campus y un diccionario de agentes, posicion]
 
-  \InterfazFuncion{Vacía}{}{lista$(\alpha)$}%
-  {$res \igobs \secuencia{}$}%
+  \InterfazFuncion{ingresarEstudiante}{\In{e}{nombre},\In{p}{pos} , \Inout{c}{campseg}}{}
+  [$\neg$ (e $\in$ (estudiantes($c$) \ U \ hippies($c$))) $\land$  esIngreso?($p, campus(c)$) $\land$ \ $\neg$ estaOcupada?(p,c) \ $\land$ \ $c \igobs c_{0}$ ]
+  {$c$ $\igobs$ ingresarEstudiante($e, p, c_{0}$)}
+  [La complejidad es agregarlo a estudiantes o hippies y sancionar a los que corresponda O(*long e*)]
+  [Ingresa un estudiante en una posicion valida]
+  []
+
+  \InterfazFuncion{ingresarHippie}{\In{e}{nombre},\In{p}{pos} , \Inout{c}{campseg}}{}
+  [$\neg$ (e $\in$ (estudiantes($c$) \ U \ hippies($c$))) $\land$  esIngreso?($p, campus(c)$) $\land$ \ $\neg$ estaOcupada?(p,c) \ $\land$ \ $c \igobs c_{0}$ ]
+  {$c$ $\igobs$ ingresarHippie($e, p, c_{0}$)}
+  [La complejidad es agregarlo a estudiantes o hippies y sancionar a los que corresponda O(*long e*)]
+  [Ingresa un hippie en una posicion valida]
+  []
+
+
+
+  \InterfazFuncion{moverEstudiantes}{\In{e}{nombre},\In{d}{dir},\Inout{c}{campseg}}{}
+  [e $\in$ (estudiantes($c$) $\land$ (seRetira(e,d,c) $\or$ posValida?(proxPosicion(posEstudianteYHippie(e,c),d,campus(c)),campus(c)) $\land$ $\neg$ estaOcupada?(proxPosicion(posEstudianteYHippie(e,c),d,campus(c)),campus(c),c) $\land$ $c \igobs c_{0}$ ]
+  {$c \igobs$ moverEstudiante(e,d,$c_{0}$)}
+  [Complejidad longitud del nombre!]
+  [Muevo un estudiante!]
+  []
+
+  \InterfazFuncion{moverHippie}{\In{h}{nombre},\Inout{c}{campseg}}{}
+  [h $\in$ (hippie($c$) $\land$ $\neg$ todasOcupadas?(vecinos(posEstudianteHippie(h,c),campus(c),c)) $\land$ $c \igobs c_{0}$]
+  {$c \igobs$ moverHippie(h,$c_{0}$}
+  [Complejidad longitud del nombre! mas la cantidad de estudiantes]
+  [Muevo un hippie]
+  []
+
+
+  \InterfazFuncion{moverAgente}{\In{a}{agente},\Inout{c}{campseg}}{}
+  [a $\in$ (agentes($c$) $\luego$ cantSanciones(a,c) $\leq$ 3 $\land$  $\neg$ todasOcupadas?(vecinos(posAgente(a,c),campus(c),c)) $\land$ $c \igobs c_{0}$]
+  {$c \igobs$ moverAgente(a, $c_{0}$)}
+  []
+  [Muevo un agente que no esta con mas de 3 sanciones]
+  []
+
+  \InterfazFuncion{campus}{\In{c}{campseg}}{campus}
+  [true]
+  {$res \igobs$ campus(c)}
   [$\Theta(1)$]
-  [genera una lista vacía.]
+  [Devuelvo una referencia a campus]
+  []
 
-  \InterfazFuncion{AgregarAdelante}{\Inout{l}{lista($\alpha$)}, \In{a}{$\alpha$}}{itLista($\alpha$}
-  [$l \igobs l_0$]
-  {$l \igobs \secuencia{a}[l_0]$ $\land$ $res$ $=$ CrearItBi(\secuencia{}, $l$) $\land$ alias(SecuSuby($res$) $=$ $l$)}
-  [$\Theta(copy(a))$]
-  [agrega el elemento $a$ como primer elemento de la lista.  Retorna un iterador a $l$, de forma tal que Siguiente devuelva $a$.]
-  [el elemento $a$ agrega por copia. El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
-
- 
-  \Titulo{Operaciones del iterador}
-
-  \InterfazFuncion{CrearIt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
-  {$res$ $\igobs$ crearItBi(\secuencia{}, $l$) $\land$ alias(SecuSuby($it$) $=$ $l$)}
+  \InterfazFuncion{estudiantes}{\In{c}{campseg}}{Itconj}
+  [true]
+  {$res \igobs$ crearIT(estudiantes(c))}
   [$\Theta(1)$]
-  [crea un iterador bidireccional de la lista, de forma tal que al pedir \NombreFuncion{Siguiente} se obtenga el primer elemento de $l$.]
-  [el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  [Devuelvo un iterador a conjunto.]
+  []
 
-  \InterfazFuncion{CrearItUlt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
-  {$res$ $\igobs$ crearItBi($l$, \secuencia{}) $\land$ alias(SecuSuby($it$) $=$ $l$)}
+   \InterfazFuncion{hippies}{\In{c}{campseg}}{Itconj}
+  [true]
+  {$res \igobs$ crearIT(hippies(c))}
   [$\Theta(1)$]
-  [crea un iterador bidireccional de la lista, de forma tal que al pedir \NombreFuncion{Anterior} se obtenga el último elemento de $l$.]  
-  [el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  [Devuelvo un iterador a conjunto.]
+  []
+
+   \InterfazFuncion{agentes}{\In{c}{campseg}}{Itconj}
+  [true]
+  {$res \igobs$ crearIT(agentes(c))}
+  [$\Theta(1)$]
+  [Devuelvo un iterador a conjunto.]
+  []
+
+ \InterfazFuncion{posEstudianteYHippies}{\In{n}{nombre},\In{c}{campseg}}{pos}
+  [(n $\in$ (estudiantes($c$) \ U \ hippies($c$))]
+  {$res \igobs$ posEstudianteYHippies(n,c)}
+  [$\Theta(longitud del input)$]
+  [Pregunto por la posicion de un estudiante o hippie]
+  []
+
+ \InterfazFuncion{posAgente}{\In{a}{agente},\In{c}{campseg}}{pos}
+  [(a $\in$ agentes($c$)]
+  {$res \igobs$ posAgente(a,c)}
+  [$\Theta(1)$]
+  [Pregunto por la posicion de un agente]
+  []
+
+  \InterfazFuncion{cantSanciones}{\In{a}{agente},\In{c}{campseg}}{nat}
+  [(a $\in$ agentes($c$)]
+  {$res \igobs$ cantSanciones(a,c)}
+  [$\Theta(1)$]
+  [Pregunto por la cant de sanciones de un agente]
+  []
+
+    \InterfazFuncion{cantHippiesAtrapados}{\In{a}{agente},\In{c}{campseg}}{nat}
+  [(a $\in$ agentes($c$)]
+  {$res \igobs$ cantHippiesAtrapados(a,c)}
+  [$\Theta(1)$]
+  [Pregunto por la cant de hippies atrapados de un agente]
+  []
+
+ \InterfazFuncion{cantHippies}{\In{c}{campseg}}{nat}
+  [true]
+  {$res \igobs$ cantHippies(c)}
+  []
+  [Pregunto por la cant de hippies]
+  []
+
+   \InterfazFuncion{cantEstudiantes}{\In{c}{campseg}}{nat}
+  [true]
+  {$res \igobs$ cantEstudiantes(c)}
+  []
+  [Pregunto por la cant de estudiantes]
+  []
+
+  \InterfazFuncion{masVigilante}{\In{c}{campseg}}{agente}
+  [true]
+  {$res \igobs$ masVigilante(c)}
+  []
+  [Pregunto por la cant de estudiantes]
+  []
+
+   \InterfazFuncion{conMismasSanciones}{\In{a}{agente},\In{c}{campseg}}{conj(agentes)}
+  [(a $\in$ agentes($c$)]
+  {$res \igobs$ conMismasSanciones(c)}
+  [tiene que ser O(1) en caso promedio]
+  [Devuelve al conj de agentes con la misma cantidad de sanciones]
+  []
+
+  \InterfazFuncion{conKSanciones}{\In{k}{nat},\In{c}{campseg}}{conj(agentes)}
+  [true]
+  {$res \igobs$ conKSanciones(c)}
+  []
+  [Devuelve al conj de agentes con k sanciones]
+  []
 
 \end{Interfaz}
 
 \begin{Representacion}
   
-  \Titulo{Representación de la lista}
+  \Titulo{RepresentaciÃ³n del Campus Seguro}
 
-  \begin{Estructura}{lista$(\alpha)$}[lst]
-    \begin{Tupla}[lst]
-      \tupItem{primero}{puntero(nodo)}%
-      \tupItem{longitud}{nat}%
+  \begin{Estructura}{Campus Seguro}[estr]
+    \begin{Tupla}[estr]
+      \tupItem{campus}{Campus}%
+      \tupItem{HipYEst}{HippiesYEstudiantes}%
+      \tupItem{agentes}{Agentes}%
+      \tupItem{posOcupadasHippies}{Matriz(nombre)}%
+      \tupItem{posOcupadasEstudiantes}{Matriz(nombre)}%
+      \tupItem{posOcupadasAgentes}{Matriz(placa)}%
     \end{Tupla}
 
-    \begin{Tupla}[nodo]
-      \tupItem{dato}{$\alpha$}%
-      \tupItem{anterior}{puntero(nodo)}%
-      \tupItem{siguiente}{puntero(nodo)}%
-    \end{Tupla}
-  \end{Estructura}
-
-  \Rep[lst][l]{($l$.primero $=$ NULL) $=$ ($l$.longitud $=$ $0$) $\yluego$ ($l$.longitud $\neq$ $0$ \impluego \\
-    Nodo($l$, $l$.longitud) $=$ $l$.primero $\land$ \\
-    ($\forall i$: nat)(Nodo($l$,$i$)\DRef siguiente $=$ Nodo($l$,$i+1$)\DRef anterior) $\land$ \\
-    ($\forall i$: nat)($1 \leq i <$ $l$.longitud $\implies$ Nodo($l$,$i$) $\neq$ $l$.primero)}\mbox{}
-
-  ~      
-
-  \tadOperacion{Nodo}{lst/l,nat}{puntero(nodo)}{$l$.primero $\neq$ NULL}
-  \tadAxioma{Nodo($l$,$i$)}{\IF $i = 0$ THEN $l$.primero ELSE Nodo(FinLst($l$), $i-1$) FI}
-
-  ~
-
-  \tadOperacion{FinLst}{lst}{lst}{}
-  \tadAxioma{FinLst($l$)}{Lst($l$.primero\DRef siguiente, $l$.longitud $-$ $\min$\{$l$.longitud, $1$\})}
-
-  ~
-
-  \tadOperacion{Lst}{puntero(nodo),nat}{lst}{}
-  \tadAxioma{Lst($p,n$)}{$\langle p, n\rangle$}
-
-  ~
- 
-  \AbsFc[lst]{secu($\alpha$)}[l]{\IF $l$.longitud $=$ $0$ THEN \secuencia{} ELSE \secuencia{$l$.primero\DRef dato}[Abs(FinLst($l$))] FI}
-
-  \Titulo{Representación del iterador}
-
-  \begin{Estructura}{itLista($\alpha$)}[iter]
-    \begin{Tupla}[iter]
-      \tupItem{siguiente}{puntero(nodo)}%
-      \tupItem{lista}{puntero(lst)}%
+    \begin{Tupla}[pos]
+      \tupItem{fila}{nat}%
+      \tupItem{columna}{nat}%
     \end{Tupla}
   \end{Estructura}
 
-  \Rep[iter][it]{Rep($\ast$($it$.lista)) $\yluego$ ($it$.siguiente $=$ NULL $\oluego$ ($\exists i$: nat)(Nodo($\ast it$.lista, $i$) $=$ $it$.siguiente)}
+  Invariante de representacion en castellano:
+  \begin{enumerate}
+  
+  \item Para toda $p$ de tipo $pos$, si $p$ esta definida en obstaculos, entonces tanto la fila como la columna de $p$ son menores o iguales a $alto$ y $ancho$ respectivamente.
+  
+  \end{enumerate}
 
-  ~
+  \Rep[estr][e]{
+  
+  \begin{enumerate}
+  \item ($\forall$ $p$ : pos) $p$ $\in$ claves(e.obstaculos) $\implies$ ( p.fila $\leq$ c.alto $\land$ p.columna $\leq$ c.ancho )
+  \end{enumerate}
+  
+  }\mbox{}
 
-  \Abs[iter]{itBi($\alpha$)}[it]{b}{Siguientes($b$) $=$ Abs(Sig($it$.lista, $it$.siguiente)) $\land$\\
-    Anteriores($b$) $=$ Abs(Ant($it$.lista, $it$.siguiente))}
-
-  ~
-
-  \tadOperacion{Sig}{puntero(lst)/l,puntero(nodo)/p}{lst}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Sig($i, p$)}{Lst($p$, $l$\DRef longitud $-$ Pos($\ast l$, $p$))}
-
-  ~
-
-  \tadOperacion{Ant}{puntero(lst)/l,puntero(nodo)/p}{lst}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Ant($i, p$)}{Lst(\IF $p$ $=$ $l$\DRef primero THEN NULL ELSE $l$\DRef primero FI, Pos($\ast l$, $p$))}
-
-  ~
-
-  {\small Nota: cuando $p$ $=$ NULL, Pos devuelve la longitud de la lista, lo cual está bien, porque significa que el iterador no tiene siguiente.}
-  \tadOperacion{Pos}{lst/l,puntero(nodo)/p}{puntero(nodo)}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Pos($l$,$p$)}{\IF $l$.primero $=$ $p$ $\lor$ $l$.longitud $=$ $0$ THEN $0$ ELSE $1$ $+$ Pos(FinLst($l$), $p$) FI}
-
+  \AbsFc[estr]{campus}[e]{c : campus / \\
+    ($\forall$ $p$ : pos) def?($p$, e.obstaculos) $\igobs$ ocupada?($p$, c) $\land$ 
+    alto($c$) $\igobs$ e.alto $\land$
+    ancho($c$) $\igobs$ e.ancho}
 
 \end{Representacion}
+
+  \begin{Algoritmos}
+
+\textbf{Algoritmos de Campus}
+  \listofalgorithms
+    
+  \begin{algorithm}[h]
+    \text{$i$NuevoCampus(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
+
+    \Begin{
+      res.computadoras $\leftarrow $ vacio() \hfill \textbf{//O(1)}\\
+      res.mapa $\leftarrow $ vacia() \hfill \textbf{//O(1)}\\
+      res.indexToString $\leftarrow $ vacia() \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+
+    \caption{NuevoCampus}    
+  \end{algorithm}
+
+  \begin{algorithm}[h]
+    \text{$i$AgregarObstaculo(\In{p}{pos}, \Inout{e}{estr})}
+
+    \Begin{
+      Colocar($p$, $true$, e.obstaculos) \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+
+    \caption{AgregarObstaculo}
+  \end{algorithm}
+
+  \end{Algoritmos}
 
 \end{document}
