@@ -128,16 +128,16 @@
 \begin{document}
 
 
-\section{Módulo Agentes}
+\section{Modulo Agentes}
 
 
 \begin{Interfaz}
   
   \textbf{se explica con}: \tadNombre{Agentes}
 
-  \textbf{géneros}: \TipoVariable{agentes}
+  \textbf{generos}: \TipoVariable{agentes}
 
-  \Titulo{Operaciones básicas de agentes}
+  \Titulo{Operaciones basicas de agentes}
 
   \InterfazFuncion{NuevoAgentes}{\In{as}{dicc(placa, posicion)}}{agentes}%
   [$\neg$ $\emptyset$?(claves($as$))]
@@ -145,7 +145,7 @@
   [O(N$a$) //Revisar al hacer algoritmo]
   [Crea un nuevo contenedor de Agentes con los agentes contenidos en $as$. N$a$ es la cantidad de agentes definidos en $as$]
 
-  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{conj(placa)}%
+  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{itConj(placa)}%
   [true]
   {$res \igobs$ agentes?($as$)}%
   [$\Theta(1)$]
@@ -212,7 +212,7 @@
 
 \begin{Representacion}
   
-  \Titulo{Representación de los Agentes}
+  \Titulo{Representacion de los Agentes}
 
   \begin{Estructura}{agentes}[estr]
     \begin{Tupla}[estr]
@@ -310,7 +310,7 @@
   \listofalgorithms
   
   \begin{algorithm}[H]
-    \text{$i$NuevoAgentes(\In{d}{DiccRapido(placa,datos)}) $\rightarrow$ res: estr}
+    \text{$i$NuevoAgentes(\In{d}{DiccRapido(placa,posicion)}) $\rightarrow$ res: estr}
   
     \Begin{
       var \\
