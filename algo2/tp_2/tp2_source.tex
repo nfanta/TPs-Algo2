@@ -280,7 +280,7 @@
   [$\Theta(1)$]
   [Agrega una sancion al agente $a$]
 
-  \InterfazFuncion{AgregarSancion}{\In{a}{placa}, \In{p}{posicion}, \Inout{as}{agentes}}{}%
+  \InterfazFuncion{CambiarPosicion}{\In{a}{placa}, \In{p}{posicion}, \Inout{as}{agentes}}{}%
   [estaAgente($a, as$) $\land$ as = $as_{0}$]
   {$as \igobs$ cambiarPos($a, p, as_{0}$)}%
   [$\Theta(1)$]
@@ -337,7 +337,8 @@
 
   \begin{Estructura}{agentes}[estr]
     \begin{Tupla}[estr]
-      \tupItem{as}{DiccRapido(placa, datos)}%
+      \tupItem{as}{DiccRapido(nat, datos)}%
+      \tupItem{claves}{conj(nat)}
       \tupItem{masVig}{nat}%
       \tupItem{huboSanciones}{bool}%
       \tupItem{mismSanciones}{lista(conj(nat))}%
@@ -345,8 +346,8 @@
     \end{Tupla}
 
     \begin{Tupla}[datos]
-      \tupItem{sanciones}{nat}%
       \tupItem{pos}{posicion}%
+      \tupItem{sanciones}{nat}%
       \tupItem{capturas}{nat}%
       \tupItem{conMismSanciones}{itLista(conj(nat))}%
     \end{Tupla}
@@ -369,6 +370,7 @@
   Invariante de representacion en castellano:
   \begin{enumerate}
   
+  \item $claves$ son las claves del diccionario $as$
   \item masVigilante esta definido en agentes.
   \item masVigilante es el agente con menor numero de placa entre aquellos que tienen mas capturas en el diccionario de agentes.
   \item Si no hubo sanciones ($\neg$huboSanciones), entonces el arreglo kSanciones representa fielmente a todos los agentes con sus respectivas sanciones segun el diccionario.
@@ -381,6 +383,7 @@
   \Rep[estr][e]{
   
   \begin{enumerate}
+  \item ( ($\forall$ $a$ : nat) def?($a$, e.as) $\implies$ En($a$, e.claves) ) $\land$
   \item def?(e.masVigilante, e.as) $\yluego$
   \item (($\forall$ $a$ : nat) def?($a$, e.as) $\impluego$ (obtener($a$, e.as).capturas $=$ obtener(e.masVigilante, e.as).capturas $\land$ $a$ $>$ e.masVigilante) $\lor$ (obtener($a$, e.as).capturas $<$ obtener(e.masVigilante, e.as).capturas) $\lor$ ($a$ $=$ e.masVigilante)) $\land$
   \item ($\neg$(e.huboSanciones) $\implies$ CorrespondenSanciones(e) $\land$ SancionesOrdenadas(e) $\land$ PlacasValidas(e)) $\land$
@@ -392,7 +395,7 @@
   {Reemplazos sintacticos: }
   ~      
   % \tadOperacion{CorrespondenSanciones}{estr/e}{bool}{}
-  \tadAxioma{CorrespondenSanciones($e$)}{($\forall$ $i$ : nat) $i$ $<$ Tam(e.kSanciones) $\impluego$ e.kSanciones[$i$].sanciones $=$ obtener(e.kSanciones[$i$].placa, e.as).sanciones}
+  \tadAxioma{CorrespondenSanciones($e$)}{($\forall$ $i$ : nat) $i$ $<$ Tam(e.kSanciones) $\impluego$ e.kSanciones[$i$].sanciones $=$ Obtener(e.kSanciones[$i$].placa, e.as).sanciones}
   ~      
   % \tadOperacion{SancionesOrdenadas}{estr/e}{bool}{}
   \tadAxioma{SancionesOrdenadas($e$)}{($\forall$ $i$ : nat) $i$ $<$ (Tam(e.kSanciones)$-1$) $\impluego$ e.kSanciones[$i$].sanciones $\leq$ e.kSanciones[$i+1$].sanciones}
@@ -401,56 +404,159 @@
   \tadAxioma{PlacasValidas($e$)}{($\forall$ $i$ : nat) $i$ $<$ Tam(e.kSanciones) $\impluego$ (($\forall$ $i'$ : nat) $i'$ $<$ Tam(e.kSanciones) $\land$ $\neg$($i = i'$) $\impluego$ $\neg$(e.kSanciones[$i$].placa = e.kSanciones[$i'$].placa))}
   ~      
   % \tadOperacion{MSDefinidosEnDicc}{estr/e, nat/i}{bool}{}
-  \tadAxioma{MSDefinidosEnDicc($e$, $i$)}{($\forall$ $a$ : nat) En($a$, e.mismSanciones[$i$]) $\implies$ def?($a$, e.as)}
+  \tadAxioma{MSDefinidosEnDicc($e$, $i$)}{($\forall$ $a$ : nat) En($a$, e.mismSanciones[$i$]) $\implies$ Def?($a$, e.as)}
   ~      
   %\tadOperacion{DiccDefinidosEnMSYNoRepetidos}{estr/e}{bool}{}
-  \tadAxioma{DiccDefinidosEnMSYNoRepetidos($e$)}{($\forall$ $a$ : nat) def?($a$, e.as) $\implies$ (($\exists!$ $i$ : nat) i $<$ Longitud(e.mismSanciones) $\impluego$ En($a$, e.mismSanciones[$i$]))}
+  \tadAxioma{DiccDefinidosEnMSYNoRepetidos($e$)}{($\forall$ $a$ : nat) Def?($a$, e.as) $\implies$ (($\exists!$ $i$ : nat) i $<$ Longitud(e.mismSanciones) $\impluego$ En($a$, e.mismSanciones[$i$]))}
   ~      
   %\tadOperacion{MSTieneMismSanciones}{estr/e, nat/i}{bool}{}
-  \tadAxioma{MSTieneMismSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i$]) $\land$ $\neg$($a = a'$)) $\impluego$ obtener($a$, e.as) $=$ obtener($a'$, e.as)}
+  \tadAxioma{MSTieneMismSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i$]) $\land$ $\neg$($a = a'$)) $\impluego$ Obtener($a$, e.as) $=$ Obtener($a'$, e.as)}
   ~      
   %\tadOperacion{MSCadaItemTieneDifSanciones}{estr/e, nat/i}{bool}{}
-  \tadAxioma{MSCadaItemTieneDifSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i+1$])) $\impluego$ obtener($a$, e.as) $<$ obtener($a'$, e.as)}
+  \tadAxioma{MSCadaItemTieneDifSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i+1$])) $\impluego$ Obtener($a$, e.as) $<$ Obtener($a'$, e.as)}
   ~
   
   \AbsFc[estr]{agentes}[e]{$as$ : agentes / \\
-    ($\forall$ $a$ : placa) def?($a$, e.as) $\iff$ $a$ $\in$ agentes?($as$) $\yluego$ \\
-    ($\forall$ $a$ : placa) def?($a$, e.as) $\impluego$ \\
-    ( obtener($a$, e.as).sanciones $\igobs$ sancionesAgente($a$, $as$) $\land$ \\
-    obtener($a$, e.as).capturas $\igobs$ capturasAgente($a$, $as$) $\land$ \\
-    obtener($a$, e.as).pos $\igobs$ posicionAgente($a$, $as$) $\land$ )
+    ($\forall$ $a$ : placa) Def?($a$, e.as) $\iff$ $a$ $\in$ agentes?($as$) $\yluego$ \\
+    ($\forall$ $a$ : placa) Def?($a$, e.as) $\impluego$ \\
+    ( Obtener($a$, e.as).sanciones $\igobs$ sancionesAgente($a$, $as$) $\land$ \\
+    Obtener($a$, e.as).capturas $\igobs$ capturasAgente($a$, $as$) $\land$ \\
+    Obtener($a$, e.as).pos $\igobs$ posicionAgente($a$, $as$) $\land$ )
     }
 
 \end{Representacion}
 
   \begin{Algoritmos}
 
-\textbf{Algoritmos de Campus}
+\textbf{Algoritmos de Agentes}
   \listofalgorithms
-    
-  \begin{algorithm}[h]
-    \text{$i$NuevoCampus(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
-
+  
+  \begin{algorithm}[H]
+    \text{$i$NuevoAgentes(\In{d}{DiccRapido(placa,datos)}) $\rightarrow$ res: estr}
+  
     \Begin{
-      res.computadoras $\leftarrow $ vacio() \hfill \textbf{//O(1)}\\
-      res.mapa $\leftarrow $ vacia() \hfill \textbf{//O(1)}\\
-      res.indexToString $\leftarrow $ vacia() \hfill \textbf{//O(1)}
+      var \\
+      itAMismSanciones : itConj \\
+      itClavesD : itConj \\
+      res.as $\leftarrow$ DiccRapidoVacio() \hfill \textbf{//O(1)} \\
+      res.claves $\leftarrow$ Claves(d) \hfill \textbf{//O(N)} \\
+      res.masVig $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      res.mismSanciones $\leftarrow$ Vacia() \hfill \textbf{//O(1)} \\
+      AgregarAtras(res.mismSanciones, res.claves) \hfill \textbf{//O(N)} \\
+      itAMismSanciones $\leftarrow$ CrearIt(res.mismSanciones) \hfill \textbf{//O(1)} \\
+
+      itClavesD $\leftarrow$ CrearIt(res.claves) \hfill \textbf{//O(1)} \\
+      \While{HayMas(itClavesD)}{
+        \If(\hfill \textbf{//O(1)}){res.masVig == 0}
+          {res.masVig $\leftarrow$ Actual(itClavesD) \hfill \textbf{//O(1)}}
+        \If(\hfill \textbf{//O(1)}){Actual(itClavesD) $<$ res.masVig}
+          {res.masVig $\leftarrow$ Actual(itClavesD) \hfill \textbf{//O(1)}}
+        Definir (  Actual(itClavesD),  $\langle$ Obtener(Actual(itClavesD), d), 0, 0, 0, itAMismSanciones $\rangle$,  res.as ) \hfill \textbf{//O(1)} \\
+        Avanzar(itClavesD) \hfill \textbf{//O(1)}
+      }
+
+      \hfill \textbf{//while es O(N)} \\
+      res.huboSanciones $\leftarrow$ false \hfill \textbf{//O(1)} \\
+      res.kSanciones $\leftarrow$ CrearArreglo(Longitud(res.claves)) \hfill \textbf{//O(N)}
+    }
+    \KwData{O(N), con N la cantidad de agentes}
+  
+    \caption{NuevoAgentes}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: itConj}
+  
+    \Begin{
+      res $\leftarrow$ CrearIt(as.claves) \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
-
-    \caption{NuevoCampus}    
+  
+    \caption{Agentes?}
   \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
 
-  \begin{algorithm}[h]
-    \text{$i$AgregarObstaculo(\In{p}{pos}, \Inout{e}{estr})}
-
+  \begin{algorithm}[H]
+    \text{$i$AgregarSancion( \In{a}{nat}, \Inout{as}{estr} ) }
+  
     \Begin{
-      Colocar($p$, $true$, e.obstaculos) \hfill \textbf{//O(1)}
+      var \\
+      iteradorLista : itLista \\
+      {\small //Primero, le agrego la sancion directamente sobre el significado (DiccRapido hace aliasing en la operacion Obtener) \\ }
+      Obtener(a, as).sanciones $\leftarrow$ (Obtener(a, as).sanciones + 1) \hfill \textbf{//O(1)} \\
+      as.huboSanciones $\leftarrow$ true \hfill \textbf{//O(1)} \\
+      {\small //Ahora tengo que modificar mismSanciones para que refleje el cambio \\ }
+      iteradorLista $\leftarrow$ Obtener(a, as).conMismSanciones \hfill \textbf{//O(1)} \\
+      {\small //Borro a $a$ del conjunto, porque ya no comparte sanciones con nadie del mismo \\}
+      Borrar(a, Siguiente(iteradorLista)) \hfill \textbf{//O(N), pero se desestima} \\
+      {\small //Me muevo al lugar que le corresponde ahora \\}
+      Avanzar(iteradorLista) \hfill \textbf{//O(1)} \\
+      \eIf(\hfill \textbf{//O(1)}){$\neg$ HaySiguiente(iteradorLista)}
+        {
+        {\small //Si no hay nada, creo un nuevo elemento que solo me tiene a mi \\}
+        AgregarComoSiguiente(iteradorLista, Vacio()) \hfill \textbf{//O(1)} \\
+        Siguiente(iteradorLista).Agregar(a) \hfill \textbf{//O(1)} \\
+        }
+        {
+        \eIf(\hfill \textbf{//O(1)}){Obtener(DameUno(Siguiente(iteradorLista)), as).sanciones $>$ Obtener(a, as).sanciones}
+          {
+          {\small //Si el que esta en el lugar al que iba tiene mas sanciones que yo, me agrego antes para mantener el orden creciente \\}
+          AgregarComoAnterior(iteradorLista, Vacio()) \hfill \textbf{//O(1)} \\
+          Anterior(iteradorLista).Agregar(a) \hfill \textbf{//O(1)} \\
+          Retroceder(iteradorLista) \hfill \textbf{//O(1)} \\
+          }
+          {
+          {\small //Si no, debe tener las mismas (tiene mas que las que yo tenia antes, y yo sume una sancion, a lo sumo tiene la misma cantidad) \\}
+          Siguiente(iteradorLista).Agregar(a) \hfill \textbf{//O(1)}
+          } 
+        }
+      Obtener(a, as).conMismSanciones $\leftarrow$ iteradorLista \hfill \textbf{//O(1)}
+    }
+    \KwData{O(N) | Desestimando el borrado: O(1)}
+  
+    \caption{AgregarSancion}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$CambiarPosicion(\In{a}{nat}, \In{p}{posicion}, \Inout{as}{agentes}) $\rightarrow$ res: estr}
+  
+    \Begin{
+      Obtener(a, as).posicion $\leftarrow$ p \hfill \textbf{//O(1)} \\
     }
     \KwData{O(1)}
-
-    \caption{AgregarObstaculo}
+  
+    \caption{CambiarPosicion}
   \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$AgregarCaptura(\In{a}{nat}, \Inout{as}{agentes}) $\rightarrow$ res: estr}
+  
+    \Begin{
+      Obtener(a, as).capturas $\leftarrow$ (Obtener(a, as).capturas + 1) \hfill \textbf{//O(1)} \\
+      {\small //Ademas de sumar captura, hago el mantenimiento de masVigilante  \\}
+      \eIf(\hfill \textbf{//O(1)}){Obtener(a, as).capturas $>$ Obtener(as.masVigilante, as).capturas}
+        {as.masVigilante $\leftarrow$ a \hfill \textbf{//O(1)}}
+        {
+          \If(\hfill \textbf{//O(1)}){Obtener(a, as).capturas $==$ Obtener(as.masVigilante, as).capturas}
+          {
+            \If(\hfill \textbf{//O(1)}){a $<$ as.masVigilante}
+            {as.masVigilante $\leftarrow$ a \hfill \textbf{//O(1)}}
+          }
+        }
+    }
+    \KwData{O(1)}
+  
+    \caption{AgregarCaptura}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
 
   \end{Algoritmos}
 
