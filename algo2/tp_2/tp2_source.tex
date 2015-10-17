@@ -11,7 +11,8 @@
 
 \SetKwInput{KwData}{Complejidad}
 \SetKwInput{KwComm}{Comentarios}
-\SetAlgorithmName{Algoritmo}{Algoritmo}{Lista de algoritmos}
+\SetKw{ret}{return}
+\SetAlgorithmName{Algoritmo}{Algoritmo}{\large Lista de algoritmos}
 \SetAlCapSkip{1em}
 
 \newcommand{\moduloNombre}[1]{\textbf{#1}}
@@ -123,7 +124,23 @@
 
 \newcommand{\DRef}{\ensuremath{\rightarrow}}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% COMIENZO DEL DOCUMENTO %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 \begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%
+%% MODULO CAMPUS %%
+%%%%%%%%%%%%%%%%%%%
+
+
 
 \section{Módulo Campus}
 
@@ -139,87 +156,96 @@
   \InterfazFuncion{NuevoCampus}{\In{al}{nat}, \In{an}{nat}}{campus}%
   [true]
   {$res \igobs$ crearCampus($al, an$)}%
-  [$\Theta(1)$]
+  [$O(n^{2})$]
   [Crea un nuevo campus vacio de alto $al$ x ancho $an$.]
 
   \InterfazFuncion{AgregarObstaculo}{\In{p}{pos)}, \Inout{c}{campus}}{}
   [posValida($p, c$) $\land$ $\neg$ocupada?($p,c$) $\land$ $c \igobs c_{0}$ ]
   {$c$ $\igobs$ agregarObstaculo($p, c_{0}$)}
-  []
+  [$O(1)$]
   [Agrega un obstaculo al campus $c$ en la posicion $p$.]
   []
 
   \InterfazFuncion{Filas}{\In{c}{campus}}{nat}
   [true]
   {$res \igobs$ filas($c$}
-  []
+  [$O(1)$]
   [Devuelve el alto (filas) del campus $c$.]
   []
 
   \InterfazFuncion{Columnas}{\In{c}{campus}}{nat}
   [true]
   {$res \igobs$ columnas($c$}
-  []
+  [$O(1)$]
   [Devuelve el ancho (columnas) del campus $c$.]
   []
 
   \InterfazFuncion{Ocupada?}{\In{p}{pos}, \In{c}{campus}}{bool}
   [true]
-  {$res \igobs$ posValida?($p, c$)}
+  {$res \igobs$ ocupada?($p, c$)}
+  [$O(1)$]
+  [Devuelve $true$ si la posicion $p$ se encuentra ocupada por algun obstaculo en el campus $c$, sino retorna $false$.]
   []
+
+  \InterfazFuncion{PosValida?}{\In{p}{pos}, \In{c}{campus}}{bool}
+  [true]
+  {$res \igobs$ posValida?($p, c$)}
+  [$O(1)$]
   [Devuelve $true$ si la posicion $p$ es valida en el campus $c$, sino retorna $false$.]
   []
 
   \InterfazFuncion{EsIngreso?}{\In{p}{pos}, \In{c}{campus}}{bool}
   [true]
   {$res \igobs$ esIngreso?($p, c$)}
-  []
+  [$O(1)$]
   [Verifica si la posicion $p$ es una entrada del campus $c$.]
   []
 
   \InterfazFuncion{IngresoSuperior?}{\In{p}{pos}, \In{c}{campus}}{bool}
   [true]
   {$res \igobs$ ingresoSuperior?($p, c$)}
-  []
+  [$O(1)$]
   [Verifica si la posicion $p$ es una entrada superior del campus $c$.]
   []
 
   \InterfazFuncion{IngresoInferior?}{\In{p}{pos}, \In{c}{campus}}{bool}
   [true]
   {$res \igobs$ ingresoInferior?($p, c$)}
-  []
+  [$O(1)$]
   [Verifica si la posicion $p$ es una entrada inferior del campus $c$.]
   []
 
   \InterfazFuncion{Vecinos}{\In{p}{pos}, \In{c}{campus}}{conj($pos$)}
   [posValida($p, c$)]
   {$res \igobs$ vecinos($p, c$)}
-  []
+  [$O(1)$]
   [Devuelve un conjunto de las posiciones que rodean a $p$ en el campus $c$]
   []
 
   \InterfazFuncion{Distancia}{ \In{p_{0}}{pos}, \In{p_{1}}{pos}, \In{c}{campus}}{nat}
   [true]
   {$res \igobs$ distancia($p_{0}$, $p_{1}$, $c$)}
-  []
+  [$O(1)$]
   [Devuelve la distancia, en casilleros, desde la posicion $p_{0}$ a la posicion $p_{1}$.]
   []
 
   \InterfazFuncion{ProxPosicion}{\In{p}{pos}, \In{d}{dir}, \In{c}{campus}}{pos}
   [posValida($p, c$)]
   {$res \igobs$ proxPosicion($p, d, c$)}
-  []
+  [$O(1)$]
   [Indica la posicion que se encuentra al lado de $p$, en la direccion $d$.]
   []
 
-  \InterfazFuncion{Obstaculos}{\In{c}{campus}}{conj($pos$)}
-  [true]
-  {$res \igobs$ obstaculos($c$)}
-  []
-  [Devuelve un conjunto que contiene todas las posiciones ocupadas por obstaculos en el campus $c$. EXTENDER TAD.]
+  \InterfazFuncion{IngresosMasCercanos}{\In{p}{pos}, \In{c}{campus}}{conj($pos$)}
+  [posValida?($p, c$)]
+  {$res \igobs$ ingresosMasCercanos($p, c$)}
+  [$O(1)$]
+  [Devuelve un conjunto que contiene las posiciones de los ingresos mas cercanos a $p$ en el campus $c$.]
 
 
 \end{Interfaz}
+\bigskip
+
 
 \begin{Representacion}
   
@@ -238,13 +264,15 @@
     \end{Tupla}
   \end{Estructura}
 
-  Invariante de representacion en castellano:
+  \bigskip
+  \textbf{Invariante de representacion en castellano:}
   \begin{enumerate}
   
   \item Para toda $p$ de tipo $pos$, si $p$ esta definida en obstaculos, entonces tanto la fila como la columna de $p$ son menores o iguales a $alto$ y $ancho$ respectivamente.
   
   \end{enumerate}
 
+  \bigskip
   \Rep[estr][e]{
   
   \begin{enumerate}
@@ -253,31 +281,33 @@
   
   }\mbox{}
 
+  \bigskip
   \AbsFc[estr]{campus}[e]{c : campus / \\
     ($\forall$ $p$ : pos) def?($p$, e.obstaculos) $\igobs$ ocupada?($p$, c) $\land$ 
     alto($c$) $\igobs$ e.alto $\land$
     ancho($c$) $\igobs$ e.ancho}
+  \bigskip
 
 \end{Representacion}
 
   \begin{Algoritmos}
 
-    \textbf{Algoritmos de Campus}
+    % \textbf{Algoritmos de Campus}
     \listofalgorithms
     \newpage
     
 
     \begin{algorithm}[H]
       \text{$i$NuevoCampus(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
-      
+    
       \Begin{
-        res.computadoras $\leftarrow $ vacio() \hfill \textbf{//O(1)}\\
-        res.mapa $\leftarrow $ vacia() \hfill \textbf{//O(1)}\\
-        res.indexToString $\leftarrow $ vacia() \hfill \textbf{//O(1)}
+        res.alto $\leftarrow$ al \hfill \textbf{//O(1)}\\
+        res.ancho $\leftarrow$ an \hfill \textbf{//O(1)}\\
+        res.obstaculos $\leftarrow$ vacio() \hfill \textbf{//O($n^{2}$)}
       }
-      \KwData{O(1)}
-
-      \caption{NuevoCampus}    
+      \KwData{$O(n^{2})$}
+    
+      \caption{nombre}
     \end{algorithm}
     \rule{17.5cm}{0.4pt}
     \bigskip
@@ -289,7 +319,7 @@
       \Begin{
         Colocar($p$, $true$, e.obstaculos) \hfill \textbf{//O(1)}
       }
-      \KwData{O(1)}
+      \KwData{$O(1)$}
 
       \caption{AgregarObstaculo}
     \end{algorithm}
@@ -301,9 +331,10 @@
       \text{$i$Filas(\In{e}{estr}) $\rightarrow$ res: nat}
       
       \Begin{
-        res $\leftarrow$ e.alto \hfill \textbf{//O(1)}
+        res $\leftarrow$ e.alto \hfill \textbf{//O(1)}\\
+        \ret{res}
       }
-      \KwData{O(1)}
+      \KwData{$O(1)$}
       
       \caption{Filas}
     \end{algorithm}
@@ -315,9 +346,10 @@
       \text{$i$Columnas(\In{e}{estr}) $\rightarrow$ res: nat}
       
       \Begin{
-        res $\leftarrow$ e.ancho \hfill \textbf{//O(1)}
+        res $\leftarrow$ e.ancho \hfill \textbf{//O(1)}\\
+        \ret{res}
       }
-      \KwData{O(1)}
+      \KwData{$O(1)$}
       
       \caption{Columnas}
     \end{algorithm}
@@ -329,9 +361,10 @@
       \text{$i$Ocupada?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
     
       \Begin{
-        Ocupada?($p$, e.obstaculos) \hfill \textbf{//O(1)}
+        res $\leftarrow$ Ocupada?($p$, e.obstaculos) \hfill \textbf{//O(1)}\\
+        \ret{res}
       }
-      \KwData{O(1)}
+      \KwData{$O(1)$}
       \KwComm{La funcion Ocupada que se llama, es la del modulo matriz}
     
       \caption{Ocupada?}
@@ -351,8 +384,9 @@
         \If(\hfill \textbf{//O(1)}){0 < p.fila $\lor$ 0 < p.columna}
           {res $\leftarrow$ false \hfill \textbf{//O(1)}}
 
+        \ret{res}
       }
-      \KwData{O(1)}
+      \KwData{$O(1)$}
     
       \caption{PosValida}
     \end{algorithm}
@@ -368,8 +402,10 @@
 
         \If(\hfill \textbf{//O(1)}){ingresoSuperior($p, e$) $\lor$ ingresoInferior($p, e$)}
           {res $\leftarrow$ true \hfill \textbf{//O(1)}}
+
+        \ret{res}
       }
-      \KwData{O(1)}
+      \KwData{$O(1)$}
     
       \caption{EsIngreso?}
     \end{algorithm}
@@ -385,8 +421,10 @@
 
         \If(\hfill \textbf{//O(1)}){p.fila == 1}
           {res $\leftarrow$ true}
+
+        \ret{res}
       }
-      \KwData{O(1)}
+      \KwData{$O(1)$}
     
       \caption{IngresoSuperior?}
     \end{algorithm}
@@ -402,10 +440,76 @@
 
         \If(\hfill \textbf{//O(1)}){p.fila == e.alto}
           {res $\leftarrow$ true}
+
+        \ret{res}
       }
-      \KwData{O(1)}
+      \KwData{$O(1)$}
     
       \caption{IngresoInferior?}
+    \end{algorithm}
+    \rule{17.5cm}{0.4pt}
+    \bigskip
+
+
+    \begin{algorithm}[H]
+      \text{$i$Vecinos(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(bool)}
+    
+      \Begin{
+        res $\leftarrow$ vecino($p$, e.obstaculos) \hfill \textbf{//O(1)}
+
+        \ret{res}
+      }
+      \KwData{$O(1)$}
+    
+      \caption{Vecinos}
+    \end{algorithm}
+    \rule{17.5cm}{0.4pt}
+    \bigskip
+
+
+    \begin{algorithm}[H]
+      \text{$i$Distancia(\In{p_{0}}{pos}, \In{p_{1}}{pos}, \In{e}{estr}) $\rightarrow$ res: nat}
+    
+      \Begin{
+        res $\leftarrow$ distancia($p_{0}, p_{1}$, e.obstaculos) \hfill \textbf{//O(1)}\\
+        
+        \ret{res}
+      }
+      \KwData{$O(1)$}
+    
+      \caption{Distancia}
+    \end{algorithm}
+    \rule{17.5cm}{0.4pt}
+    \bigskip
+
+
+    \begin{algorithm}[H]
+      \text{$i$ProxPosicion(\In{p}{pos}, \In{d}{dir}, \In{e}{estr}) $\rightarrow$ res: pos}
+    
+      \Begin{
+        res $\leftarrow$ proxPosicion($p, d$, e.obstaculo) \hfill \textbf{//O(1)}
+
+        \ret{res}
+      }
+      \KwData{$O(1)$}
+    
+      \caption{ProxPosicion}
+    \end{algorithm}
+    \rule{17.5cm}{0.4pt}
+    \bigskip
+
+
+    \begin{algorithm}[H]
+      \text{$i$ingresosMasCercano(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(pos)}
+    
+      \Begin{
+        res $\leftarrow$ ingresosMasCercano($p$, e.obstaculos) \hfill \textbf{//O(1)}
+
+        \ret{res}
+      }
+      \KwData{$O(1)$}
+    
+      \caption{ingresosMasCercano}
     \end{algorithm}
     \rule{17.5cm}{0.4pt}
     \bigskip
