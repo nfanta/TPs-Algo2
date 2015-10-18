@@ -145,7 +145,7 @@
   [O(N$a$) //Revisar al hacer algoritmo]
   [Crea un nuevo contenedor de Agentes con los agentes contenidos en $as$. N$a$ es la cantidad de agentes definidos en $as$]
 
-  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{conj(placa)}%
+  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{conjRapido(placa)}%
   [true]
   {$res \igobs$ agentes?($as$)}%
   [$\Theta(1)$]
@@ -194,14 +194,14 @@
   [$\Theta(1)$]
   [Devuelve el agente que mas capturas tiene en $as$. Si hubiera mas de uno, devuelve el de menor placa.]
 
-  \InterfazFuncion{ConMismasSanciones}{\In{a}{placa}, \In{as}{agentes}}{puntero(conj(placa))}%
+  \InterfazFuncion{ConMismasSanciones}{\In{a}{placa}, \In{as}{agentes}}{puntero(conjRapido(placa))}%
   [estaAgente($a, as$)]
   {$res \igobs$ conMismasSanciones($a, as$)}%
   [$\Theta(1)$]
   [Devuelve la referencia a el conjunto de agentes que tienen la misma cantidad de sanciones que el agente $a$]
   [$res$ no es modificable. Cualquier referencia que se guarde queda invalidada si se agregan sanciones.]
 
-  \InterfazFuncion{ConKSanciones}{\In{k}{nat}, \Inout{as}{agentes}}{conj(placa)}%
+  \InterfazFuncion{ConKSanciones}{\In{k}{nat}, \Inout{as}{agentes}}{conjRapido(placa)}%
   [true]
   {$res \igobs$ conKSanciones($k, as$)}%
   [O(N$a$) la primera vez, O(log(N$a$)) en siguientes llamadas mientras no ocurran sanciones.]
@@ -218,10 +218,10 @@
   \begin{Estructura}{agentes}[estr]
     \begin{Tupla}[estr]
       \tupItem{as}{DiccRapido(nat, datos)}%
-      \tupItem{claves}{conj(nat)}
+      \tupItem{claves}{conjRapido(nat)}
       \tupItem{masVig}{nat}%
       \tupItem{huboSanciones}{bool}%
-      \tupItem{mismSanciones}{lista(conj(nat))}%
+      \tupItem{mismSanciones}{lista(conjRapido(nat))}%
       \tupItem{kSanciones}{Arreglo(tuplaK)}%
     \end{Tupla}
 
@@ -229,7 +229,7 @@
       \tupItem{pos}{posicion}%
       \tupItem{sanciones}{nat}%
       \tupItem{capturas}{nat}%
-      \tupItem{conMismSanciones}{itLista(conj(nat))}%
+      \tupItem{conMismSanciones}{itLista(conjRapido(nat))}%
     \end{Tupla}
 
     \begin{Tupla}[tuplaK]
@@ -350,7 +350,7 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: conj(nat)}
+    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: conjRapido(nat)}
   
     \Begin{
       res $\leftarrow$ as.claves \hfill \textbf{//O(1)}
@@ -494,7 +494,7 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$ConMismasSanciones(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: puntero(conj(nat))}
+    \text{$i$ConMismasSanciones(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: puntero(conjRapido(nat))}
   
     \Begin{
       res $\leftarrow$ $\&$(Siguiente(Obtener(a, as.as).conMismSanciones)) \hfill \textbf{//O(1)}
@@ -508,7 +508,7 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$ConKSanciones(\In{k}{nat}, \Inout{as}{estr}) $\rightarrow$ res: puntero(conj(nat))}
+    \text{$i$ConKSanciones(\In{k}{nat}, \Inout{as}{estr}) $\rightarrow$ res: puntero(conjRapido(nat))}
   
     \Begin{
       var \\

@@ -1,0 +1,368 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[paper=a4paper, hmargin=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{xspace}
+\usepackage{xargs}
+\usepackage{ifthen}
+\usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage[]{algorithm2e}
+
+\SetKwInput{KwData}{Complejidad}
+\SetKwInput{KwComm}{Comentarios}
+\SetKwInput{KwExp}{Explicacion}
+\SetAlgorithmName{Algoritmo}{Algoritmo}{Lista de algoritmos}
+\SetAlCapSkip{1em}
+
+
+\newcommand{\moduloNombre}[1]{\textbf{#1}}
+
+\let\NombreFuncion=\textsc
+\let\TipoVariable=\texttt
+\let\ModificadorArgumento=\textbf
+\newcommand{\res}{$res$\xspace}
+\newcommand{\tab}{\hspace*{7mm}}
+
+\newcommandx{\TipoFuncion}[3]{%
+  \NombreFuncion{#1}(#2) \ifx#3\empty\else $\to$ \res\,: \TipoVariable{#3}\fi%
+}
+\newcommand{\In}[2]{\ModificadorArgumento{in} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Out}[2]{\ModificadorArgumento{out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Inout}[2]{\ModificadorArgumento{in/out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Aplicar}[2]{\NombreFuncion{#1}(#2)}
+
+\newlength{\IntFuncionLengthA}
+\newlength{\IntFuncionLengthB}
+\newlength{\IntFuncionLengthC}
+%InterfazFuncion(nombre, argumentos, valor retorno, precondicion, postcondicion, complejidad, descripcion, aliasing)
+\newcommandx{\InterfazFuncion}[9][4=true,6,7,8,9]{%
+  \hangindent=\parindent
+  \TipoFuncion{#1}{#2}{#3}\\%
+  \textbf{Pre} $\equiv$ \{#4\}\\%
+  \textbf{Post} $\equiv$ \{#5\}%
+  \ifx#6\empty\else\\\textbf{Complejidad:} #6\fi%
+  \ifx#7\empty\else\\\textbf{Descripción:} #7\fi%
+  \ifx#8\empty\else\\\textbf{Aliasing:} #8\fi%
+  \ifx#9\empty\else\\\textbf{Requiere:} #9\fi%
+}
+
+\newenvironment{Interfaz}{%
+  \parskip=2ex%
+  \noindent\textbf{\Large Interfaz}%
+  \par%
+}{}
+
+\newenvironment{Representacion}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Representación}%
+  \vspace*{2ex}%
+}{}
+
+\newenvironment{Algoritmos}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Algoritmos}%
+  \vspace*{2ex}%
+}{}
+
+
+\newcommand{\Titulo}[1]{
+  \vspace*{1ex}\par\noindent\textbf{\large #1}\par
+}
+
+\newenvironmentx{Estructura}[2][2={estr}]{%
+  \par\vspace*{2ex}%
+  \TipoVariable{#1} \textbf{se representa con} \TipoVariable{#2}%
+  \par\vspace*{1ex}%
+}{%
+  \par\vspace*{2ex}%
+}%
+
+\newboolean{EstructuraHayItems}
+\newlength{\lenTupla}
+\newenvironmentx{Tupla}[1][1={estr}]{%
+    \settowidth{\lenTupla}{\hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($}%
+    \addtolength{\lenTupla}{\parindent}%
+    \hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($%
+    \begin{minipage}[t]{\linewidth-\lenTupla}%
+    \setboolean{EstructuraHayItems}{false}%
+}{%
+    $)$%
+    \end{minipage}
+}
+
+\newcommandx{\tupItem}[3][1={\ }]{%
+    %\hspace*{3mm}%
+    \ifthenelse{\boolean{EstructuraHayItems}}{%
+        ,#1%
+    }{}%
+    \emph{#2}: \TipoVariable{#3}%
+    \setboolean{EstructuraHayItems}{true}%
+}
+
+\newcommandx{\RepFc}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{#3}%
+}%
+
+\newcommandx{\Rep}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{true \ssi #3}%
+}%
+
+\newcommandx{\Abs}[5][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \settominwidth{\hangindent}{Abs($#3$) \igobs #4: #2 $\mid$ }%
+  \addtolength{\hangindent}{\parindent}%
+  Abs($#3$) \igobs #4: #2 $\mid$ #5%
+}%
+
+\newcommandx{\AbsFc}[4][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \tadAxioma{Abs($#3$)}{#4}%
+}%
+
+
+\newcommand{\DRef}{\ensuremath{\rightarrow}}
+
+\begin{document}
+
+
+\section{Modulo DiccRapido(clave, significado)}
+
+
+\begin{Interfaz}
+  
+  \textbf{se explica con}: \tadNombre{Diccionario(clave, significado)}
+
+  \textbf{generos}: \TipoVariable{diccRapido(clave, significado)}
+
+  \Titulo{Operaciones basicas de conjunto}
+
+  {\small $clave$ debe ser de tipo nat, sino la funcion de hash no funciona.  \\}
+
+  \InterfazFuncion{Vacio}{}{diccRapido(clave, significado)}%
+  [true]
+  {$res \igobs$ vacio()}%
+  [O(N) donde N es la cantidad de claves en $c$]
+  [Crea un nuevo diccionario vacio.]
+
+  \InterfazFuncion{Definir}{\In{k}{clave}\In{s}{significado}, \Inout{d}{diccRapido(clave, significado)}}{}%
+  [d $\igobs$ $d_{0}$]
+  {$d \igobs$ definir($k$, $s$, $d_{0}$)}%
+  [$\Theta(1)$]
+  [Define el elemento $k$, con significado $s$, en el diccionario $d$]
+
+  \InterfazFuncion{Def?}{\In{c}{clave}, \In{d}{diccRapido(clave, significado)}}{bool}%
+  [true]
+  {$res \igobs$ def?($c$, $d$)}%
+  [O(N), con N siendo la cantidad de claves]
+  [Devuelve $true$ si la clave $k$ esta definida]
+
+  \InterfazFuncion{Obtener}{\In{c}{clave}, \In{d}{diccRapido(clave, significado)}}{significado}%
+  [def?($c$, $d$)]
+  {$res \igobs$ obtener($c$, $d$)}%
+  [$\Theta(1)$]
+  [Devuelve el significado de la clave $c$]
+  [$res$ es una referencia al significado de $c$ en el diccionario $d$. Si se modifica, se modificara el significado dentro del diccionario. Si se borra una clave, o se define alguna clave, la referencia queda invalidada.]
+
+  \InterfazFuncion{Claves}{\In{d}{diccRapido(clave, significado)}}{conj(clave)}%
+  [true]
+  {$res \igobs$ dameUno($c$)}%
+  [$\Theta(1)$]
+  [Devuelve el conjunto de claves del diccionario $d$]
+  [$res$ es una referencia constante a un conj(clave).]
+
+  % \InterfazFuncion{Borrar}{\In{c}{clave}, \Inout{d}{diccRapido(clave, significado)}}{}%
+  % [def?($c$, $d$) $\land$ d $\igobs$ $d_{0}$]
+  % {$d \igobs$ borrar($c$, $d_{0}$)}%
+  % [O(N)]
+  % [Borra el significado de la clave $c$]
+
+
+\end{Interfaz}
+
+\begin{Representacion}
+  
+  \Titulo{Representacion del DiccRapido}
+
+  \begin{Estructura}{diccRapido(clave, significado)}[estr]
+    \begin{Tupla}[estr]
+      \tupItem{defs}{arreglo(tuplaSignificado)}
+      \tupItem{claves}{conj(clave)}
+    \end{Tupla}
+
+    \begin{Tupla}[tuplaSignificado]
+      \tupItem{key}{clave}
+      \tupItem{def}{significado}
+    \end{Tupla}
+  \end{Estructura}
+
+  Invariante de representacion en castellano: \\
+  \begin{enumerate}
+    \item Todas las claves estan definidas en el arreglo y todas las cosas definidas estan en claves.
+    \item La funcion Hash manda a cada clave al lugar donde esta definida.
+  \end{enumerate}
+
+  \Rep[estr][d]{
+    \begin{enumerate}
+      \item ( \ ($\forall$ $c$ : clave) En($c$, d.claves) $\implies$ (($\exists!$ i : nat) Definido?(i, d.defs) $\yluego$ d.defs[i].key = $c$) \ ) $\land$ \\ ( \ ($\forall$ i : nat) Definido?(i, d.defs) $\impluego$ En(d.defs[i].key, d.claves) ) $\yluego$
+      \item ( \ ($\forall$ $c$ : clave) En($c$, d.claves) $\implies$ (Definido?(Hash($c$, $c$, $d$), d.defs) $\yluego$ d.defs[Hash($c$, $c$, $d$)].key = $c$ ) \ )
+    \end{enumerate}
+  }\mbox{}
+
+  %\tadOperacion{Hash}{clave \ k, clave \ c, diccRapido(clave{,} \ significado) \ d}{nat}{}
+  \tadAxioma{Hash($k, c, d$)}{\IF {(Definido?(fHash) $\yluego$ d.defs[fHash].key == $c$) $\lor$ ($\neg$Definido?(fHash)) } THEN fHash ELSE Hash($k+1$, $c$, $d$) FI}
+  {\small //Donde fHash es ($k$ $\%$ Cantidad(d.claves))  \\}
+  {\small //La clave $k$ es el valor sobre el cual aplico el Hash, y la clave $c$ es la clave que busco ubicar. \\}
+  ~
+  
+  \AbsFc[estr]{Diccionario(clave, significado)}[e]{$d$ : Diccionario(clave, significado) / \\
+    ($\forall$ $c$ : clave) En($c$, e.claves) $\iff$ def?($c$, $d$) $\yluego$ \\
+    ($\forall$ $c$ : clave) def?($c$, $d$) $\impluego$ obtener($c$, $d$) $\igobs$ e.defs[Hash($c$, $c$, $e$)].significado 
+    }
+
+\end{Representacion}
+
+  \begin{Algoritmos}
+
+\textbf{Algoritmos de Agentes}
+  \listofalgorithms
+  
+  \begin{algorithm}[H]
+    \text{$i$Vacio() $\rightarrow$ res: estr}
+  
+    \Begin{
+      res.claves $\leftarrow$ Vacio() \hfill \textbf{//O(1)} \\
+      res.defs $\leftarrow$ CrearArreglo(1) \hfill \textbf{//O(1)} \\
+    }
+    \KwData{O(1)}
+  
+    \caption{Vacio}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$Definir(\In{k}{clave}, \In{s}{significado}, \Inout{d}{estr})}
+  
+    \Begin{
+      var \\
+      i : nat \\
+      arregloAux : Arreglo \\
+
+      i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      \eIf(\hfill \textbf{//O(1)}){Def?(k, d)}
+        {
+          {\small //Entonces es redefinir  \\}
+          d.defs[Hash(k, k, d)].def $\leftarrow$ s \hfill \textbf{//O(1)} \\
+          d.defs[Hash(k, k, d)].key $\leftarrow$ k \hfill \textbf{//O(1)} \\
+        }
+        {
+          {\small //Entonces es definir algo nuevo, asi que debo ampliar el arreglo  \\}
+          Agregar(s, d.claves) \hfill \textbf{//O(N)} \\
+          arregloAux $\leftarrow$ CrearArreglo(Tam(d.defs) +1 ) \hfill \textbf{//O(N)} \\
+          \While(\hfill \textbf{//O(1)}){i $<$ Tam(d.defs)}
+          {
+            {\small //Re-Hasheo con la nueva cantidad de keys  \\}
+            arregloAux[Hash(d.defs[i].key, d.defs[i].key, d)].key $\leftarrow$ d.defs[i].key \hfill \textbf{//O(1)} \\
+            arregloAux[Hash(d.defs[i].key, d.defs[i].key, d)].def $\leftarrow$ d.defs[i].def \hfill \textbf{//O(1)} \\
+            i $\leftarrow$ i + 1 \hfill \textbf{//O(1)} 
+          }
+          \hfill \textbf{//While: O(N)} \\
+          {\small //Y defino a k donde corresponde  \\}
+          arregloAux[Hash(k, k, d)].def $\leftarrow$ s \hfill \textbf{//O(1)} \\
+          arregloAux[Hash(k, k, d)].key $\leftarrow$ k \hfill \textbf{//O(1)} \\
+
+          d.defs $\leftarrow$ arregloAux \hfill \textbf{//O(N)}
+        }
+    }
+    \KwData{O(N)}
+  
+    \caption{Definir}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$Def?(\In{k}{clave}, \In{d}{estr}) $\rightarrow$ res: bool}
+  
+    \Begin{
+      res $\leftarrow$ En(k, d.claves) \hfill \textbf{//O(N)}
+    }
+    \KwData{O(N)}
+  
+    \caption{Def?}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$Obtener(\In{k}{clave}, \In{d}{estr}) $\rightarrow$ res: significado}
+  
+    \Begin{
+      res $\leftarrow$ d.defs[Hash(k, k, d)].significado \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+  
+    \caption{Obtener}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$Claves(\In{d}{estr}) $\rightarrow$ res: conj(clave)}
+  
+    \Begin{
+      res $\leftarrow$ d.claves \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+  
+    \caption{Claves}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{Hash(\In{c}{clave}, \In{d}{estr}) $\rightarrow$ res: nat}
+  
+    \Begin{
+      var \\
+      k : nat \\
+      desvio : nat \\
+      desvio $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      k $\leftarrow$ $c \ \% \ Cardinal(d.claves)$ \hfill \textbf{//O(1)} \\
+
+      \While(\hfill \textbf{//O(1)}){Definido?(k, d.defs) $\yluego$ $\neg$(d.defs[k].key = c)}
+      {
+        desvio $\leftarrow$ desvio + 1 \hfill \textbf{//O(1)} \\
+        k $\leftarrow$ $(c + desvio) \ \% \ Cardinal(d.claves)$ \hfill \textbf{//O(1)} \\
+      }
+      \hfill \textbf{//While: O(1) en caso promedio. O(N) peor caso.}
+      res $\leftarrow$ k \hfill \textbf{//O(1)} \\
+    }
+    \KwData{O(1) en caso Promedio con buena distribucion. O(N) peor caso.}
+    \KwComm{La idea es que intento poner a $c$ en el resto de $c$ en la division por la cantidad de claves. Si fallo, intento ponerlo en el siguiente lugar, y asi hasta poder colocarlo.}
+  
+    \caption{nombre}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  % \begin{algorithm}[H]
+  %   \text{$i$Borrar(\In{k}{clave}, \Inout{d}{estr})}
+  
+  %   \Begin{
+  %     linea \hfill \textbf{//O(1)}
+  %   }
+  %   \KwData{O(1)}
+  
+  %   \caption{Borrar}
+  % \end{algorithm}
+  % \rule{17.5cm}{0.4pt}
+  % \bigskip
+
+  \end{Algoritmos}
+
+
+\end{document}
