@@ -166,21 +166,26 @@
   \InterfazFuncion{Cantidad}{\In{c}{conjRapido($\alpha$)}}{nat}%
   [true]
   {$res \igobs$ $\#$c}%
-  [O(N)]
-  [Devuelve la cantidad de elementos definidos en $c$]  
+  [O($N^{2}$)]
+  [Devuelve la cantidad de elementos definidos en $c$. En este conjunto se sacrifica la complejidad de $Cantidad$ por $Agregar$ siempre en O(1)]  
 
   \InterfazFuncion{DameUno}{\In{c}{conjRapido($\alpha$)}}{$\alpha$}%
-  [$\neg$$\emptyset$?(c)]
+  [$\neg$$\emptyset$?($c$)]
   {$res \igobs$ dameUno($c$)}%
   [$\Theta(1)$]
   [Devuelve un elemento del conjunto.]
 
   \InterfazFuncion{SinUno}{\Inout{c}{conjRapido($\alpha$)}}{}%
-  [$\neg$$\emptyset$?(c)]
-  {$res \igobs$ sinUno($c$)}%
-  [$\Theta(1)$]
+  [$\neg$$\emptyset$?($c$) $\land$ $c \igobs c_{0}$]
+  {$c \igobs$ sinUno($c_{0}$)}%
+  [O(N)]
   [Devuelve el conjunto sin el elemento que devuelve DameUno($c$).]
 
+  \InterfazFuncion{Borrar}{\In{a}{$\alpha$}, \Inout{c}{conjRapido($\alpha$)}}{}%
+  [$a$ $\in$ $c$ $\land$ $c \igobs c_{0}$]
+  {$c \igobs$ $c_{0}$ - \{ $a$ \}}%
+  [O(N)]
+  [Devuelve el conjunto sin el elemento $a$.]
 
 \end{Interfaz}
 
@@ -288,9 +293,9 @@
     \text{$i$SinUno(\Inout{c}{lista($\alpha$)})}
   
     \Begin{
-      Fin($c$) \hfill \textbf{//O(1)}
+      Borrar(DameUno($c$), $c$) \hfill \textbf{//O(N)}
     }
-    \KwData{O(1)}
+    \KwData{O(N)}
   
     \caption{SinUno}
   \end{algorithm}
@@ -325,6 +330,32 @@
     \KwComm{O($\sum_{i=1}^{n} n$) = O($\frac{1}{2}n(n+1)$) = O($\frac{1}{2}n^{2}+\frac{1}{2}n$) = O($n^{2}$)}
   
     \caption{Cantidad}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$Borrar(\In{a}{$\alpha$}, \Inout{c}{lista($\alpha$)})}
+  
+    \Begin{
+      var \\
+      iterador : itLista($\alpha$) \\
+      iterador $\leftarrow$ CrearIt(c) \hfill \textbf{//O(1)} \\
+      \While(\hfill \textbf{//O(1)}){HaySiguiente(iterador)}
+      {
+        \eIf(\hfill \textbf{//O(1)}){Siguiente(iterador) == $a$}
+          {
+            EliminarSiguiente(iterador) \hfill \textbf{//O(1)} \\
+          }
+          {
+            Avanzar(iterador) \hfill \textbf{//O(1)} \\
+          }
+      }
+      \hfill \textbf{//While: O(N)}
+    }
+    \KwData{O(N)}
+  
+    \caption{Borrar}
   \end{algorithm}
   \rule{17.5cm}{0.4pt}
   \bigskip
