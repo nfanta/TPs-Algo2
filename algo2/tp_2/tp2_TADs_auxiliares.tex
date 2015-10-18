@@ -76,9 +76,9 @@ TAD \tadNombre{posicion} ES \tadNombre{$\langle $nat$, $nat$ \rangle$}
 \tadGeneradores
 
 \tadOperacion{nuevoAgentes}{dicc(placa {,} posicion) \ $d$}{agentes}{$\neg$$\emptyset$?(claves($d$))}
-\tadOperacion{agregarSancion}{placa \ $a$, agentes \ $as$}{posicion}{$a$ $\in$ agentes?($as$)}
-\tadOperacion{cambiarPos}{placa \ $a$, posicion \ $p$, agentes \ $as$}{posicion}{$a$ $\in$ agentes?($as$)}
-\tadOperacion{agregarCaptura}{placa \ $a$, agentes \ $as$}{posicion}{$a$ $\in$ agentes?($as$)}
+\tadOperacion{agregarSancion}{placa \ $a$, agentes \ $as$}{agentes}{$a$ $\in$ agentes?($as$)}
+\tadOperacion{cambiarPos}{placa \ $a$, posicion \ $p$, agentes \ $as$}{agentes}{$a$ $\in$ agentes?($as$)}
+\tadOperacion{agregarCaptura}{placa \ $a$, agentes \ $as$}{agentes}{$a$ $\in$ agentes?($as$)}
 
 \tadOtrasOperaciones
 
@@ -129,5 +129,116 @@ TAD \tadNombre{posicion} ES \tadNombre{$\langle $nat$, $nat$ \rangle$}
 
 \end{tad}
 
+TAD \tadNombre{nombre} ES \tadNombre{string}
+
+\begin{tad}{\tadNombre{HippiesYEstudiantes}}
+
+\tadGeneros{hipyest}
+\tadExporta{hipyest, Generadores, Observadores Basicos, esta?, esHip?, esEst?, borrar}
+\tadUsa{\tadNombre{Nat, Conj($\alpha$), Bool, Tupla($\alpha_1, \ldots, \alpha_n$), nombre, Diccionario(clave, significado)}}
+
+\tadObservadores
+
+\tadOperacion{diccPos}{hipyest}{dicc(nombre, posicion)}{}
+\tadOperacion{esHip?}{nombre \ $n$, hipyest \ $he$}{bool}{esta?(n, he)}
+
+\tadGeneradores
+
+\tadOperacion{nuevoHippiesYEstudiantes}{}{hipyest}{}
+\tadOperacion{defHippie}{nombre \ $n$, posicion \ $p$, hipyest \ $he$}{hipyest}{}
+\tadOperacion{defEstudiante}{nombre \ $n$, posicion \ $p$, hipyest \ $he$}{hipyest}{}
+
+\tadOtrasOperaciones
+
+\tadOperacion{posHippieYEst}{nombre \ $n$, hipyest \ $he$}{posicion}{$n$ $\in$ hippies?($as$) $\lor$ $n$ $\in$ estudiantes?($as$)}
+\tadOperacion{hippies?}{hipyest}{conj(nombre)}{}
+\tadOperacion{estudiantes?}{hipyest}{conj(nombre)}{}
+\tadOperacion{esta?}{nombre, hipyest}{bool}{}
+\tadOperacion{esEst?}{nombre \ $n$, hipyest \ $he$}{bool}{esta?(n, he)}
+\tadOperacion{borrar}{nombre \ $n$, hipyest \ $he$}{hipyest}{esta?(n, he)}
+\tadOperacion{soloHippies}{conj(nombre) \ $cn$, hipyest \ $he$}{conj(nombre)}{($\forall$ n : nombre) n $\in$ cn $\implies$ n $\in$ claves(diccPos($he$))}
+\tadOperacion{soloEstudiantes}{conj(nombre) \ $cn$, hipyest \ $he$}{conj(nombre)}{($\forall$ n : nombre) n $\in$ cn $\implies$ n $\in$ claves(diccPos($he$))  }
+
+\tadAxiomas[
+\paratodo{hipyest}{he}
+\paratodo{nombre}{n}
+\paratodo{nombre}{b}
+\paratodo{diccionario(nombre, posicion)}{d}
+\paratodo{posicion}{p}
+\paratodo{conj(nombre)}{cN}
+]
+
+\tadAxioma{diccPos(nuevoHippiesYEstudiantes())}{vacio}
+\tadAxioma{diccPos(defHippie($n, p, he$))}{definir($n, p,$ diccPos($he$))}
+\tadAxioma{diccPos(defEstudiante($n, p, he$))}{definir($n, p,$ diccPos($he$))}
+
+\tadAxioma{esHip?(b, defHippie($n, p, he$))}{
+	\IF {$b = n$}
+		THEN {true}
+		ELSE {esHip?($b, he$)}
+	FI
+}
+\tadAxioma{esHip?(b, defEstudiante($n, p, he$))}{
+	\IF {$b = n$}
+		THEN {false}
+		ELSE {esHip?($b, he$)}
+	FI
+}
+
+\tadAxioma{posHippieYEst($n, he$)}{obtener($n,$ diccPos($he$))}
+\tadAxioma{esta?($n, he$)}{def?($n$, diccPos($he$))}
+\tadAxioma{esEst?($n, he$)}{$\neg$esHip($n, he$)}
+\tadAxioma{hippies?($he$)}{soloHippies(claves(diccPos($he$)), $he$)}
+\tadAxioma{estudiantes?($he$)}{soloEstudiantes(claves(diccPos($he$)), $he$)}
+\tadAxioma{soloHippies($cn, he$)}{
+	\IF {$\emptyset$?($cn$)}
+		THEN {$\emptyset$}
+		ELSE {
+			\IF {esHip?(dameUno($cn$), $he$)}
+				THEN {Ag($cn$, soloHippies(sinUno($cn$, $he$)))}
+				ELSE {soloHippies(sinUno($cn$, $he$))}
+			FI
+		}
+	FI
+}
+\tadAxioma{soloEstudiantes($cn, he$)}{
+	\IF {$\emptyset$?($cn$)}
+		THEN {$\emptyset$}
+		ELSE {
+			\IF {$\neg$esHip?(dameUno($cn$), $he$)}
+				THEN {Ag($cn$, soloEstudiantes(sinUno($cn$, $he$)))}
+				ELSE {soloEstudiantes(sinUno($cn$, $he$))}
+			FI
+		}
+	FI
+}
+
+\tadAxioma{borrar(b, defHippie($n, p, he$))}{
+	\IF {$b = n$}
+		THEN {
+			\IF {def?($b$, diccPos($he$))}
+				THEN {borrar($b$, $he$)}
+				ELSE {$he$}
+			FI
+		}
+		ELSE {defHippie($n, p,$ borrar($b$, $he$))}
+	FI
+}
+
+\tadAxioma{borrar(b, defEstudiante($n, p, he$))}{
+	\IF {$b = n$}
+		THEN {
+			\IF {def?($b$, diccPos($he$))}
+				THEN {borrar($b$, $he$)}
+				ELSE {$he$}
+			FI
+		}
+		ELSE {defEstudiante($n, p,$ borrar($b$, $he$))}
+	FI
+}
+
+\end{tad}
+
 
 \end{document}
+

@@ -1,0 +1,667 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[paper=a4paper, hmargin=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{xspace}
+\usepackage{xargs}
+\usepackage{ifthen}
+\usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage[]{algorithm2e}
+
+\SetKwInput{KwData}{Complejidad}
+\SetKwInput{KwComm}{Comentarios}
+\SetKwInput{KwExp}{Explicacion}
+\SetAlgorithmName{Algoritmo}{Algoritmo}{Lista de algoritmos}
+\SetAlCapSkip{1em}
+
+
+\newcommand{\moduloNombre}[1]{\textbf{#1}}
+
+\let\NombreFuncion=\textsc
+\let\TipoVariable=\texttt
+\let\ModificadorArgumento=\textbf
+\newcommand{\res}{$res$\xspace}
+\newcommand{\tab}{\hspace*{7mm}}
+
+\newcommandx{\TipoFuncion}[3]{%
+  \NombreFuncion{#1}(#2) \ifx#3\empty\else $\to$ \res\,: \TipoVariable{#3}\fi%
+}
+\newcommand{\In}[2]{\ModificadorArgumento{in} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Out}[2]{\ModificadorArgumento{out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Inout}[2]{\ModificadorArgumento{in/out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Aplicar}[2]{\NombreFuncion{#1}(#2)}
+
+\newlength{\IntFuncionLengthA}
+\newlength{\IntFuncionLengthB}
+\newlength{\IntFuncionLengthC}
+%InterfazFuncion(nombre, argumentos, valor retorno, precondicion, postcondicion, complejidad, descripcion, aliasing)
+\newcommandx{\InterfazFuncion}[9][4=true,6,7,8,9]{%
+  \hangindent=\parindent
+  \TipoFuncion{#1}{#2}{#3}\\%
+  \textbf{Pre} $\equiv$ \{#4\}\\%
+  \textbf{Post} $\equiv$ \{#5\}%
+  \ifx#6\empty\else\\\textbf{Complejidad:} #6\fi%
+  \ifx#7\empty\else\\\textbf{Descripción:} #7\fi%
+  \ifx#8\empty\else\\\textbf{Aliasing:} #8\fi%
+  \ifx#9\empty\else\\\textbf{Requiere:} #9\fi%
+}
+
+\newenvironment{Interfaz}{%
+  \parskip=2ex%
+  \noindent\textbf{\Large Interfaz}%
+  \par%
+}{}
+
+\newenvironment{Representacion}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Representación}%
+  \vspace*{2ex}%
+}{}
+
+\newenvironment{Algoritmos}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Algoritmos}%
+  \vspace*{2ex}%
+}{}
+
+
+\newcommand{\Titulo}[1]{
+  \vspace*{1ex}\par\noindent\textbf{\large #1}\par
+}
+
+\newenvironmentx{Estructura}[2][2={estr}]{%
+  \par\vspace*{2ex}%
+  \TipoVariable{#1} \textbf{se representa con} \TipoVariable{#2}%
+  \par\vspace*{1ex}%
+}{%
+  \par\vspace*{2ex}%
+}%
+
+\newboolean{EstructuraHayItems}
+\newlength{\lenTupla}
+\newenvironmentx{Tupla}[1][1={estr}]{%
+    \settowidth{\lenTupla}{\hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($}%
+    \addtolength{\lenTupla}{\parindent}%
+    \hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($%
+    \begin{minipage}[t]{\linewidth-\lenTupla}%
+    \setboolean{EstructuraHayItems}{false}%
+}{%
+    $)$%
+    \end{minipage}
+}
+
+\newcommandx{\tupItem}[3][1={\ }]{%
+    %\hspace*{3mm}%
+    \ifthenelse{\boolean{EstructuraHayItems}}{%
+        ,#1%
+    }{}%
+    \emph{#2}: \TipoVariable{#3}%
+    \setboolean{EstructuraHayItems}{true}%
+}
+
+\newcommandx{\RepFc}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{#3}%
+}%
+
+\newcommandx{\Rep}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{true \ssi #3}%
+}%
+
+\newcommandx{\Abs}[5][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \settominwidth{\hangindent}{Abs($#3$) \igobs #4: #2 $\mid$ }%
+  \addtolength{\hangindent}{\parindent}%
+  Abs($#3$) \igobs #4: #2 $\mid$ #5%
+}%
+
+\newcommandx{\AbsFc}[4][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \tadAxioma{Abs($#3$)}{#4}%
+}%
+
+
+\newcommand{\DRef}{\ensuremath{\rightarrow}}
+
+\begin{document}
+
+
+\section{Modulo Agentes}
+
+
+\begin{Interfaz}
+  
+  \textbf{se explica con}: \tadNombre{Agentes}
+
+  \textbf{generos}: \TipoVariable{agentes}
+
+  \textbf{usa}: \TipoVariable{conjRapido($\alpha$)}, \TipoVariable{diccRapido(clave, significado)}, \TipoVariable{nat}, \TipoVariable{bool}, \TipoVariable{lista}
+
+  \Titulo{Operaciones basicas de agentes}
+
+  \InterfazFuncion{NuevoAgentes}{\In{as}{dicc(placa, posicion)}}{agentes}%
+  [$\neg$ $\emptyset$?(claves($as$))]
+  {$res \igobs$ nuevoAgentes($as$)}%
+  [O(N$a$) //Revisar al hacer algoritmo]
+  [Crea un nuevo contenedor de Agentes con los agentes contenidos en $as$. N$a$ es la cantidad de agentes definidos en $as$]
+
+  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{conjRapido(placa)}%
+  [true]
+  {$res \igobs$ agentes?($as$)}%
+  [$\Theta(1)$]
+  [Me devuelve un conjunto de todos los agentes definidos en $as$]
+  [$res$ es una referencia constante a un conj(placa).]
+
+  \InterfazFuncion{AgregarSancion}{\In{a}{placa}, \Inout{as}{agentes}}{}%
+  [estaAgente($a, as$) $\land$ as = $as_{0}$]
+  {$as \igobs$ agregarSancion($a, as_{0}$)}%
+  [$\Theta(1)$]
+  [Agrega una sancion al agente $a$]
+
+  \InterfazFuncion{CambiarPosicion}{\In{a}{placa}, \In{p}{posicion}, \Inout{as}{agentes}}{}%
+  [estaAgente($a, as$) $\land$ as = $as_{0}$]
+  {$as \igobs$ cambiarPos($a, p, as_{0}$)}%
+  [$\Theta(1)$]
+  [Modifica la posicion del agente $a$, para que sea $p$]
+
+  \InterfazFuncion{AgregarCaptura}{\In{a}{placa}, \Inout{as}{agentes}}{}%
+  [estaAgente($a, as$) $\land$ as = $as_{0}$]
+  {$as \igobs$ agregarCaptura($a, as_{0}$)}%
+  [$\Theta(1)$]
+  [Agrega una captura al agente $a$]
+
+  \InterfazFuncion{PosAgente}{\In{a}{placa}, \In{as}{agentes}}{posicion}%
+  [estaAgente($a, as$)]
+  {$res \igobs$ posicionAgente($a, as$)}%
+  [$\Theta(1)$]
+  [Devuelve la posicion actual del agente $a$]
+
+  \InterfazFuncion{SancionesAgente}{\In{a}{placa}, \In{as}{agentes}}{nat}%
+  [estaAgente($a, as$)]
+  {$res \igobs$ sancionesAgente($a, as$)}%
+  [$\Theta(1)$]
+  [Devuelve las sanciones actuales del agente $a$]
+
+  \InterfazFuncion{CapturasAgente}{\In{a}{placa}, \In{as}{agentes}}{nat}%
+  [estaAgente($a, as$)]
+  {$res \igobs$ capturasAgente($a, as$)}%
+  [$\Theta(1)$]
+  [Devuelve la cantidad de capturas actuales del agente $a$]
+
+  \InterfazFuncion{MasVigilante}{\In{as}{agentes}}{placa}%
+  [true]
+  {$res \igobs$ masVigilante($as$)}%
+  [$\Theta(1)$]
+  [Devuelve el agente que mas capturas tiene en $as$. Si hubiera mas de uno, devuelve el de menor placa.]
+
+  \InterfazFuncion{ConMismasSanciones}{\In{a}{placa}, \In{as}{agentes}}{conjRapido(placa)}%
+  [estaAgente($a, as$)]
+  {alias($res \igobs$ conMismasSanciones($a, as$))}%
+  [$\Theta(1)$]
+  [Devuelve la referencia a el conjunto de agentes que tienen la misma cantidad de sanciones que el agente $a$]
+  [$res$ no es modificable. Cualquier referencia que se guarde queda invalidada si se agregan sanciones.]
+
+  \InterfazFuncion{ConKSanciones}{\In{k}{nat}, \Inout{as}{agentes}}{conjRapido(placa)}%
+  [true]
+  {alias($res \igobs$ conKSanciones($k, as$))}%
+  [O(N$a$) la primera vez, O(log(N$a$)) en siguientes llamadas mientras no ocurran sanciones.]
+  [Devuelve el conjunto de agentes que tienen exactamente $k$ sanciones. N$a$ es la cantidad de agentes definidos en $as$]
+  [$res$ no es modificable. Cualquier referencia que se guarde queda invalidada si se agregan sanciones. Si $res$ es $NULL$, significa que no se encontraron agentes con $k$ sanciones]
+
+
+\end{Interfaz}
+
+\begin{Representacion}
+  
+  \Titulo{Representacion de los Agentes}
+
+  \begin{Estructura}{agentes}[estr]
+    \begin{Tupla}[estr]
+      \tupItem{as}{DiccRapido(placa, datos)}%
+      \tupItem{claves}{conjRapido(placa)}
+      \tupItem{masVig}{placa}%
+      \tupItem{huboSanciones}{bool}%
+      \tupItem{mismSanciones}{lista(conjRapido(placa))}%
+      \tupItem{kSanciones}{Arreglo(tuplaK)}%
+    \end{Tupla}
+
+    \begin{Tupla}[datos]
+      \tupItem{pos}{posicion}%
+      \tupItem{sanciones}{nat}%
+      \tupItem{capturas}{nat}%
+      \tupItem{conMismSanciones}{itLista(conjRapido(placa))}%
+    \end{Tupla}
+
+    \begin{Tupla}[tuplaK]
+      \tupItem{sanciones}{nat}%
+      \tupItem{placa}{placa}%
+    \end{Tupla}
+
+    \begin{Tupla}[posicion]
+      \tupItem{fila}{nat}%
+      \tupItem{columna}{nat}%
+    \end{Tupla}
+
+    {\small La idea de la lista enlazada mismSanciones es que guarde en cada posicion a todos aquellos agentes que comparten sanciones, con rapido acceso gracias al Iterador en los datos del agente. El arreglo kSanciones se utiliza para ordenar a los agentes por su cantidad de sanciones en tiempo O(N), y poder buscar a alguno con $K$ sanciones en O(log(N)) para acceder a aquellos que tienen la misma cantidad via mismSanciones}
+
+
+  \end{Estructura}
+
+  Invariante de representacion en castellano:
+  \begin{enumerate}
+  
+  \item $claves$ son las claves del diccionario $as$
+  \item masVigilante esta definido en agentes.
+  \item masVigilante es el agente con menor numero de placa entre aquellos que tienen mas capturas en el diccionario de agentes.
+  \item El arreglo kSanciones tiene almacenadas todas las placas de agentes.
+  \item Si no hubo sanciones ($\neg$huboSanciones), entonces el arreglo kSanciones representa a los agentes en orden creciente de sanciones. Ademas las sanciones se corresponden con el diccionario
+  \item Los agentes de la lista mismSanciones no estan repetidos, y son exactamente los definidos en diccionario de agentes.
+  %\item No se repiten los agentes en conjuntos de distintos items de la lista.
+  \item Para todo item de la lista mismSanciones, y para todo agente dentro del conjunto del item, la cantidad de sanciones es igual al resto del conjunto, y menor al de todos los agentes de items siguientes.
+  
+  \end{enumerate}
+
+  \Rep[estr][e]{
+  
+  \begin{enumerate}
+  \item ( ($\forall$ $a$ : nat) def?($a$, e.as) $\iff$ En($a$, e.claves) ) $\yluego$
+  \item def?(e.masVigilante, e.as) $\yluego$
+  \item (($\forall$ $a$ : nat) def?($a$, e.as) $\impluego$ (obtener($a$, e.as).capturas $=$ obtener(e.masVigilante, e.as).capturas $\land$ $a$ $>$ e.masVigilante) $\lor$ (obtener($a$, e.as).capturas $<$ obtener(e.masVigilante, e.as).capturas) $\lor$ ($a$ $=$ e.masVigilante)) $\land$
+  \item ( ($\forall$ $a$ : nat) def?($a$, e.as) $\impluego$ ($\exists!$ $i$ : nat) e.kSanciones[$i$].placa $=$ $a$  $\land$
+  \item $\neg$(e.huboSanciones) $\implies$ (CorrespondenSanciones(e) $\yluego$ SancionesOrdenadas(e)) $\land$
+  \item ( \ (($\forall$ $i$ : nat) $i <$ Longitud(e.mismSanciones) $\impluego$ MSDefinidosEnDicc(e,$i$)) $\land$ DiccDefinidosEnMSYNoRepetidos(e) \ ) $\yluego$
+  \item ( \ ($\forall$ $i$ : nat) ($i <$ Longitud(e.mismSanciones) $\impluego$ MSTieneMismSanciones(e, $i$)) $\land$ \\ ($i <$ (Longitud(e.mismSanciones) $- 1$) $\impluego$ MSCadaItemTieneDifSanciones(e,$i$)) \ )
+  \end{enumerate}
+  
+  }\mbox{}
+  {Reemplazos sintacticos: }
+  ~      
+  % \tadOperacion{CorrespondenSanciones}{estr/e}{bool}{}
+  \tadAxioma{CorrespondenSanciones($e$)}{($\forall$ $i$ : nat) $i$ $<$ Tam(e.kSanciones) $\impluego$ e.kSanciones[$i$].sanciones $=$ Obtener(e.kSanciones[$i$].placa, e.as).sanciones}
+  ~      
+  % \tadOperacion{SancionesOrdenadas}{estr/e}{bool}{}
+  \tadAxioma{SancionesOrdenadas($e$)}{($\forall$ $i$ : nat) $i$ $<$ (Tam(e.kSanciones)$-1$) $\impluego$ Obtener(e.kSanciones[$i$].placa, e.as).sanciones $\leq$ Obtener(e.kSanciones[$i+1$].placa, e.as).sanciones}
+  ~      
+  % \tadOperacion{MSDefinidosEnDicc}{estr/e, nat/i}{bool}{}
+  \tadAxioma{MSDefinidosEnDicc($e$, $i$)}{($\forall$ $a$ : nat) En($a$, e.mismSanciones[$i$]) $\implies$ Def?($a$, e.as)}
+  ~      
+  %\tadOperacion{DiccDefinidosEnMSYNoRepetidos}{estr/e}{bool}{}
+  \tadAxioma{DiccDefinidosEnMSYNoRepetidos($e$)}{($\forall$ $a$ : nat) Def?($a$, e.as) $\implies$ (($\exists!$ $i$ : nat) i $<$ Longitud(e.mismSanciones) $\impluego$ En($a$, e.mismSanciones[$i$]))}
+  ~      
+  %\tadOperacion{MSTieneMismSanciones}{estr/e, nat/i}{bool}{}
+  \tadAxioma{MSTieneMismSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i$]) $\land$ $\neg$($a = a'$)) $\impluego$ Obtener($a$, e.as) $=$ Obtener($a'$, e.as)}
+  ~      
+  %\tadOperacion{MSCadaItemTieneDifSanciones}{estr/e, nat/i}{bool}{}
+  \tadAxioma{MSCadaItemTieneDifSanciones($e$, $i$)}{($\forall$ $a, a'$ : nat) (En($a$, e.mismSanciones[$i$]) $\land$ En($a'$, e.mismSanciones[$i+1$])) $\impluego$ Obtener($a$, e.as) $<$ Obtener($a'$, e.as)}
+  ~
+  
+  \AbsFc[estr]{agentes}[e]{$as$ : agentes / \\
+    ($\forall$ $a$ : placa) Def?($a$, e.as) $\iff$ $a$ $\in$ agentes?($as$) $\yluego$ \\
+    ($\forall$ $a$ : placa) Def?($a$, e.as) $\impluego$ \\
+    ( Obtener($a$, e.as).sanciones $\igobs$ sancionesAgente($a$, $as$) $\land$ \\
+    Obtener($a$, e.as).capturas $\igobs$ capturasAgente($a$, $as$) $\land$ \\
+    Obtener($a$, e.as).pos $\igobs$ posicionAgente($a$, $as$) $\land$ )
+    }
+
+\end{Representacion}
+
+  \begin{Algoritmos}
+
+\textbf{Algoritmos de Agentes}
+  \listofalgorithms
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$NuevoAgentes(\In{d}{DiccRapido(placa,posicion)}) $\rightarrow$ res: estr}
+  
+    \Begin{
+      var \\
+      itAMismSanciones : itConj \\
+      itClavesD : itConj \\
+      i : nat \\
+      i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      res.as $\leftarrow$ DiccRapidoVacio() \hfill \textbf{//O(1)} \\
+      res.claves $\leftarrow$ Claves(d) \hfill \textbf{//O(N)} \\
+      res.masVig $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      res.mismSanciones $\leftarrow$ Vacia() \hfill \textbf{//O(1)} \\
+      AgregarAtras(res.mismSanciones, res.claves) \hfill \textbf{//O(N)} \\
+      itAMismSanciones $\leftarrow$ CrearIt(res.mismSanciones) \hfill \textbf{//O(1)} \\
+      res.kSanciones $\leftarrow$ CrearArreglo(Longitud(res.claves)) \hfill \textbf{//O(N)}
+
+      itClavesD $\leftarrow$ CrearIt(res.claves) \hfill \textbf{//O(1)} \\
+      \While(\hfill \textbf{//Guarda: O(1)}){HayMas(itClavesD)}{
+        \If(\hfill \textbf{//O(1)}){res.masVig == 0}
+          {res.masVig $\leftarrow$ Actual(itClavesD) \hfill \textbf{//O(1)}}
+        \If(\hfill \textbf{//O(1)}){Actual(itClavesD) $<$ res.masVig}
+          {res.masVig $\leftarrow$ Actual(itClavesD) \hfill \textbf{//O(1)}}
+        Definir (  Actual(itClavesD),  $\langle$ *Obtener(Actual(itClavesD), d), 0, 0, 0, itAMismSanciones $\rangle$,  res.as ) \hfill \textbf{//O(1)} \\
+        res.kSanciones[i] $\leftarrow$ Actual(itClavesD) \hfill \textbf{//O(1)} \\
+        i $\leftarrow$ i+1 \hfill \textbf{//O(1)} \\
+        Avanzar(itClavesD) \hfill \textbf{//O(1)} 
+      }
+
+      \hfill \textbf{//While: O(N)} \\
+      res.huboSanciones $\leftarrow$ false \hfill \textbf{//O(1)} \\
+    }
+    \KwData{O(N), con N la cantidad de agentes}
+  
+    \caption{NuevoAgentes}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: itconjRapido(nat)}
+  
+    \Begin{
+      res $\leftarrow$ CrearIt(as.claves) \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+  
+    \caption{Agentes?}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$AgregarSancion( \In{a}{nat}, \Inout{as}{estr} ) }
+  
+    \Begin{
+      var \\
+      iteradorLista : itLista \\
+      {\small //Primero, le agrego la sancion directamente sobre el significado (DiccRapido hace aliasing en la operacion Obtener) \\ }
+      *(Obtener(a, as.as)).sanciones $\leftarrow$ (*(Obtener(a, as.as)).sanciones + 1) \hfill \textbf{//O(1)} \\
+      as.huboSanciones $\leftarrow$ true \hfill \textbf{//O(1)} \\
+      {\small //Ahora tengo que modificar mismSanciones para que refleje el cambio \\ }
+      iteradorLista $\leftarrow$ *(Obtener(a, as.as)).conMismSanciones \hfill \textbf{//O(1)} \\
+      {\small //Borro a $a$ del conjunto, porque ya no comparte sanciones con nadie del mismo \\}
+      Borrar(a, Siguiente(iteradorLista)) \hfill \textbf{//O(N), pero se desestima} \\
+      {\small //Me muevo al lugar que le corresponde ahora \\}
+      Avanzar(iteradorLista) \hfill \textbf{//O(1)} \\
+      \eIf(\hfill \textbf{//O(1)}){$\neg$ HaySiguiente(iteradorLista)}
+        {
+        {\small //Si no hay nada, creo un nuevo elemento que solo me tiene a mi \\}
+        AgregarComoSiguiente(iteradorLista, Vacio()) \hfill \textbf{//O(1)} \\
+        Siguiente(iteradorLista).Agregar(a) \hfill \textbf{//O(1)} \\
+        }
+        {
+        \eIf(\hfill \textbf{//O(1)}){*(Obtener(DameUno(Siguiente(iteradorLista)), as)).sanciones $>$ *(Obtener(a, as.as)).sanciones}
+          {
+          {\small //Si el que esta en el lugar al que iba tiene mas sanciones que yo, me agrego antes para mantener el orden creciente \\}
+          AgregarComoAnterior(iteradorLista, Vacio()) \hfill \textbf{//O(1)} \\
+          Anterior(iteradorLista).Agregar(a) \hfill \textbf{//O(1)} \\
+          Retroceder(iteradorLista) \hfill \textbf{//O(1)} \\
+          }
+          {
+          {\small //Si no, debe tener las mismas (tiene mas que las que yo tenia antes, y yo sume una sancion, a lo sumo tiene la misma cantidad) \\}
+          Siguiente(iteradorLista).Agregar(a) \hfill \textbf{//O(1)}
+          } 
+        }
+      *(Obtener(a, as.as)).conMismSanciones $\leftarrow$ iteradorLista \hfill \textbf{//O(1)}
+    }
+    \KwData{O(N) | Desestimando el borrado: O(1)}
+  
+    \caption{AgregarSancion}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$CambiarPosicion(\In{a}{nat}, \In{p}{posicion}, \Inout{as}{estr})}
+  
+    \Begin{
+      *(Obtener(a, as.as)).posicion $\leftarrow$ p \hfill \textbf{//O(1)} \\
+    }
+    \KwData{O(1)}
+  
+    \caption{CambiarPosicion}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$AgregarCaptura(\In{a}{nat}, \Inout{as}{estr})}
+  
+    \Begin{
+      *(Obtener(a, as.as)).capturas $\leftarrow$ (*(Obtener(a, as.as)).capturas + 1) \hfill \textbf{//O(1)} \\
+      {\small //Ademas de sumar captura, hago el mantenimiento de masVigilante  \\}
+      \eIf(\hfill \textbf{//O(1)}){*(Obtener(a, as.as)).capturas $>$ *Obtener(as.masVigilante, as).capturas}
+        {as.masVigilante $\leftarrow$ a \hfill \textbf{//O(1)}}
+        {
+          \If(\hfill \textbf{//O(1)}){*(Obtener(a, as.as)).capturas $==$ *Obtener(as.masVigilante, as).capturas}
+          {
+            \If(\hfill \textbf{//O(1)}){a $<$ as.masVigilante}
+            {as.masVigilante $\leftarrow$ a \hfill \textbf{//O(1)}}
+          }
+        }
+    }
+    \KwData{O(1)}
+  
+    \caption{AgregarCaptura}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$PosAgente(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: posicion}
+  
+    \Begin{
+      res $\leftarrow$ *(Obtener(a, as.as)).posicion \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+  
+    \caption{PosAgente}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$SancionesAgente(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: nat}
+  
+    \Begin{
+      res $\leftarrow$ *(Obtener(a, as.as)).sanciones \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+  
+    \caption{SancionesAgente}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$CapturasAgente(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: nat}
+  
+    \Begin{
+      res $\leftarrow$ *(Obtener(a, as.as)).capturas \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+  
+    \caption{CapturasAgente}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$masVigilante(\In{as}{estr}) $\rightarrow$ res: nat}
+  
+    \Begin{
+      res $\leftarrow$ as.masVigilante \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+  
+    \caption{masVigilante}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$ConMismasSanciones(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: puntero(conjRapido(nat))}
+  
+    \Begin{
+      res $\leftarrow$ $\&$(Siguiente(*(Obtener(a, as.as)).conMismSanciones)) \hfill \textbf{//O(1)}
+    }
+    \KwData{O(1)}
+
+  
+    \caption{ConMismasSanciones}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{$i$ConKSanciones(\In{k}{nat}, \Inout{as}{estr}) $\rightarrow$ res: puntero(conjRapido(nat))}
+  
+    \Begin{
+      var \\
+      i : nat \\
+      encontrado : bool \\
+      encontrado $\leftarrow$ false \hfill \textbf{//O(1)} \\
+      i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      \If(\hfill \textbf{//O(1)}){as.huboSanciones == true}
+        {
+          {\small //Actualizo el arreglo kSanciones  \\}
+          \While(\hfill \textbf{//O(1)}){i $<$ Tam(as.kSanciones)}
+          {
+            as.kSanciones[i].sanciones $\leftarrow$ *Obtener(as.kSanciones[i].placa, as.as).sanciones \hfill \textbf{//O(1)} \\
+            i $\leftarrow$ i + 1 \hfill \textbf{//O(1)}
+          }
+          \hfill \textbf{//While: O(N)} \\
+          {\small //Y luego lo ordeno en orden creciente de sanciones  \\}
+          CountingSortSanciones(as.kSanciones, as) \hfill \textbf{//O(N)} \\
+        }
+        
+        {\small //En el arreglo kSanciones tengo, en orden creciente por sancion, a los agentes. Busco a uno con k sanciones  \\}
+        {\small //Busqueda binaria me devuelve el i que cumple que las sanciones del agente en posicion i del arreglo son k   \\}
+        encontrado $\leftarrow$ BusquedaBinariaSanciones(k, as.kSanciones, as, i) \hfill \textbf{//O(log(N))} \\
+        \eIf(\hfill \textbf{//O(1)}){encontrado}
+           {
+           res $\leftarrow$ $\&$(Siguiente(*Obtener(as.kSanciones[i], as.as).conMismSanciones)) \hfill \textbf{//O(1)} \\
+           }
+           {
+           res $\leftarrow$ NULL \hfill \textbf{//O(1)} \\
+           }
+        
+        
+    }
+    \KwData{O(2N + log(N)) = O(N) |  En llamadas siguientes: O(log(N))}
+    \KwComm{La primer complejidad se da cuando hubo sanciones. N es la cantidad de agentes. En proximas llamadas, la complejidad pasa a ser unicamente la busqueda binaria, es decir, log(N)}
+    \caption{ConKSanciones}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{CountingSortSanciones(\Inout{arreglo}{Arreglo(tuplaK)}, \In{as}{as})}
+  
+    \Begin{
+      var \\
+      i, total, cantidadAnt : nat \\
+      maxSanciones : nat \\
+      cantidad : Arreglo(nat) \\
+      output : Arreglo(tuplaK) \\
+
+      iterador : itConj(nat)\\
+      i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      cantidadAnt $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      total $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      {\small //Se que a todos los agentes con las maximas sanciones los tengo en el ultimo elemento de la lista mismSanciones.  \\}
+      maxSanciones $\leftarrow$ *Obtener(DameUno(Ultimo(as.mismSanciones)), as.as).sanciones \hfill \textbf{//O(1)} \\
+      {\small //Creo el arreglo cantidad con MaxSanciones posiciones. \\}
+      cantidad $\leftarrow$ CrearArreglo(maxSanciones) \hfill \textbf{//O(maxSanciones)} \\
+      output $\leftarrow$ CrearArreglo(Tam(arreglo)) \hfill \textbf{//O(N)} \\
+
+      \While(\hfill \textbf{//O(1)}){i $<$ maxSanciones}
+      {
+        cantidad[i] $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+        i $\leftarrow$ i + 1 \hfill \textbf{//O(1)} 
+      }
+      \hfill \textbf{//While: O(maxSanciones)} \\
+
+
+      {\small //Calculo la cantidad de cada numero de sanciones  \\}
+      i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      \While(\hfill \textbf{//O(1)}){i $<$ Tam(arreglo)}
+      {
+        cantidad[arreglo[i].sanciones] $\leftarrow$ cantidad[arreglo[i].sanciones] + 1 \hfill \textbf{//O(1)} \\
+        i $\leftarrow$ i + 1 \hfill \textbf{//O(1)}
+      }
+      \hfill \textbf{//While: O(N)}
+
+      {\small //Calculo el indice inicial para cada numero de sanciones  \\}
+      i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      \While(\hfill \textbf{//O(1)}){i $<$ maxSanciones}
+      {
+        cantidadAnt $\leftarrow$ cantidad[i] \hfill \textbf{//O(1)} \\
+        cantidad[i] $\leftarrow$ total \hfill \textbf{//O(1)} \\
+        total $\leftarrow$ total + cantidadAnt \hfill \textbf{//O(1)} \\
+        i $\leftarrow$ i + 1 \hfill \textbf{//O(1)} 
+      }
+      \hfill \textbf{//While: O(maxSanciones)} \\
+
+      {\small //Coloco a cada agente (<sanciones, placa>) en el lugar que le corresponde en el output  \\}
+      i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      \While(\hfill \textbf{//O(1)}){i $<$ Tam(arreglo)}
+      {
+        output[cantidad[arreglo[i].sanciones]] $\leftarrow$ arreglo[i] \hfill \textbf{//O(1)} \\
+        cantidad[arreglo[i].sanciones] $\leftarrow$ cantidad[arreglo[i].sanciones] + 1 \hfill \textbf{//O(1)} \\
+        i $\leftarrow$ i + 1 \hfill \textbf{//O(1)}
+      }
+      \hfill \textbf{//While: O(N)}
+
+      arreglo $\leftarrow$ output \hfill \textbf{//O(N)}
+    }
+    \KwData{O(5N + 3maxSanciones) = O(N)}
+    \KwComm{Vamos a asumir que maxSanciones es, a lo sumo, un multiplo de N (kN) con un k constante y pequeño (k $<$ N), y tomar la complejidad como O(N).}
+  
+    \caption{CountingSortSanciones}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \begin{algorithm}[H]
+    \text{BusquedaBinariaSanciones(\In{k}{nat}, \In{arreglo}{Arreglo(tuplaK)}, \In{as}{estr} \Inout{i}{nat}) $\rightarrow$ res: bool}
+  
+    \Begin{
+      var \\
+      iMin, iMax, iMed : nat \\
+      iMin $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
+      iMax $\leftarrow$ Tam(arreglo) \hfill \textbf{//O(1)} \\
+      res $\leftarrow$ false \hfill \textbf{//O(1)} \\
+
+      \While(\hfill \textbf{//O(1)}){iMin $\leq$ iMax}
+      {
+        iMed $\leftarrow$ $\lfloor((iMin + iMax) / 2)\rfloor$ \hfill \textbf{//O(1)} \\
+        \eIf(\hfill \textbf{//O(1)}){arreglo[iMed].sanciones == k}
+          {
+            i $\leftarrow$ iMed \hfill \textbf{//O(1)} \\
+            res $\leftarrow$ true \hfill \textbf{//O(1)} \\
+            iMin $\leftarrow$ $iMax + 1$ \hfill \textbf{//O(1)}
+          }
+          {
+            \eIf(\hfill \textbf{//O(1)}){arreglo[iMed].sanciones $<$ k}
+              {
+                iMin $\leftarrow$ $iMed + 1$ \hfill \textbf{//O(1)}
+              }
+              {
+                iMax $\leftarrow$ $iMed - 1$ \hfill \textbf{//O(1)}
+              }
+          }
+
+      }
+      \hfill \textbf{//While: O(log(N))}
+
+    }
+    \KwData{O(log(N))}
+    \KwComm{$i$ devuelve el indice donde el agente tiene $k$ sanciones. $i$ se invalida si $res$ es $false$ (no encontrado)}
+  
+    \caption{BusquedaBinariaSanciones}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+  \end{Algoritmos}
+
+
+\end{document}

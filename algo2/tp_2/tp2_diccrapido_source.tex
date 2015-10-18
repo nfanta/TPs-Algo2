@@ -206,8 +206,8 @@
 
   \Rep[estr][d]{
     \begin{enumerate}
-      \item ( \ ($\forall$ $c$ : clave) En($c$, d.claves) $\implies$ (($\exists!$ i : nat) Definido?(i, d.defs) $\yluego$ d.defs[i].key = $c$) \ ) $\land$ \\ ( \ ($\forall$ i : nat) Definido?(i, d.defs) $\impluego$ En(d.defs[i].key, d.claves) ) $\yluego$
-      \item ( \ ($\forall$ $c$ : clave) En($c$, d.claves) $\implies$ (Definido?(Hash($c$, $c$, $d$), d.defs) $\yluego$ d.defs[Hash($c$, $c$, $d$)].key = $c$ ) \ )
+      \item ( \ ($\forall$ $c$ : clave) Pertenece?($c$, d.claves) $\implies$ (($\exists!$ i : nat) Definido?(i, d.defs) $\yluego$ d.defs[i].key = $c$) \ ) $\land$ \\ ( \ ($\forall$ i : nat) Definido?(i, d.defs) $\impluego$ Pertenece?(d.defs[i].key, d.claves) ) $\yluego$
+      \item ( \ ($\forall$ $c$ : clave) Pertenece?($c$, d.claves) $\implies$ (Definido?(Hash($c$, $c$, $d$), d.defs) $\yluego$ d.defs[Hash($c$, $c$, $d$)].key = $c$ ) \ )
     \end{enumerate}
   }\mbox{}
 
@@ -218,7 +218,7 @@
   ~
   
   \AbsFc[estr]{Diccionario(clave, significado)}[e]{$d$ : Diccionario(clave, significado) / \\
-    ($\forall$ $c$ : clave) En($c$, e.claves) $\iff$ def?($c$, $d$) $\yluego$ \\
+    ($\forall$ $c$ : clave) Pertenece?($c$, e.claves) $\iff$ def?($c$, $d$) $\yluego$ \\
     ($\forall$ $c$ : clave) def?($c$, $d$) $\impluego$ obtener($c$, $d$) $\igobs$ e.defs[Hash($c$, $c$, $e$)].significado 
     }
 
@@ -228,6 +228,7 @@
 
 \textbf{Algoritmos de Agentes}
   \listofalgorithms
+  \bigskip
   
   \begin{algorithm}[H]
     \text{$i$Vacio() $\rightarrow$ res: estr}
@@ -288,7 +289,7 @@
     \text{$i$Def?(\In{k}{clave}, \In{d}{estr}) $\rightarrow$ res: bool}
   
     \Begin{
-      res $\leftarrow$ En(k, d.claves) \hfill \textbf{//O(N)}
+      res $\leftarrow$ Pertenece?(k, d.claves) \hfill \textbf{//O(N)}
     }
     \KwData{O(N)}
   
@@ -314,7 +315,7 @@
     \text{$i$Claves(\In{d}{estr}) $\rightarrow$ res: conj(clave)}
   
     \Begin{
-      res $\leftarrow$ d.claves \hfill \textbf{//O(1)}
+      res $\leftarrow$ $\&$d.claves \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
   
