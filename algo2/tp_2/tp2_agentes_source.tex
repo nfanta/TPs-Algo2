@@ -137,7 +137,7 @@
 
   \textbf{generos}: \TipoVariable{agentes}
 
-  \textbf{usa}: \TipoVariable{conjRapido($\alpha$)}, \TipoVariable{diccRapido(clave, significado)}, \TipoVariable{nat}, \TipoVariable{bool}, \TipoVariable{lista}
+  \textbf{usa}: \TipoVariable{conj($\alpha$)}, \TipoVariable{diccRapido(clave, significado)}, \TipoVariable{nat}, \TipoVariable{bool}, \TipoVariable{lista}
 
   \Titulo{Operaciones basicas de agentes}
 
@@ -147,7 +147,7 @@
   [O(N$a$) //Revisar al hacer algoritmo]
   [Crea un nuevo contenedor de Agentes con los agentes contenidos en $as$. N$a$ es la cantidad de agentes definidos en $as$]
 
-  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{conjRapido(placa)}%
+  \InterfazFuncion{Agentes?}{\In{as}{agentes}}{conj(placa)}%
   [true]
   {$res \igobs$ agentes?($as$)}%
   [$\Theta(1)$]
@@ -196,14 +196,14 @@
   [$\Theta(1)$]
   [Devuelve el agente que mas capturas tiene en $as$. Si hubiera mas de uno, devuelve el de menor placa.]
 
-  \InterfazFuncion{ConMismasSanciones}{\In{a}{placa}, \In{as}{agentes}}{conjRapido(placa)}%
+  \InterfazFuncion{ConMismasSanciones}{\In{a}{placa}, \In{as}{agentes}}{conj(placa)}%
   [estaAgente($a, as$)]
   {alias($res \igobs$ conMismasSanciones($a, as$))}%
   [$\Theta(1)$]
   [Devuelve la referencia a el conjunto de agentes que tienen la misma cantidad de sanciones que el agente $a$]
   [$res$ no es modificable. Cualquier referencia que se guarde queda invalidada si se agregan sanciones.]
 
-  \InterfazFuncion{ConKSanciones}{\In{k}{nat}, \Inout{as}{agentes}}{conjRapido(placa)}%
+  \InterfazFuncion{ConKSanciones}{\In{k}{nat}, \Inout{as}{agentes}}{conj(placa)}%
   [true]
   {alias($res \igobs$ conKSanciones($k, as$))}%
   [O(N$a$) la primera vez, O(log(N$a$)) en siguientes llamadas mientras no ocurran sanciones.]
@@ -220,10 +220,10 @@
   \begin{Estructura}{agentes}[estr]
     \begin{Tupla}[estr]
       \tupItem{as}{DiccRapido(placa, datos)}%
-      \tupItem{claves}{conjRapido(placa)}
+      \tupItem{claves}{conj(placa)}
       \tupItem{masVig}{placa}%
       \tupItem{huboSanciones}{bool}%
-      \tupItem{mismSanciones}{lista(conjRapido(placa))}%
+      \tupItem{mismSanciones}{lista(conj(placa))}%
       \tupItem{kSanciones}{Arreglo(tuplaK)}%
     \end{Tupla}
 
@@ -231,7 +231,7 @@
       \tupItem{pos}{posicion}%
       \tupItem{sanciones}{nat}%
       \tupItem{capturas}{nat}%
-      \tupItem{conMismSanciones}{itLista(conjRapido(placa))}%
+      \tupItem{conMismSanciones}{itLista(conj(placa))}%
     \end{Tupla}
 
     \begin{Tupla}[tuplaK]
@@ -353,7 +353,7 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: itconjRapido(nat)}
+    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: itConj(nat)}
   
     \Begin{
       res $\leftarrow$ CrearIt(as.claves) \hfill \textbf{//O(1)}
@@ -497,7 +497,7 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$ConMismasSanciones(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: puntero(conjRapido(nat))}
+    \text{$i$ConMismasSanciones(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: puntero(conj(nat))}
   
     \Begin{
       res $\leftarrow$ $\&$(Siguiente(*(Obtener(a, as.as)).conMismSanciones)) \hfill \textbf{//O(1)}
@@ -511,7 +511,7 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$ConKSanciones(\In{k}{nat}, \Inout{as}{estr}) $\rightarrow$ res: puntero(conjRapido(nat))}
+    \text{$i$ConKSanciones(\In{k}{nat}, \Inout{as}{estr}) $\rightarrow$ res: puntero(conj(nat))}
   
     \Begin{
       var \\
