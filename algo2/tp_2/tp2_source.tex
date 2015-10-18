@@ -7,7 +7,14 @@
 \usepackage{xargs}
 \usepackage{ifthen}
 \usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage[]{algorithm2e}
 
+\SetKwInput{KwData}{Complejidad}
+\SetKwInput{KwComm}{Comentarios}
+\SetKw{ret}{return}
+\SetKw{var}{var \normalfont}
+\SetAlgorithmName{Algoritmo}{Algoritmo}{\large Lista de algoritmos}
+\SetAlCapSkip{1em}
 
 \newcommand{\moduloNombre}[1]{\textbf{#1}}
 
@@ -118,131 +125,173 @@
 
 \newcommand{\DRef}{\ensuremath{\rightarrow}}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% COMIENZO DEL DOCUMENTO %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 \begin{document}
 
-\section{Módulo Lista Enlazada($\alpha$)}
+
+
+%%%%%%%%%%%%%%%%%%%
+%% MODULO CAMPUS %%
+%%%%%%%%%%%%%%%%%%%
+
+
+
+\section{Módulo Matriz}
 
 
 \begin{Interfaz}
   
   \textbf{parámetros formales}\hangindent=2\parindent\\
-  \parbox{1.7cm}{\textbf{géneros}} $\alpha$\\
+  \parbox{1.7cm}{\textbf{género}} $significado$\\
   \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
-    \InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
+    \InterfazFuncion{Copiar}{\In{a}{$significado$}}{$significado$}
     {$res \igobs a$}
     [$\Theta(copy(a))$]
-    [función de copia de $\alpha$'s]
+    [función de copia de $significado$]
   }
 
-  \textbf{se explica con}: \tadNombre{Secuencia$(\alpha)$}, \tadNombre{Iterador Bidireccional($\alpha$)}.
+  \textbf{se explica con}: \tadNombre{Diccionario(pos, significado)}
 
-  \textbf{géneros}: \TipoVariable{lista$(\alpha)$}, \TipoVariable{itLista($\alpha$)}.
+  \textbf{géneros}: \TipoVariable{matriz}
+  \bigskip
+  \newline
+  El modulo funciona como un diccionario, pero solo se utiliza con claves del tipo $pos$.
+  Extiende el TAD para contemplar que la creacion de una nueva matriz requiere dos parametros, el
+  $alto$ y el $ancho$.
+  
 
-  \Titulo{Operaciones básicas de lista}
+  \Titulo{Operaciones básicas de matriz}
 
-  \InterfazFuncion{Vacía}{}{lista$(\alpha)$}%
-  {$res \igobs \secuencia{}$}%
-  [$\Theta(1)$]
-  [genera una lista vacía.]
+  \InterfazFuncion{NuevaMatriz}{\In{al}{nat}, \In{an}{nat}}{matriz}
+  [true]
+  {$res \igobs$ vacio}
+  [$O(n * m)$]
+  [Crea una nueva matriz de alto $al$ x ancho $an$.]
 
-  \InterfazFuncion{AgregarAdelante}{\Inout{l}{lista($\alpha$)}, \In{a}{$\alpha$}}{itLista($\alpha$}
-  [$l \igobs l_0$]
-  {$l \igobs \secuencia{a}[l_0]$ $\land$ $res$ $=$ CrearItBi(\secuencia{}, $l$) $\land$ alias(SecuSuby($res$) $=$ $l$)}
-  [$\Theta(copy(a))$]
-  [agrega el elemento $a$ como primer elemento de la lista.  Retorna un iterador a $l$, de forma tal que Siguiente devuelva $a$.]
-  [el elemento $a$ agrega por copia. El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  \InterfazFuncion{Colocar}{\In{p}{pos}, \In{s}{significado}, \Inout{m}{matriz}}{}
+  [$m \igobs m_{0}$]
+  {$m \igobs$ definir($p, s, m_{0}$)}
+  [$O(1)$]
+  [Coloca $(define)$ el significado $s$ en la posicion $p$ de la matriz $m$.]
 
- 
-  \Titulo{Operaciones del iterador}
+  \InterfazFuncion{Ocupada?}{\In{p}{pos}, \In{m}{matriz}}{bool}
+  [true]
+  {$res \igobs$ def?($p, m$)}
+  [$O(1)$]
+  [Devuelve $true$ si la posicion $p$ esta ocupada.]
+  []
 
-  \InterfazFuncion{CrearIt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
-  {$res$ $\igobs$ crearItBi(\secuencia{}, $l$) $\land$ alias(SecuSuby($it$) $=$ $l$)}
-  [$\Theta(1)$]
-  [crea un iterador bidireccional de la lista, de forma tal que al pedir \NombreFuncion{Siguiente} se obtenga el primer elemento de $l$.]
-  [el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  \InterfazFuncion{Obtener}{\In{p}{pos}, \In{m}{matriz}}{significado}
+  [def?($p, m$)]
+  {$res \igobs$ obtener($p, m$)}
+  [$O(1)$]
+  [Retorna el $significado$ almacenado en la posicion $p$.]
+  []
 
-  \InterfazFuncion{CrearItUlt}{\In{l}{lista($\alpha$)}}{itLista($\alpha$)}
-  {$res$ $\igobs$ crearItBi($l$, \secuencia{}) $\land$ alias(SecuSuby($it$) $=$ $l$)}
-  [$\Theta(1)$]
-  [crea un iterador bidireccional de la lista, de forma tal que al pedir \NombreFuncion{Anterior} se obtenga el último elemento de $l$.]  
-  [el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función \NombreFuncion{EliminarSiguiente}.]
+  \InterfazFuncion{Eliminar}{\In{p}{pos}, \Inout{m}{matriz}}{}
+  [def?($p, m$) $\land$ $m \igobs m_{0}$]
+  {$m \igobs$ borrar($p, m_{0}$)}
+  [$O(1)$]
+  [Elimina el contenido de la posicion $p$ de la matriz $m$.]
+  []
+
+  \InterfazFuncion{PosicionesOcupadas}{\In{m}{matriz}}{conj(pos)}
+  [true]
+  {$res \igobs$ claves($m$)}
+  [$O(1)$]
+  [Devuelve el conjunto de posiciones ocupadas en la matriz $m$]
+  []
 
 \end{Interfaz}
+\bigskip
+
 
 \begin{Representacion}
   
-  \Titulo{Representación de la lista}
+  \Titulo{Representación de Matriz}
 
-  \begin{Estructura}{lista$(\alpha)$}[lst]
-    \begin{Tupla}[lst]
-      \tupItem{primero}{puntero(nodo)}%
-      \tupItem{longitud}{nat}%
+  \begin{Estructura}{matriz}[estr]
+    \begin{Tupla}[estr]
+      \tupItem{alto}{nat}
+      \tupItem{ancho}{nat}
+      \tupItem{claves}{conjRapido(pos)}%
+      \tupItem{tablero}{vector(vector(info))}%
     \end{Tupla}
 
-    \begin{Tupla}[nodo]
-      \tupItem{dato}{$\alpha$}%
-      \tupItem{anterior}{puntero(nodo)}%
-      \tupItem{siguiente}{puntero(nodo)}%
+    \begin{Tupla}[info]
+      \tupItem{definido}{bool}%
+      \tupItem{dato}{significado}%
     \end{Tupla}
-  \end{Estructura}
 
-  \Rep[lst][l]{($l$.primero $=$ NULL) $=$ ($l$.longitud $=$ $0$) $\yluego$ ($l$.longitud $\neq$ $0$ \impluego \\
-    Nodo($l$, $l$.longitud) $=$ $l$.primero $\land$ \\
-    ($\forall i$: nat)(Nodo($l$,$i$)\DRef siguiente $=$ Nodo($l$,$i+1$)\DRef anterior) $\land$ \\
-    ($\forall i$: nat)($1 \leq i <$ $l$.longitud $\implies$ Nodo($l$,$i$) $\neq$ $l$.primero)}\mbox{}
-
-  ~      
-
-  \tadOperacion{Nodo}{lst/l,nat}{puntero(nodo)}{$l$.primero $\neq$ NULL}
-  \tadAxioma{Nodo($l$,$i$)}{\IF $i = 0$ THEN $l$.primero ELSE Nodo(FinLst($l$), $i-1$) FI}
-
-  ~
-
-  \tadOperacion{FinLst}{lst}{lst}{}
-  \tadAxioma{FinLst($l$)}{Lst($l$.primero\DRef siguiente, $l$.longitud $-$ $\min$\{$l$.longitud, $1$\})}
-
-  ~
-
-  \tadOperacion{Lst}{puntero(nodo),nat}{lst}{}
-  \tadAxioma{Lst($p,n$)}{$\langle p, n\rangle$}
-
-  ~
- 
-  \AbsFc[lst]{secu($\alpha$)}[l]{\IF $l$.longitud $=$ $0$ THEN \secuencia{} ELSE \secuencia{$l$.primero\DRef dato}[Abs(FinLst($l$))] FI}
-
-  \Titulo{Representación del iterador}
-
-  \begin{Estructura}{itLista($\alpha$)}[iter]
-    \begin{Tupla}[iter]
-      \tupItem{siguiente}{puntero(nodo)}%
-      \tupItem{lista}{puntero(lst)}%
+    \begin{Tupla}[pos]
+      \tupItem{fila}{nat}%
+      \tupItem{columna}{nat}%
     \end{Tupla}
   \end{Estructura}
 
-  \Rep[iter][it]{Rep($\ast$($it$.lista)) $\yluego$ ($it$.siguiente $=$ NULL $\oluego$ ($\exists i$: nat)(Nodo($\ast it$.lista, $i$) $=$ $it$.siguiente)}
+  \bigskip
+  \textbf{Invariante de representacion en castellano:}
+  \begin{enumerate}
+  
+  \item La longitud de tablero es $alto$
+  \item Para toda posicion de tablero, el vector que contiene posee longitud $ancho$
+  \item Para toda clave $p$ en el rango de la matriz, $p$ contenida en $claves$ implica que las componentes de $c$ (.fila, .columna) en $tablero$ dan una tupla $info$ donde .definido es $true$.
+  \item Analogo al anterior, pero para toda $p$ que este en el rango de la matriz y no este contenida en $claves$, la tupla $info$ posee .definido igual a $false$
 
-  ~
+  \end{enumerate}
 
-  \Abs[iter]{itBi($\alpha$)}[it]{b}{Siguientes($b$) $=$ Abs(Sig($it$.lista, $it$.siguiente)) $\land$\\
-    Anteriores($b$) $=$ Abs(Ant($it$.lista, $it$.siguiente))}
+  \bigskip
+  \Rep[estr][e]{
+  
+  \begin{enumerate}
+  \item Longitud(tablero) $\igobs$ alto $\land$
+  \item ($\forall$ $i$ : int) ($i$ < Longitud(tablero)) $\impluego$ Longitud(tablero[$i$]) $\igobs$ ancho $\yluego$
+  \item ($\forall$ $p$ : pos) ( $p$.fila $\leq$ alto $\land$ $p$.columna $\leq$ ancho $\land$ $p \in$ e.claves ) $\impluego$ \\ (talbero[$p$.fila][$p$.columna].definido $\igobs$ $true$)
+  \item ($\forall$ $p$ : pos) ( $p$.fila $\leq$ alto $\land$ $p$.columna $\leq$ ancho $\land$ $p \notin$ e.claves ) $\impluego$ \\ (talbero[$p$.fila][$p$.columna].definido $\igobs$ $false$)
+  \end{enumerate}
+  
+  }\mbox{}
 
-  ~
-
-  \tadOperacion{Sig}{puntero(lst)/l,puntero(nodo)/p}{lst}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Sig($i, p$)}{Lst($p$, $l$\DRef longitud $-$ Pos($\ast l$, $p$))}
-
-  ~
-
-  \tadOperacion{Ant}{puntero(lst)/l,puntero(nodo)/p}{lst}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Ant($i, p$)}{Lst(\IF $p$ $=$ $l$\DRef primero THEN NULL ELSE $l$\DRef primero FI, Pos($\ast l$, $p$))}
-
-  ~
-
-  {\small Nota: cuando $p$ $=$ NULL, Pos devuelve la longitud de la lista, lo cual está bien, porque significa que el iterador no tiene siguiente.}
-  \tadOperacion{Pos}{lst/l,puntero(nodo)/p}{puntero(nodo)}{Rep($\langle l, p\rangle$)}
-  \tadAxioma{Pos($l$,$p$)}{\IF $l$.primero $=$ $p$ $\lor$ $l$.longitud $=$ $0$ THEN $0$ ELSE $1$ $+$ Pos(FinLst($l$), $p$) FI}
-
+  \bigskip
+  \AbsFc[estr]{dicc($pos, significado$)}[e]{m : dicc($pos, significado$) \\
+    ($\forall$ $p$ : pos) def?($p$, e.claves) $\igobs$ def?($p, m$) $\land$ \\
+    ($\forall$ $p$ : pos) def?($p$, e.claves) $\impluego$ $\Pi_{2}$(obtener($p$, e)) $\igobs$ obtener($p, m$))
+  }
+  \smallskip
+  \textit{\scriptsize Las claves definidas y sus significados son iguales}
+  \bigskip
 
 \end{Representacion}
+
+\begin{Algoritmos}
+
+  % \textbf{Algoritmos de Campus}
+  \listofalgorithms
+  \newpage
+  
+
+  \begin{algorithm}[H]
+    \text{$i$NuevoCampus(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
+  
+    \Begin{
+      res.alto $\leftarrow$ al \hfill \textbf{//O(1)}\\
+      res.ancho $\leftarrow$ an \hfill \textbf{//O(1)}\\
+      res.obstaculos $\leftarrow$ vacio() \hfill \textbf{//O(al * an)}
+    }
+    \KwData{$O(al * an)$}
+  
+    \caption{nombre}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+\end{Algoritmos}
 
 \end{document}
