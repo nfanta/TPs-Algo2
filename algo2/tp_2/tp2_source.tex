@@ -623,13 +623,15 @@
       iMin, iMax, iMed : nat \\
       iMin $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
       iMax $\leftarrow$ Tam(arreglo) \hfill \textbf{//O(1)} \\
+      res $\leftarrow$ false \hfill \textbf{//O(1)} \\
 
       \While(\hfill \textbf{//O(1)}){iMin $\leq$ iMax}
       {
         iMed $\leftarrow$ $(iMin + iMax) / 2$ \hfill \textbf{//O(1)} \\
         \eIf(\hfill \textbf{//O(1)}){arreglo[iMed].sanciones == k}
           {
-            res $\leftarrow$ iMed \hfill \textbf{//O(1)} \\
+            i $\leftarrow$ iMed \hfill \textbf{//O(1)} \\
+            res $\leftarrow$ true \hfill \textbf{//O(1)} \\
             iMin $\leftarrow$ $iMax + 1$ \hfill \textbf{//O(1)}
           }
           {
