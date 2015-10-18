@@ -137,6 +137,8 @@
 
   \textbf{generos}: \TipoVariable{agentes}
 
+  \textbf{usa}: \TipoVariable{conjRapido($\alpha$)}, \TipoVariable{diccRapido(clave, significado)}, \TipoVariable{nat}, \TipoVariable{bool}, \TipoVariable{lista}
+
   \Titulo{Operaciones basicas de agentes}
 
   \InterfazFuncion{NuevoAgentes}{\In{as}{dicc(placa, posicion)}}{agentes}%
@@ -194,16 +196,16 @@
   [$\Theta(1)$]
   [Devuelve el agente que mas capturas tiene en $as$. Si hubiera mas de uno, devuelve el de menor placa.]
 
-  \InterfazFuncion{ConMismasSanciones}{\In{a}{placa}, \In{as}{agentes}}{puntero(conjRapido(placa))}%
+  \InterfazFuncion{ConMismasSanciones}{\In{a}{placa}, \In{as}{agentes}}{conjRapido(placa)}%
   [estaAgente($a, as$)]
-  {$res \igobs$ conMismasSanciones($a, as$)}%
+  {alias($res \igobs$ conMismasSanciones($a, as$))}%
   [$\Theta(1)$]
   [Devuelve la referencia a el conjunto de agentes que tienen la misma cantidad de sanciones que el agente $a$]
   [$res$ no es modificable. Cualquier referencia que se guarde queda invalidada si se agregan sanciones.]
 
   \InterfazFuncion{ConKSanciones}{\In{k}{nat}, \Inout{as}{agentes}}{conjRapido(placa)}%
   [true]
-  {$res \igobs$ conKSanciones($k, as$)}%
+  {alias($res \igobs$ conKSanciones($k, as$))}%
   [O(N$a$) la primera vez, O(log(N$a$)) en siguientes llamadas mientras no ocurran sanciones.]
   [Devuelve el conjunto de agentes que tienen exactamente $k$ sanciones. N$a$ es la cantidad de agentes definidos en $as$]
   [$res$ no es modificable. Cualquier referencia que se guarde queda invalidada si se agregan sanciones. Si $res$ es $NULL$, significa que no se encontraron agentes con $k$ sanciones]
@@ -217,11 +219,11 @@
 
   \begin{Estructura}{agentes}[estr]
     \begin{Tupla}[estr]
-      \tupItem{as}{DiccRapido(nat, datos)}%
-      \tupItem{claves}{conjRapido(nat)}
-      \tupItem{masVig}{nat}%
+      \tupItem{as}{DiccRapido(placa, datos)}%
+      \tupItem{claves}{conjRapido(placa)}
+      \tupItem{masVig}{placa}%
       \tupItem{huboSanciones}{bool}%
-      \tupItem{mismSanciones}{lista(conjRapido(nat))}%
+      \tupItem{mismSanciones}{lista(conjRapido(placa))}%
       \tupItem{kSanciones}{Arreglo(tuplaK)}%
     \end{Tupla}
 
@@ -229,12 +231,12 @@
       \tupItem{pos}{posicion}%
       \tupItem{sanciones}{nat}%
       \tupItem{capturas}{nat}%
-      \tupItem{conMismSanciones}{itLista(conjRapido(nat))}%
+      \tupItem{conMismSanciones}{itLista(conjRapido(placa))}%
     \end{Tupla}
 
     \begin{Tupla}[tuplaK]
       \tupItem{sanciones}{nat}%
-      \tupItem{placa}{nat}%
+      \tupItem{placa}{placa}%
     \end{Tupla}
 
     \begin{Tupla}[posicion]
@@ -264,7 +266,7 @@
   \Rep[estr][e]{
   
   \begin{enumerate}
-  \item ( ($\forall$ $a$ : nat) def?($a$, e.as) $\implies$ En($a$, e.claves) ) $\land$
+  \item ( ($\forall$ $a$ : nat) def?($a$, e.as) $\iff$ En($a$, e.claves) ) $\yluego$
   \item def?(e.masVigilante, e.as) $\yluego$
   \item (($\forall$ $a$ : nat) def?($a$, e.as) $\impluego$ (obtener($a$, e.as).capturas $=$ obtener(e.masVigilante, e.as).capturas $\land$ $a$ $>$ e.masVigilante) $\lor$ (obtener($a$, e.as).capturas $<$ obtener(e.masVigilante, e.as).capturas) $\lor$ ($a$ $=$ e.masVigilante)) $\land$
   \item ( ($\forall$ $a$ : nat) def?($a$, e.as) $\impluego$ ($\exists!$ $i$ : nat) e.kSanciones[$i$].placa $=$ $a$  $\land$
@@ -550,14 +552,14 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{CountingSortSanciones(\In{arreglo}{Arreglo(tuplaK)}, \In{as}{as}) $\rightarrow$ res: Arreglo(tuplaK)}
+    \text{CountingSortSanciones(\Inout{arreglo}{Arreglo(tuplaK)}, \In{as}{as})}
   
     \Begin{
       var \\
       i, total, cantidadAnt : nat \\
       maxSanciones : nat \\
       cantidad : Arreglo(nat) \\
-      output : Arreglo(tuplaK)\\
+      output : Arreglo(tuplaK) \\
 
       iterador : itConj(nat)\\
       i $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
@@ -606,8 +608,10 @@
         i $\leftarrow$ i + 1 \hfill \textbf{//O(1)}
       }
       \hfill \textbf{//While: O(N)}
+
+      arreglo $\leftarrow$ output \hfill \textbf{//O(N)}
     }
-    \KwData{O(4N + 3maxSanciones) = O(N)}
+    \KwData{O(5N + 3maxSanciones) = O(N)}
     \KwComm{Vamos a asumir que maxSanciones es, a lo sumo, un multiplo de N (kN) con un k constante y pequeño (k $<$ N), y tomar la complejidad como O(N).}
   
     \caption{CountingSortSanciones}
@@ -627,7 +631,7 @@
 
       \While(\hfill \textbf{//O(1)}){iMin $\leq$ iMax}
       {
-        iMed $\leftarrow$ $(iMin + iMax) / 2$ \hfill \textbf{//O(1)} \\
+        iMed $\leftarrow$ $\lfloor((iMin + iMax) / 2)\rfloor$ \hfill \textbf{//O(1)} \\
         \eIf(\hfill \textbf{//O(1)}){arreglo[iMed].sanciones == k}
           {
             i $\leftarrow$ iMed \hfill \textbf{//O(1)} \\

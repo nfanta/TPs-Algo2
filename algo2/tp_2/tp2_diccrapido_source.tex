@@ -161,7 +161,7 @@
 
   \InterfazFuncion{Obtener}{\In{c}{clave}, \In{d}{diccRapido(clave, significado)}}{significado}%
   [def?($c$, $d$)]
-  {$res \igobs$ obtener($c$, $d$)}%
+  {alias($res \igobs$ obtener($c$, $d$))}%
   [$\Theta(1)$]
   [Devuelve el significado de la clave $c$]
   [$res$ es una referencia al significado de $c$ en el diccionario $d$. Si se modifica, se modificara el significado dentro del diccionario. Si se borra una clave, o se define alguna clave, la referencia queda invalidada.]
@@ -301,7 +301,7 @@
     \text{$i$Obtener(\In{k}{clave}, \In{d}{estr}) $\rightarrow$ res: significado}
   
     \Begin{
-      res $\leftarrow$ d.defs[Hash(k, k, d)].significado \hfill \textbf{//O(1)}
+      res $\leftarrow$ $\&$(d.defs[Hash(k, k, d)].significado) \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
   
