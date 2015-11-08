@@ -219,15 +219,15 @@
   \begin{Estructura}{dcr}[estr]
     \begin{Tupla}[estr]
       \tupItem{dicc}{arreglo(puntero(nodo))}
-      \tupItem{claves}{conjunto(string)}
+      \tupItem{claves}{conj(string)}
     \end{Tupla}
 
     \begin{Tupla}[nodo]
-      \tupItem{id}{char}
-      \tupItem{clave}{string}
+      % \tupItem{clave}{string} NO SE USA
       \tupItem{definido}{bool}
       \tupItem{dato}{significado}
       \tupItem{sig}{arreglo(puntero(nodo))}%
+      \tupItem{it}{itConj(string)}
     \end{Tupla}
 
 
@@ -238,7 +238,8 @@
   
   \item Toda clave de $claves$ esta definida en $dicc$, es decir, $dicc$ posee un nodo con la misma clave.
   \item Todo nodo donde su .definido es $true$, su .clave esta contenida en $claves$.
-
+  \item El arreglo $dicc$ posee longitud igual a 256
+  \item Todo nodo contenido en la estructura posee el arreglo $sig$ con tamaño igual a 256
 
   \end{enumerate}
 
@@ -246,18 +247,18 @@
   \Rep[estr][e]{
   
   \begin{enumerate}
-  \item ($\forall$ s : string) $s$ $\in$ e.claves $\implies$ ( hayCamino($s$, e.dicc) $\yluego$ $\Pi_{3}$(tuplaEnDicc($s$, e.dicc)) ) $\land$
-  \item ($\forall$ s : string) (hayCamino($s$, e.dicc) $\yluego$ $\Pi_{3}$(tuplaEnDicc($s$, e.dicc)) $\implies$ $s$ $\in$ e.claves
+  \item ($\forall$ s : string) $s$ $\in$ e.claves $\implies$ ( hayCamino($s$, e.dicc) $\yluego$ $\Pi_{1}$(tuplaEnDicc($s$, e.dicc)) ) $\land$
+  \item ($\forall$ s : string) (hayCamino($s$, e.dicc) $\yluego$ $\Pi_{1}$(tuplaEnDicc($s$, e.dicc)) $\implies$ $s$ $\in$ e.claves $\land$
+  \item tam(e.dicc) = 256 $\land$
+  \item ($\forall$ s : string) (hayCamino($s$, e.dicc) $\yluego$ tam($\Pi_{3}$(tuplaEnDicc($s$, e.dicc)) ) = 256
   \end{enumerate}
-  }
-
-  
+  }  
 
   \bigskip
   
-  \AbsFc[estr]{dicc($string, significado$)}[e]{d : dicc($string, significado$) \\
-    ($\forall$ $s$ : string) def?($s$, e.claves) $\igobs$ def?($p, d$) $\land$ \\
-    ($\forall$ $s$ : string) def?($s$, e.claves) $\impluego$ $\Pi_{4}$(tuplaEnDicc($s$, e.dicc)) $\igobs$ obtener($s, d$))
+  \AbsFc[estr]{dicc($string, significado$)}[e]{d : dicc($string, significado$) / \\
+    ($\forall$ $s$ : string) En($s$, e.claves) $\igobs$ def?($p, d$) $\yluego$ \\
+    ($\forall$ $s$ : string) En($s$, e.claves) $\impluego$ $\Pi_{2}$(tuplaEnDicc($s$, e.dicc)) $\igobs$ obtener($s, d$))
   }
   \bigskip
 
@@ -265,12 +266,12 @@
   \smallskip
 
   \tadOperacion{hayCamino}{string \ $s$, arreglo \ $array$}{bool}{tam(array) = 256}
-  \tadAxioma{hayCamino($s$, e.dicc)}{
+  \tadAxioma{hayCamino($s$, array)}{
     \IF {Longitud($s$) = 0} 
       THEN {$true$}
       ELSE {
         \IF {definido(ord(prim($s$)), array)} 
-          THEN {hayCamino(fin($s$), array[ord(prim($s$))] )}
+          THEN {hayCamino(fin($s$), *array[ord(prim($s$))] )}
           ELSE {$false$} 
         FI} 
     FI
@@ -278,9 +279,9 @@
 
   \bigskip
   \tadOperacion{tuplaEnDicc}{string \ $s$, arreglo \ $array$}{tupla($\alpha_{1} ... \alpha_{n}$)}{hayCamino($s, array$) $\land$ tam(array) = 256}
-  \tadAxioma{tuplaEnDicc($s$, e.dicc)}{
+  \tadAxioma{tuplaEnDicc($s$, array)}{
     \IF {Longitud($s$) = 1} 
-      THEN {array[ord(prim($s$))]}
+      THEN {*array[ord(prim($s$))]}
       ELSE {
         tuplaEnDicc(fin($s$), array[ord(prim($s$))]
       }
@@ -317,11 +318,12 @@
     \text{$i$Definir(\In{n}{string}, \In{s}{significado}, \Inout{e}{estr})}
   
     \Begin{
-      \var{\normalfont t : string; p : puntero(nodo) tuplaVacia : nodo}\\
+      \var{\normalfont t : string; p : puntero(nodo) tuplaVacia : nodo; ittr : itConj(string)}\\
       t $\leftarrow$ fin(n) \hfill \textbf{//O(1)}\\
-      tuplaVacia $\leftarrow$ <$false$, $s$, CrearArreglo(256)> \hfill \textbf{//O(1)}\\
+      ittr $\leftarrow$ CrearIt(e.claves)
+      tuplaVacia $\leftarrow$ <$false$, $s$, CrearArreglo(256), ittr> \hfill \textbf{//O(1)}\\
 
-      \If(\hfill \textbf{//O()}){$\neg$Def?(n, e.claves)}
+      \If(\hfill \textbf{//O(Longitud(n))}){$\neg$Def?(n, e.claves)}
       {
 
       \If(\hfill \textbf{//O(1)}){$\neg$Definido(e.dicc, Ord(Prim(t)) )}
@@ -333,17 +335,26 @@
         \If(\hfill \textbf{//O(1)}){$\neg$Definido(p.sig, Ord(Prim(t)) )}
           {p.sig[Ord(Prim(t))] $\leftarrow$ tuplaVacia}\hfill \textbf{//O(1)}
 
-        p $\leftarrow$ p[Ord(Prim(t))] \hfill \textbf{//O(1)}\\
+        p $\leftarrow$ p.sig[Ord(Prim(t))] \hfill \textbf{//O(1)}\\
         t $\leftarrow$ fin(t) \hfill \textbf{//O(1)}\\
       }
 
       p.definido $\leftarrow$ $true$ \hfill \textbf{//O(1)}\\
-      p.dato $\leftarrow$ $S$ \hfill \textbf{//O(1)}\\
-      Agregar(n, e.claves) \hfill \textbf{//O(1)}
+      p.dato $\leftarrow$ $s$ \hfill \textbf{//O(1)}\\
+      ittr $\leftarrow$ AgregarRapido(n, e.claves) \hfill \textbf{//O(1)}\\
+      p.it $\leftarrow$ ittr \hfill \textbf{//O(1)}\\
+      \smallskip
+        \Else{
+          \While(\hfill \textbf{//O(Longitud(n))}){Longitud(t) > 0}{
+            p $\leftarrow$ p[Ord(Prim(t))] \hfill \textbf{//O(1)}\\
+            t $\leftarrow$ fin(t) \hfill \textbf{//O(1)}\\
+          }
+          p.dato $\leftarrow$ $s$ \hfill \textbf{//O(1)}\\
+        }
       }
     }
     \KwData{O(Longitud(n))}
-    \KwComm{$Agregar(n, e.claves)$ es O(1) dado que se sabe por el if que no esta definido.}
+    \KwComm{$AgregarRapido(n, e.claves)$ es O(1) y se puede utilizar dado que se sabe por el if que no esta definido. El it se guarda para luego poder eliminar del conjunto en O(1). En la rama else, donde la clave ya había sido definida anteriormente, solo actualizamos el significado.}
   
     \caption{Definir}
   \end{algorithm}
@@ -355,10 +366,19 @@
     \text{$i$Def?(\In{n}{string}, \In{e}{estr}) $\rightarrow$ res: bool}
   
     \Begin{
-      res $\leftarrow$ Def?(n, e.claves) \hfill \textbf{//O(1)}
+      \var{\normalfont t : string; p : puntero(nodo)}\\
+      t $\leftarrow$ fin(n) \hfill \textbf{//O(1)}\\
+      p $\leftarrow$ e.dicc[prim(n)] \hfill \textbf{//O(1)}\\
+
+      \While(\hfill \textbf{//O(Longitud(n))}){Longitud(t) > 0}{
+        p $\leftarrow$ p.sig[Ord(Prim(t))] \hfill \textbf{//O(1)}\\
+        t $\leftarrow$ fin(t) \hfill \textbf{//O(1)}\\
+      }
+
+      res $\leftarrow$ p.definido \hfill \textbf{//O(1)}\\
       \ret{res}
     }
-    \KwData{O(1)}
+    \KwData{O(Longitud(n))}
   
     \caption{Def?}
   \end{algorithm}
@@ -372,14 +392,14 @@
     \Begin{
       \var{\normalfont t : string; p : puntero(nodo)}\\
       t $\leftarrow$ fin(n) \hfill \textbf{//O(1)}\\
-      p $\leftarrow$ e.dicc[prim(n)] \hfill \textbf{//O(1)}\\
+      p $\leftarrow$ e.dicc[Ord(prim(n))] \hfill \textbf{//O(1)}\\
 
       \While(\hfill \textbf{//O(Longitud(n))}){Longitud(t) > 0}{
-        p $\leftarrow$ p[Ord(Prim(t))] \hfill \textbf{//O(1)}\\
+        p $\leftarrow$ p.sig[Ord(Prim(t))] \hfill \textbf{//O(1)}\\
         t $\leftarrow$ fin(t) \hfill \textbf{//O(1)}\\
       }
 
-      res $\leftarrow$ p.dato
+      res $\leftarrow$ p.dato \hfill \textbf{//O(1)}\\
       \ret{res}
     }
     \KwData{O(Longitud(n))}
@@ -397,10 +417,10 @@
     \Begin{
       \var{\normalfont t : string; p : puntero(nodo)}\\
       t $\leftarrow$ fin(n) \hfill \textbf{//O(1)}\\
-      p $\leftarrow$ e.dicc[prim(n)] \hfill \textbf{//O(1)}\\
+      p $\leftarrow$ e.dicc[Ord(prim(n))] \hfill \textbf{//O(1)}\\
 
       \While(\hfill \textbf{//O(Longitud(n))}){Longitud(t) > 0}{
-        p $\leftarrow$ p[Ord(Prim(t))] \hfill \textbf{//O(1)}\\
+        p $\leftarrow$ p.sig[Ord(Prim(t))] \hfill \textbf{//O(1)}\\
         t $\leftarrow$ fin(t) \hfill \textbf{//O(1)}\\
       }
 

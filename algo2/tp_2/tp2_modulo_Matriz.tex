@@ -138,7 +138,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%
-%% MODULO CAMPUS %%
+%% MODULO MATRIZ %%
 %%%%%%%%%%%%%%%%%%%
 
 
@@ -175,13 +175,13 @@
   [$O(n * m)$]
   [Crea una nueva matriz de alto $al$ x ancho $an$.]
 
-  \InterfazFuncion{Colocar}{\In{p}{pos}, \In{s}{significado}, \Inout{m}{matriz}}{}
+  \InterfazFuncion{Definir}{\In{p}{pos}, \In{s}{significado}, \Inout{m}{matriz}}{}
   [$m \igobs m_{0}$]
   {$m \igobs$ definir($p, s, m_{0}$)}
   [$O(1)$]
-  [Coloca $(define)$ el significado $s$ en la posicion $p$ de la matriz $m$.]
+  [Define el significado $s$ en la posicion $p$ de la matriz $m$.]
 
-  \InterfazFuncion{Ocupada?}{\In{p}{pos}, \In{m}{matriz}}{bool}
+  \InterfazFuncion{Def?}{\In{p}{pos}, \In{m}{matriz}}{bool}
   [true]
   {$res \igobs$ def?($p, m$)}
   [$O(1)$]
@@ -198,11 +198,11 @@
   \InterfazFuncion{Eliminar}{\In{p}{pos}, \Inout{m}{matriz}}{}
   [def?($p, m$) $\land$ $m \igobs m_{0}$]
   {$m \igobs$ borrar($p, m_{0}$)}
-  [$O(1)$]
+  [$O(n)$]
   [Elimina el contenido de la posicion $p$ de la matriz $m$.]
   []
 
-  \InterfazFuncion{PosicionesOcupadas}{\In{m}{matriz}}{conj(pos)}
+  \InterfazFuncion{Claves}{\In{m}{matriz}}{conj(pos)}
   [true]
   {$res \igobs$ claves($m$)}
   [$O(1)$]
@@ -221,14 +221,21 @@
     \begin{Tupla}[estr]
       \tupItem{alto}{nat}
       \tupItem{ancho}{nat}
-      \tupItem{claves}{conjRapido(pos)}%
+      \tupItem{claves}{conj(pos)}%
       \tupItem{tablero}{vector(vector(info))}%
     \end{Tupla}
 
     \begin{Tupla}[info]
       \tupItem{definido}{bool}%
       \tupItem{dato}{significado}%
+      \tupItem{it}{itConj(pos)}%
     \end{Tupla}
+
+  \smallskip
+  \textit{\scriptsize Utilizamos un $definido$ de tipo bool para los algoritmos y un $dato$ de tipo significado para admitir que se utilice este módulo como un diccionario de posiciones
+  con otros significado; más allá de que en campus se utiliza unicamente para significados de tipo bool.
+  El .it se utiliza para poder acceder y eliminar en O(1) una clave de .claves.}
+  \smallskip
 
     \begin{Tupla}[pos]
       \tupItem{fila}{nat}%
@@ -236,11 +243,13 @@
     \end{Tupla}
   \end{Estructura}
 
+
   \bigskip
   \textbf{Invariante de representacion en castellano:}
   \begin{enumerate}
   
   \item La longitud de tablero es $alto$
+  \item Toda clave contenida en .claves esta en el rango de la matriz.
   \item Para toda posicion de tablero, el vector que contiene posee longitud $ancho$
   \item Para toda clave $p$ en el rango de la matriz, $p$ contenida en $claves$ implica que las componentes de $c$ (.fila, .columna) en $tablero$ dan una tupla $info$ donde .definido es $true$.
   \item Analogo al anterior, pero para toda $p$ que este en el rango de la matriz y no este contenida en $claves$, la tupla $info$ posee .definido igual a $false$
@@ -251,21 +260,22 @@
   \Rep[estr][e]{
   
   \begin{enumerate}
-  \item Longitud(tablero) $\igobs$ alto $\land$
-  \item ($\forall$ $i$ : int) ($i$ < Longitud(tablero)) $\impluego$ Longitud(tablero[$i$]) $\igobs$ ancho $\yluego$
-  \item ($\forall$ $p$ : pos) ( $p$.fila $\leq$ alto $\land$ $p$.columna $\leq$ ancho $\land$ $p \in$ e.claves ) $\impluego$ \\ (talbero[$p$.fila][$p$.columna].definido $\igobs$ $true$)
-  \item ($\forall$ $p$ : pos) ( $p$.fila $\leq$ alto $\land$ $p$.columna $\leq$ ancho $\land$ $p \notin$ e.claves ) $\impluego$ \\ (talbero[$p$.fila][$p$.columna].definido $\igobs$ $false$)
+  \item Longitud(tablero) $\igobs$ e.alto $\land$
+  \item ($\forall$ $p$ : pos) En(p, e.claves) $\impluego$ p.fila $\geq$ 0 $\land$ p.fila < e.alto $\land$ p.col $\geq$ 0 $\land$ p.col < e.ancho $\land$
+  \item ($\forall$ $i$ : int) ($i$ < Longitud(e.tablero)) $\impluego$ Longitud(e.tablero[$i$]) $\igobs$ e.ancho $\yluego$
+  \item ($\forall$ $p$ : pos) ( $p$.fila $\leq$ e.alto $\land$ $p$.columna $\leq$ e.ancho $\land$ $p \in$ e.claves ) $\impluego$ \\ (e.tablero[$p$.fila][$p$.columna].definido $\igobs$ $true$)
+  \item ($\forall$ $p$ : pos) ( $p$.fila $\leq$ e.alto $\land$ $p$.columna $\leq$ e.ancho $\land$ $p \notin$ e.claves ) $\impluego$ \\ (e.tablero[$p$.fila][$p$.columna].definido $\igobs$ $false$)
   \end{enumerate}
   
   }\mbox{}
 
   \bigskip
-  \AbsFc[estr]{dicc($pos, significado$)}[e]{m : dicc($pos, significado$) \\
-    ($\forall$ $p$ : pos) def?($p$, e.claves) $\igobs$ def?($p, m$) $\land$ \\
-    ($\forall$ $p$ : pos) def?($p$, e.claves) $\impluego$ $\Pi_{2}$(obtener($p$, e)) $\igobs$ obtener($p, m$))
+  \AbsFc[estr]{dicc($pos, significado$)}[e]{m : dicc($pos, significado$) / \\
+    ($\forall$ $p$ : pos) En?($p$, e.claves) $\igobs$ def?($p, m$) $\land$ \\
+    ($\forall$ $p$ : pos) En?($p$, e.claves) $\impluego$ $\Pi_{2}$(e.tablero[p.fila][p.col]) $\igobs$ obtener($p, m$))
   }
   \smallskip
-  \textit{\scriptsize Las claves definidas y sus significados son iguales}
+  \textit{\scriptsize Las claves definidas y sus significados son iguales. La segunda parte indica que para toda clave definida, tablero en esa posición posee un $info$ donde la segunda componente (.dato) es igual al significado del diccionario resultante.}
   \bigskip
 
 \end{Representacion}
@@ -299,28 +309,36 @@
 
 
   \begin{algorithm}[H]
-    \text{$i$Colocar(\In{p}{pos}, \In{s}{significado}, \Inout{e}{estr})}
+    \text{$i$Definir(\In{p}{pos}, \In{s}{significado}, \Inout{e}{estr})}
   
     \Begin{
-      \If(\hfill \textbf{//O(1)}){p.fila > e.alto $\lor$ p.columna > e.ancho}
+      \If(\hfill \textbf{//O(1)}){p.fila < e.alto $\lor$ p.columna < e.ancho}
       {
-        \ret{e}\\
+        \If(\hfill \textbf{//O(1)}){$\neg$ $\Pi_{1}$(e.tablero[p.fila][p.columna])}{
+        \var{\normalfont temp: itConj}\\
+        temp $\leftarrow$ AgregarRapido(p, e.claves) \hfill \textbf{//O(1)} \\
+        e.tablero[p.fila][p.columna] $\leftarrow$ <$true$, s, temp> \hfill \textbf{//O(1)}\\
         \Else{
-          Agregar(p, e.claves) \hfill \textbf{//O(1)} \\
-          e.tablero[p.fila][p.columna] $\leftarrow$ <$true$, s> \hfill \textbf{//O(1)}
+          \var{\normalfont temp: itConj}\\
+          temp $\leftarrow$ $\Pi_{3}$(e.tablero[p.fila][p.columna]) \hfill \textbf{//O(1)}\\
+          e.tablero[p.fila][p.columna] $\leftarrow$ <$true$, s, temp> \hfill \textbf{//O(1)}
+        }
         }
       }
     }
     \KwData{O(1)}
+    \KwComm{El algoritmo descarta las ejecuciones con posiciones no válidas en el primer If. Luego, utilizando el .definido de la tupla $info$, puede saber en O(1) si el elemento se encuentra anteriormente definido.
+    Si no está definido, lo define de forma simple, utilizando el agregado rápido del módulo basico conjunto y utilizando el iterador que devuelve para agregarlo en la tupla.
+    Si está definido, tal y como un diccionario convencional lo actualiza. Para eso, tiene en cuenta que es necesario actualizar solo el significado, por ende, en vez de tener un iterador nuevo, lo obtiene de la definición actual.}
   
-    \caption{Colocar}
+    \caption{Definir}
   \end{algorithm}
   \rule{17.5cm}{0.4pt}
   \bigskip
 
 
   \begin{algorithm}[H]
-    \text{$i$Ocupada?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
+    \text{$i$Def?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
   
     \Begin{
       \If(\hfill \textbf{//O(1)}){p.fila > e.alto $\lor$ p.columna > e.ancho}
@@ -334,7 +352,7 @@
     }
     \KwData{O(1)}
   
-    \caption{Ocupada?}
+    \caption{Def?}
   \end{algorithm}
   \rule{17.5cm}{0.4pt}
   \bigskip
@@ -359,10 +377,13 @@
     \text{$i$Eliminar(\In{p}{pos}, \Inout{e}{estr})}
   
     \Begin{
-      Eliminar(p, e.claves) \hfill \textbf{//O(lo que diga mati)}\\
+      \var{\normalfont temp: itConj}\\
+      temp $\leftarrow$ $\Pi_{3}$(e.tablero[p.fila][p.columna]) \hfill \textbf{//O(1)} \\
+      EliminarSiguiente(temp) \hfill \textbf{//O(1)}\\
       $\Pi_{1}$(e.tablero[p.alto][p.columna]) $\leftarrow$ $false$ \hfill \textbf{//O(1)} \\
     }
     \KwData{O(1)}
+    \KwComm{La función eliminar hace uso de la precondición, que dice que $p$ está definido y el iterador que guardamos en la estructura, para poder eliminar la clave de .claves en O(1). Para ello, primero obtiene el iterador, elimina el elemento y después procede a setear la tupla como no definida.}
   
     \caption{Eliminar}
   \end{algorithm}
@@ -371,7 +392,7 @@
 
 
   \begin{algorithm}[H]
-    \text{$i$PosicionesOcupadas(\In{e}{estr}) $\rightarrow$ res: conj(pos)}
+    \text{$i$Claves(\In{e}{estr}) $\rightarrow$ res: conj(pos)}
   
     \Begin{
       res $\leftarrow$ e.claves \hfill \textbf{//O(1)}\\
@@ -379,7 +400,7 @@
     }
     \KwData{O(1)}
   
-    \caption{PosicionesOcupadas}
+    \caption{Claves}
   \end{algorithm}
   \rule{17.5cm}{0.4pt}
   \bigskip

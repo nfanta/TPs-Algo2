@@ -305,7 +305,7 @@
     \Begin{
       res.alto $\leftarrow$ al \hfill \textbf{//O(1)}\\
       res.ancho $\leftarrow$ an \hfill \textbf{//O(1)}\\
-      res.obstaculos $\leftarrow$ NuevaMatriz() \hfill \textbf{//O(al * an)}
+      res.obstaculos $\leftarrow$ NuevaMatriz(al, an|) \hfill \textbf{//O(al * an)}
     }
     \KwData{$O(al * an)$}
   
@@ -400,12 +400,7 @@
     \text{$i$EsIngreso?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
   
     \Begin{
-      res $\leftarrow$ false \hfill \textbf{//O(1)}
-
-      \If(\hfill \textbf{//O(1)}){ingresoSuperior($p, e$) $\lor$ ingresoInferior($p, e$)}
-        {res $\leftarrow$ true \hfill \textbf{//O(1)}}
-
-      \ret{res}
+      \ret{ingresoSuperior($p, e$) $\lor$ ingresoInferior($p, e$)}
     }
     \KwData{$O(1)$}
   
@@ -419,12 +414,7 @@
     \text{$i$IngresoSuperior?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
   
     \Begin{
-      res $\leftarrow$ false \hfill \textbf{//O(1)}
-
-      \If(\hfill \textbf{//O(1)}){p.fila == 1}
-        {res $\leftarrow$ true}
-
-      \ret{res}
+      \ret{p.fila == 1}
     }
     \KwData{$O(1)$}
   
@@ -438,12 +428,7 @@
     \text{$i$IngresoInferior?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
   
     \Begin{
-      res $\leftarrow$ false \hfill \textbf{//O(1)}
-
-      \If(\hfill \textbf{//O(1)}){p.fila == e.alto}
-        {res $\leftarrow$ true}
-
-      \ret{res}
+      \ret{p.fila == e.alto}
     }
     \KwData{$O(1)$}
   
@@ -509,7 +494,7 @@
       {
         \ret{<p.fila - 1, p.columna>}\hfill \textbf{//O(1)}\\ 
         \Else{
-          \If(\hfill \textbf{//O(1)}){d == $izq$}
+          \If(\hfill \textbf{//O(1)}){d == $der$}
           {
             \ret{<p.fila + 1, p.columna>}\hfill \textbf{//O(1)}\\
             \Else{
@@ -534,7 +519,7 @@
 
 
   \begin{algorithm}[H]
-    \text{$i$ingresosMasCercano(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conjunto(pos)}
+    \text{$i$ingresosMasCercano(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: conj(pos)}
   
     \Begin{
       res $\leftarrow$ Vacio()\\
