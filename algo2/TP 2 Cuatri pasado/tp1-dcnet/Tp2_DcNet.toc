@@ -1,9 +1,0 @@
-\select@language {spanish}
-\contentsline {section}{\numberline {1}Modulo Red($\alpha $)}{3}{section.1}
-\contentsline {section}{\numberline {2}M\IeC {\'o}dulo DiccString($\alpha $)}{10}{section.2}
-\contentsline {section}{\numberline {3}M\IeC {\'o}dulo DCNet}{17}{section.3}
-\contentsline {section}{\numberline {4}M\IeC {\'o}dulo ColaDePrioridad($\alpha $)}{23}{section.4}
-\contentsline {section}{\numberline {5}M\IeC {\'o}dulo PaqPrior}{29}{section.5}
-\contentsline {section}{\numberline {6}Modulo diccRapido$(\alpha , \beta )$}{31}{section.6}
-\contentsline {section}{\numberline {7}Modulo ConjuntoRapido$(\alpha )$}{46}{section.7}
-\contentsline {section}{\numberline {8}M\IeC {\'o}dulo Compu}{48}{section.8}

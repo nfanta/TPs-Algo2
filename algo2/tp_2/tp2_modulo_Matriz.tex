@@ -1,0 +1,413 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[paper=a4paper, hmargin=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{xspace}
+\usepackage{xargs}
+\usepackage{ifthen}
+\usepackage{aed2-tad,aed2-symb,aed2-itef}
+\usepackage[]{algorithm2e}
+
+\SetKwInput{KwData}{Complejidad}
+\SetKwInput{KwComm}{Comentarios}
+\SetKw{ret}{return}
+\SetKw{var}{var \normalfont}
+\SetAlgorithmName{Algoritmo}{Algoritmo}{\large Lista de algoritmos}
+\SetAlCapSkip{1em}
+
+\newcommand{\moduloNombre}[1]{\textbf{#1}}
+
+\let\NombreFuncion=\textsc
+\let\TipoVariable=\texttt
+\let\ModificadorArgumento=\textbf
+\newcommand{\res}{$res$\xspace}
+\newcommand{\tab}{\hspace*{7mm}}
+
+\newcommandx{\TipoFuncion}[3]{%
+  \NombreFuncion{#1}(#2) \ifx#3\empty\else $\to$ \res\,: \TipoVariable{#3}\fi%
+}
+\newcommand{\In}[2]{\ModificadorArgumento{in} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Out}[2]{\ModificadorArgumento{out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Inout}[2]{\ModificadorArgumento{in/out} \ensuremath{#1}\,: \TipoVariable{#2}\xspace}
+\newcommand{\Aplicar}[2]{\NombreFuncion{#1}(#2)}
+
+\newlength{\IntFuncionLengthA}
+\newlength{\IntFuncionLengthB}
+\newlength{\IntFuncionLengthC}
+%InterfazFuncion(nombre, argumentos, valor retorno, precondicion, postcondicion, complejidad, descripcion, aliasing)
+\newcommandx{\InterfazFuncion}[9][4=true,6,7,8,9]{%
+  \hangindent=\parindent
+  \TipoFuncion{#1}{#2}{#3}\\%
+  \textbf{Pre} $\equiv$ \{#4\}\\%
+  \textbf{Post} $\equiv$ \{#5\}%
+  \ifx#6\empty\else\\\textbf{Complejidad:} #6\fi%
+  \ifx#7\empty\else\\\textbf{Descripción:} #7\fi%
+  \ifx#8\empty\else\\\textbf{Aliasing:} #8\fi%
+  \ifx#9\empty\else\\\textbf{Requiere:} #9\fi%
+}
+
+\newenvironment{Interfaz}{%
+  \parskip=2ex%
+  \noindent\textbf{\Large Interfaz}%
+  \par%
+}{}
+
+\newenvironment{Representacion}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Representación}%
+  \vspace*{2ex}%
+}{}
+
+\newenvironment{Algoritmos}{%
+  \vspace*{2ex}%
+  \noindent\textbf{\Large Algoritmos}%
+  \vspace*{2ex}%
+}{}
+
+
+\newcommand{\Titulo}[1]{
+  \vspace*{1ex}\par\noindent\textbf{\large #1}\par
+}
+
+\newenvironmentx{Estructura}[2][2={estr}]{%
+  \par\vspace*{2ex}%
+  \TipoVariable{#1} \textbf{se representa con} \TipoVariable{#2}%
+  \par\vspace*{1ex}%
+}{%
+  \par\vspace*{2ex}%
+}%
+
+\newboolean{EstructuraHayItems}
+\newlength{\lenTupla}
+\newenvironmentx{Tupla}[1][1={estr}]{%
+    \settowidth{\lenTupla}{\hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($}%
+    \addtolength{\lenTupla}{\parindent}%
+    \hspace*{3mm}donde \TipoVariable{#1} es \TipoVariable{tupla}$($%
+    \begin{minipage}[t]{\linewidth-\lenTupla}%
+    \setboolean{EstructuraHayItems}{false}%
+}{%
+    $)$%
+    \end{minipage}
+}
+
+\newcommandx{\tupItem}[3][1={\ }]{%
+    %\hspace*{3mm}%
+    \ifthenelse{\boolean{EstructuraHayItems}}{%
+        ,#1%
+    }{}%
+    \emph{#2}: \TipoVariable{#3}%
+    \setboolean{EstructuraHayItems}{true}%
+}
+
+\newcommandx{\RepFc}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{#3}%
+}%
+
+\newcommandx{\Rep}[3][1={estr},2={e}]{%
+  \tadOperacion{Rep}{#1}{bool}{}%
+  \tadAxioma{Rep($#2$)}{true \ssi #3}%
+}%
+
+\newcommandx{\Abs}[5][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \settominwidth{\hangindent}{Abs($#3$) \igobs #4: #2 $\mid$ }%
+  \addtolength{\hangindent}{\parindent}%
+  Abs($#3$) \igobs #4: #2 $\mid$ #5%
+}%
+
+\newcommandx{\AbsFc}[4][1={estr},3={e}]{%
+  \tadOperacion{Abs}{#1/#3}{#2}{Rep($#3$)}%
+  \tadAxioma{Abs($#3$)}{#4}%
+}%
+
+
+\newcommand{\DRef}{\ensuremath{\rightarrow}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% COMIENZO DEL DOCUMENTO %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%
+%% MODULO MATRIZ %%
+%%%%%%%%%%%%%%%%%%%
+
+
+
+\section{Módulo Matriz}
+
+
+\begin{Interfaz}
+  
+  \textbf{parámetros formales}\hangindent=2\parindent\\
+  \parbox{1.7cm}{\textbf{género}} $significado$\\
+  \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{%
+    \InterfazFuncion{Copiar}{\In{a}{$significado$}}{$significado$}
+    {$res \igobs a$}
+    [$\Theta(copy(a))$]
+    [función de copia de $significado$]
+  }
+
+  \textbf{se explica con}: \tadNombre{Diccionario(pos, significado)}
+
+  \textbf{géneros}: \TipoVariable{matriz}
+  \bigskip
+  \newline
+  El modulo funciona como un diccionario, pero solo se utiliza con claves del tipo $pos$.
+  Extiende el TAD para contemplar que la creacion de una nueva matriz requiere dos parametros, el
+  $alto$ y el $ancho$.
+  
+
+  \Titulo{Operaciones básicas de matriz}
+
+  \InterfazFuncion{NuevaMatriz}{\In{al}{nat}, \In{an}{nat}}{matriz}
+  [true]
+  {$res \igobs$ vacio}
+  [$O(n * m)$]
+  [Crea una nueva matriz de alto $al$ x ancho $an$.]
+
+  \InterfazFuncion{Definir}{\In{p}{pos}, \In{s}{significado}, \Inout{m}{matriz}}{}
+  [$m \igobs m_{0}$]
+  {$m \igobs$ definir($p, s, m_{0}$)}
+  [$O(1)$]
+  [Define el significado $s$ en la posicion $p$ de la matriz $m$.]
+
+  \InterfazFuncion{Def?}{\In{p}{pos}, \In{m}{matriz}}{bool}
+  [true]
+  {$res \igobs$ def?($p, m$)}
+  [$O(1)$]
+  [Devuelve $true$ si la posicion $p$ esta ocupada.]
+  []
+
+  \InterfazFuncion{Obtener}{\In{p}{pos}, \In{m}{matriz}}{significado}
+  [def?($p, m$)]
+  {$res \igobs$ obtener($p, m$)}
+  [$O(1)$]
+  [Retorna el $significado$ almacenado en la posicion $p$.]
+  []
+
+  \InterfazFuncion{Eliminar}{\In{p}{pos}, \Inout{m}{matriz}}{}
+  [def?($p, m$) $\land$ $m \igobs m_{0}$]
+  {$m \igobs$ borrar($p, m_{0}$)}
+  [$O(n)$]
+  [Elimina el contenido de la posicion $p$ de la matriz $m$.]
+  []
+
+  \InterfazFuncion{Claves}{\In{m}{matriz}}{conj(pos)}
+  [true]
+  {$res \igobs$ claves($m$)}
+  [$O(1)$]
+  [Devuelve el conjunto de posiciones ocupadas en la matriz $m$]
+  []
+
+\end{Interfaz}
+\bigskip
+
+
+\begin{Representacion}
+  
+  \Titulo{Representación de Matriz}
+
+  \begin{Estructura}{matriz}[estr]
+    \begin{Tupla}[estr]
+      \tupItem{alto}{nat}
+      \tupItem{ancho}{nat}
+      \tupItem{claves}{conj(pos)}%
+      \tupItem{tablero}{vector(vector(info))}%
+    \end{Tupla}
+
+    \begin{Tupla}[info]
+      \tupItem{definido}{bool}%
+      \tupItem{dato}{significado}%
+      \tupItem{it}{itConj(pos)}%
+    \end{Tupla}
+
+  \smallskip
+  \textit{\scriptsize Utilizamos un $definido$ de tipo bool para los algoritmos y un $dato$ de tipo significado para admitir que se utilice este módulo como un diccionario de posiciones
+  con otros significado; más allá de que en campus se utiliza unicamente para significados de tipo bool.
+  El .it se utiliza para poder acceder y eliminar en O(1) una clave de .claves.}
+  \smallskip
+
+    \begin{Tupla}[pos]
+      \tupItem{fila}{nat}%
+      \tupItem{columna}{nat}%
+    \end{Tupla}
+  \end{Estructura}
+
+
+  \bigskip
+  \textbf{Invariante de representacion en castellano:}
+  \begin{enumerate}
+  
+  \item La longitud de tablero es $alto$
+  \item Toda clave contenida en .claves esta en el rango de la matriz.
+  \item Para toda posicion de tablero, el vector que contiene posee longitud $ancho$
+  \item Para toda clave $p$ en el rango de la matriz, $p$ contenida en $claves$ implica que las componentes de $c$ (.fila, .columna) en $tablero$ dan una tupla $info$ donde .definido es $true$.
+  \item Analogo al anterior, pero para toda $p$ que este en el rango de la matriz y no este contenida en $claves$, la tupla $info$ posee .definido igual a $false$
+
+  \end{enumerate}
+
+  \bigskip
+  \Rep[estr][e]{
+  
+  \begin{enumerate}
+  \item Longitud(tablero) $\igobs$ e.alto $\land$
+  \item ($\forall$ $p$ : pos) En(p, e.claves) $\impluego$ p.fila $\geq$ 0 $\land$ p.fila < e.alto $\land$ p.col $\geq$ 0 $\land$ p.col < e.ancho $\land$
+  \item ($\forall$ $i$ : int) ($i$ < Longitud(e.tablero)) $\impluego$ Longitud(e.tablero[$i$]) $\igobs$ e.ancho $\yluego$
+  \item ($\forall$ $p$ : pos) ( $p$.fila $\leq$ e.alto $\land$ $p$.columna $\leq$ e.ancho $\land$ $p \in$ e.claves ) $\impluego$ \\ (e.tablero[$p$.fila][$p$.columna].definido $\igobs$ $true$)
+  \item ($\forall$ $p$ : pos) ( $p$.fila $\leq$ e.alto $\land$ $p$.columna $\leq$ e.ancho $\land$ $p \notin$ e.claves ) $\impluego$ \\ (e.tablero[$p$.fila][$p$.columna].definido $\igobs$ $false$)
+  \end{enumerate}
+  
+  }\mbox{}
+
+  \bigskip
+  \AbsFc[estr]{dicc($pos, significado$)}[e]{m : dicc($pos, significado$) / \\
+    ($\forall$ $p$ : pos) En?($p$, e.claves) $\igobs$ def?($p, m$) $\land$ \\
+    ($\forall$ $p$ : pos) En?($p$, e.claves) $\impluego$ $\Pi_{2}$(e.tablero[p.fila][p.col]) $\igobs$ obtener($p, m$))
+  }
+  \smallskip
+  \textit{\scriptsize Las claves definidas y sus significados son iguales. La segunda parte indica que para toda clave definida, tablero en esa posición posee un $info$ donde la segunda componente (.dato) es igual al significado del diccionario resultante.}
+  \bigskip
+
+\end{Representacion}
+
+\begin{Algoritmos}
+
+  % \textbf{Algoritmos de Campus}
+  \listofalgorithms
+  \newpage
+  
+
+  \begin{algorithm}[H]
+    \text{$i$NuevaMatriz(\In{al}{nat}, \In{an}{nat}) $\rightarrow$ res: estr}
+  
+    \Begin{
+      res.alto $\leftarrow$ al \hfill \textbf{//O(1)}\\
+      res.ancho $\leftarrow$ an \hfill \textbf{//O(1)}\\
+      res.claves $\leftarrow$ Vacio() \hfill \textbf{//O(1)}\\
+      res.tablero $\leftarrow$ CrearArreglo(al) \hfill \textbf{//O(al)}\\
+      \For(\hfill \textbf{//O(al)}){i $\leftarrow$ 0..($al - 1$)}{
+        res.tablero[i] $\leftarrow$ CrearArreglo(an) \hfill \textbf{//O(an)}
+      }
+    }
+    \KwData{$O(al * an)$}
+  
+    \caption{NuevaMatriz}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+
+  \begin{algorithm}[H]
+    \text{$i$Definir(\In{p}{pos}, \In{s}{significado}, \Inout{e}{estr})}
+  
+    \Begin{
+      \If(\hfill \textbf{//O(1)}){p.fila < e.alto $\lor$ p.columna < e.ancho}
+      {
+        \If(\hfill \textbf{//O(1)}){$\neg$ $\Pi_{1}$(e.tablero[p.fila][p.columna])}{
+        \var{\normalfont temp: itConj}\\
+        temp $\leftarrow$ AgregarRapido(p, e.claves) \hfill \textbf{//O(1)} \\
+        e.tablero[p.fila][p.columna] $\leftarrow$ <$true$, s, temp> \hfill \textbf{//O(1)}\\
+        \Else{
+          \var{\normalfont temp: itConj}\\
+          temp $\leftarrow$ $\Pi_{3}$(e.tablero[p.fila][p.columna]) \hfill \textbf{//O(1)}\\
+          e.tablero[p.fila][p.columna] $\leftarrow$ <$true$, s, temp> \hfill \textbf{//O(1)}
+        }
+        }
+      }
+    }
+    \KwData{O(1)}
+    \KwComm{El algoritmo descarta las ejecuciones con posiciones no válidas en el primer If. Luego, utilizando el .definido de la tupla $info$, puede saber en O(1) si el elemento se encuentra anteriormente definido.
+    Si no está definido, lo define de forma simple, utilizando el agregado rápido del módulo basico conjunto y utilizando el iterador que devuelve para agregarlo en la tupla.
+    Si está definido, tal y como un diccionario convencional lo actualiza. Para eso, tiene en cuenta que es necesario actualizar solo el significado, por ende, en vez de tener un iterador nuevo, lo obtiene de la definición actual.}
+  
+    \caption{Definir}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$Def?(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: bool}
+  
+    \Begin{
+      \If(\hfill \textbf{//O(1)}){p.fila > e.alto $\lor$ p.columna > e.ancho}
+      {
+        res $\leftarrow$ false \hfill \textbf{//O(1)} \\
+        \Else{
+          res $\leftarrow$ $\Pi_{1}$(e.tablero[p.fila][p.columna]) \hfill \textbf{//O(1)} \\
+        }
+      }
+      \ret{res}
+    }
+    \KwData{O(1)}
+  
+    \caption{Def?}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$Obtener(\In{p}{pos}, \In{e}{estr}) $\rightarrow$ res: significado}
+  
+    \Begin{
+      res $\leftarrow$ $\Pi_{2}$(e.tablero[p.fila][p.columna]) \hfill \textbf{//O(1)} \\
+      \ret{res}
+    }
+    \KwData{O(1)}
+  
+    \caption{Obtener}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$Eliminar(\In{p}{pos}, \Inout{e}{estr})}
+  
+    \Begin{
+      \var{\normalfont temp: itConj}\\
+      temp $\leftarrow$ $\Pi_{3}$(e.tablero[p.fila][p.columna]) \hfill \textbf{//O(1)} \\
+      EliminarSiguiente(temp) \hfill \textbf{//O(1)}\\
+      $\Pi_{1}$(e.tablero[p.alto][p.columna]) $\leftarrow$ $false$ \hfill \textbf{//O(1)} \\
+    }
+    \KwData{O(1)}
+    \KwComm{La función eliminar hace uso de la precondición, que dice que $p$ está definido y el iterador que guardamos en la estructura, para poder eliminar la clave de .claves en O(1). Para ello, primero obtiene el iterador, elimina el elemento y después procede a setear la tupla como no definida.}
+  
+    \caption{Eliminar}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+  \begin{algorithm}[H]
+    \text{$i$Claves(\In{e}{estr}) $\rightarrow$ res: conj(pos)}
+  
+    \Begin{
+      res $\leftarrow$ e.claves \hfill \textbf{//O(1)}\\
+      \ret{res}
+    }
+    \KwData{O(1)}
+  
+    \caption{Claves}
+  \end{algorithm}
+  \rule{17.5cm}{0.4pt}
+  \bigskip
+
+
+
+
+\end{Algoritmos}
+
+\end{document}
