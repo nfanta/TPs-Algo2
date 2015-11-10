@@ -311,7 +311,8 @@
 
 \textbf{Algoritmos de Agentes}
   \listofalgorithms
-  
+  \bigskip
+
   \begin{algorithm}[H]
     \text{$i$NuevoAgentes(\In{d}{DiccRapido(placa,posicion)}) $\rightarrow$ res: estr}
   
@@ -335,7 +336,7 @@
           {res.masVig $\leftarrow$ Actual(itClavesD) \hfill \textbf{//O(1)}}
         \If(\hfill \textbf{//O(1)}){Actual(itClavesD) $<$ res.masVig}
           {res.masVig $\leftarrow$ Actual(itClavesD) \hfill \textbf{//O(1)}}
-        Definir (  Actual(itClavesD),  $\langle$ Obtener(Actual(itClavesD), d), 0, 0, 0, itAMismSanciones $\rangle$,  res.as ) \hfill \textbf{//O(1)} \\
+        Definir (  Actual(itClavesD),  $\langle$ *Obtener(Actual(itClavesD), d), 0, 0, 0, itAMismSanciones $\rangle$,  res.as ) \hfill \textbf{//O(1)} \\
         res.kSanciones[i] $\leftarrow$ Actual(itClavesD) \hfill \textbf{//O(1)} \\
         i $\leftarrow$ i+1 \hfill \textbf{//O(1)} \\
         Avanzar(itClavesD) \hfill \textbf{//O(1)} 
@@ -352,10 +353,10 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: conjRapido(nat)}
+    \text{$i$Agentes?(\In{as}{estr}) $\rightarrow$ res: itconjRapido(nat)}
   
     \Begin{
-      res $\leftarrow$ as.claves \hfill \textbf{//O(1)}
+      res $\leftarrow$ CrearIt(as.claves) \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
   
@@ -371,10 +372,10 @@
       var \\
       iteradorLista : itLista \\
       {\small //Primero, le agrego la sancion directamente sobre el significado (DiccRapido hace aliasing en la operacion Obtener) \\ }
-      Obtener(a, as.as).sanciones $\leftarrow$ (Obtener(a, as.as).sanciones + 1) \hfill \textbf{//O(1)} \\
+      *(Obtener(a, as.as)).sanciones $\leftarrow$ (*(Obtener(a, as.as)).sanciones + 1) \hfill \textbf{//O(1)} \\
       as.huboSanciones $\leftarrow$ true \hfill \textbf{//O(1)} \\
       {\small //Ahora tengo que modificar mismSanciones para que refleje el cambio \\ }
-      iteradorLista $\leftarrow$ Obtener(a, as.as).conMismSanciones \hfill \textbf{//O(1)} \\
+      iteradorLista $\leftarrow$ *(Obtener(a, as.as)).conMismSanciones \hfill \textbf{//O(1)} \\
       {\small //Borro a $a$ del conjunto, porque ya no comparte sanciones con nadie del mismo \\}
       Borrar(a, Siguiente(iteradorLista)) \hfill \textbf{//O(N), pero se desestima} \\
       {\small //Me muevo al lugar que le corresponde ahora \\}
@@ -386,7 +387,7 @@
         Siguiente(iteradorLista).Agregar(a) \hfill \textbf{//O(1)} \\
         }
         {
-        \eIf(\hfill \textbf{//O(1)}){Obtener(DameUno(Siguiente(iteradorLista)), as).sanciones $>$ Obtener(a, as.as).sanciones}
+        \eIf(\hfill \textbf{//O(1)}){*(Obtener(DameUno(Siguiente(iteradorLista)), as)).sanciones $>$ *(Obtener(a, as.as)).sanciones}
           {
           {\small //Si el que esta en el lugar al que iba tiene mas sanciones que yo, me agrego antes para mantener el orden creciente \\}
           AgregarComoAnterior(iteradorLista, Vacio()) \hfill \textbf{//O(1)} \\
@@ -398,7 +399,7 @@
           Siguiente(iteradorLista).Agregar(a) \hfill \textbf{//O(1)}
           } 
         }
-      Obtener(a, as.as).conMismSanciones $\leftarrow$ iteradorLista \hfill \textbf{//O(1)}
+      *(Obtener(a, as.as)).conMismSanciones $\leftarrow$ iteradorLista \hfill \textbf{//O(1)}
     }
     \KwData{O(N) | Desestimando el borrado: O(1)}
   
@@ -411,7 +412,7 @@
     \text{$i$CambiarPosicion(\In{a}{nat}, \In{p}{posicion}, \Inout{as}{estr})}
   
     \Begin{
-      Obtener(a, as.as).posicion $\leftarrow$ p \hfill \textbf{//O(1)} \\
+      *(Obtener(a, as.as)).posicion $\leftarrow$ p \hfill \textbf{//O(1)} \\
     }
     \KwData{O(1)}
   
@@ -424,12 +425,12 @@
     \text{$i$AgregarCaptura(\In{a}{nat}, \Inout{as}{estr})}
   
     \Begin{
-      Obtener(a, as.as).capturas $\leftarrow$ (Obtener(a, as.as).capturas + 1) \hfill \textbf{//O(1)} \\
+      *(Obtener(a, as.as)).capturas $\leftarrow$ (*(Obtener(a, as.as)).capturas + 1) \hfill \textbf{//O(1)} \\
       {\small //Ademas de sumar captura, hago el mantenimiento de masVigilante  \\}
-      \eIf(\hfill \textbf{//O(1)}){Obtener(a, as.as).capturas $>$ Obtener(as.masVigilante, as).capturas}
+      \eIf(\hfill \textbf{//O(1)}){*(Obtener(a, as.as)).capturas $>$ *Obtener(as.masVigilante, as).capturas}
         {as.masVigilante $\leftarrow$ a \hfill \textbf{//O(1)}}
         {
-          \If(\hfill \textbf{//O(1)}){Obtener(a, as.as).capturas $==$ Obtener(as.masVigilante, as).capturas}
+          \If(\hfill \textbf{//O(1)}){*(Obtener(a, as.as)).capturas $==$ *Obtener(as.masVigilante, as).capturas}
           {
             \If(\hfill \textbf{//O(1)}){a $<$ as.masVigilante}
             {as.masVigilante $\leftarrow$ a \hfill \textbf{//O(1)}}
@@ -447,7 +448,7 @@
     \text{$i$PosAgente(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: posicion}
   
     \Begin{
-      res $\leftarrow$ Obtener(a, as.as).posicion \hfill \textbf{//O(1)}
+      res $\leftarrow$ *(Obtener(a, as.as)).posicion \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
   
@@ -460,7 +461,7 @@
     \text{$i$SancionesAgente(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: nat}
   
     \Begin{
-      res $\leftarrow$ Obtener(a, as.as).sanciones \hfill \textbf{//O(1)}
+      res $\leftarrow$ *(Obtener(a, as.as)).sanciones \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
   
@@ -473,7 +474,7 @@
     \text{$i$CapturasAgente(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: nat}
   
     \Begin{
-      res $\leftarrow$ Obtener(a, as.as).capturas \hfill \textbf{//O(1)}
+      res $\leftarrow$ *(Obtener(a, as.as)).capturas \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
   
@@ -499,7 +500,7 @@
     \text{$i$ConMismasSanciones(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: puntero(conjRapido(nat))}
   
     \Begin{
-      res $\leftarrow$ $\&$(Siguiente(Obtener(a, as.as).conMismSanciones)) \hfill \textbf{//O(1)}
+      res $\leftarrow$ $\&$(Siguiente(*(Obtener(a, as.as)).conMismSanciones)) \hfill \textbf{//O(1)}
     }
     \KwData{O(1)}
 
@@ -523,7 +524,7 @@
           {\small //Actualizo el arreglo kSanciones  \\}
           \While(\hfill \textbf{//O(1)}){i $<$ Tam(as.kSanciones)}
           {
-            as.kSanciones[i].sanciones $\leftarrow$ Obtener(as.kSanciones[i].placa, as.as).sanciones \hfill \textbf{//O(1)} \\
+            as.kSanciones[i].sanciones $\leftarrow$ *Obtener(as.kSanciones[i].placa, as.as).sanciones \hfill \textbf{//O(1)} \\
             i $\leftarrow$ i + 1 \hfill \textbf{//O(1)}
           }
           \hfill \textbf{//While: O(N)} \\
@@ -536,7 +537,7 @@
         encontrado $\leftarrow$ BusquedaBinariaSanciones(k, as.kSanciones, as, i) \hfill \textbf{//O(log(N))} \\
         \eIf(\hfill \textbf{//O(1)}){encontrado}
            {
-           res $\leftarrow$ $\&$(Siguiente(Obtener(as.kSanciones[i], as.as).conMismSanciones)) \hfill \textbf{//O(1)} \\
+           res $\leftarrow$ $\&$(Siguiente(*Obtener(as.kSanciones[i], as.as).conMismSanciones)) \hfill \textbf{//O(1)} \\
            }
            {
            res $\leftarrow$ NULL \hfill \textbf{//O(1)} \\
@@ -566,7 +567,7 @@
       cantidadAnt $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
       total $\leftarrow$ 0 \hfill \textbf{//O(1)} \\
       {\small //Se que a todos los agentes con las maximas sanciones los tengo en el ultimo elemento de la lista mismSanciones.  \\}
-      maxSanciones $\leftarrow$ Obtener(DameUno(Ultimo(as.mismSanciones)), as.as).sanciones \hfill \textbf{//O(1)} \\
+      maxSanciones $\leftarrow$ *Obtener(DameUno(Ultimo(as.mismSanciones)), as.as).sanciones \hfill \textbf{//O(1)} \\
       {\small //Creo el arreglo cantidad con MaxSanciones posiciones. \\}
       cantidad $\leftarrow$ CrearArreglo(maxSanciones) \hfill \textbf{//O(maxSanciones)} \\
       output $\leftarrow$ CrearArreglo(Tam(arreglo)) \hfill \textbf{//O(N)} \\
