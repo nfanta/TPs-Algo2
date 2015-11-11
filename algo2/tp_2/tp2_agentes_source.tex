@@ -525,10 +525,10 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$ConMismasSanciones(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: puntero(conj(nat))}
+    \text{$i$ConMismasSanciones(\In{a}{nat}, \In{as}{estr}) $\rightarrow$ res: conj(nat)}
   
     \Begin{
-      res $\leftarrow$ $\&$(Siguiente(*(Obtener(a, as.as)).conMismSanciones)) \hfill \textbf{//O(N$a$)}
+      res $\leftarrow$ Siguiente(*(Obtener(a, as.as)).conMismSanciones) \hfill \textbf{//O(N$a$)}
     }
     \KwData{O(N$a$) en peor caso. O(1) si se asegura distribucion uniforme de las placas}
 
@@ -539,7 +539,7 @@
   \bigskip
 
   \begin{algorithm}[H]
-    \text{$i$ConKSanciones(\In{k}{nat}, \Inout{as}{estr}) $\rightarrow$ res: puntero(conj(nat))}
+    \text{$i$ConKSanciones(\In{k}{nat}, \Inout{as}{estr}) $\rightarrow$ res: conj(nat)}
   
     \Begin{
       var \\
@@ -582,10 +582,10 @@
         encontrado $\leftarrow$ BusquedaBinariaSanciones(k, as.kSanciones, as, i) \hfill \textbf{//O(log(N$a$))} \\
         \eIf(\hfill \textbf{//O(1)}){encontrado}
           {
-            res $\leftarrow$ $\&$(Siguiente(*Obtener(as.kSanciones[i], as.as).conMismSanciones)) \hfill \textbf{//O(N$a$)} \\
+            res $\leftarrow$ Siguiente(*Obtener(as.kSanciones[i], as.as).conMismSanciones) \hfill \textbf{//O(N$a$)} \\
           }
           {
-            res $\leftarrow$ NULL \hfill \textbf{//O(1)} \\
+            res $\leftarrow$ Vacio() \hfill \textbf{//O(1)} \\
           }
         
         
