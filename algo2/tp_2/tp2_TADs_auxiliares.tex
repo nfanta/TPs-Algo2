@@ -102,19 +102,19 @@ TAD \tadNombre{posicion} ES \tadNombre{$\langle $nat$, $nat$ \rangle$}
 \tadAxioma{agentes?(agregarCaptura($a$, $as$))}{agentes?($as$)}
 
 \tadAxioma{posicionAgente($a$, nuevoAgentes($d$))}{obtener($a$, $d$)}
-\tadAxioma{posicionAgente($a$, agregarSancion($a$, $as$))}{posicionAgente($a$, $as$)}
-\tadAxioma{posicionAgente($a$, cambiarPos($a$, $p$, $as$))}{$p$}
-\tadAxioma{posicionAgente($a$, agregarCaptura($a$, $as$))}{posicionAgente($a$, $as$)}
+\tadAxioma{posicionAgente($a$, agregarSancion($a'$, $as$))}{posicionAgente($a$, $as$)}
+\tadAxioma{posicionAgente($a$, cambiarPos($a'$, $p$, $as$))}{\IF $a$ = $a'$ THEN $p$ ELSE posicionAgente($a$, $as$) FI}
+\tadAxioma{posicionAgente($a$, agregarCaptura($a'$, $as$))}{posicionAgente($a$, $as$)}
 
 \tadAxioma{sancionesAgente($a$, nuevoAgentes($d$))}{0}
-\tadAxioma{sancionesAgente($a$, agregarSancion($a$, $as$))}{1 + sancionesAgente($a$, $as$)}
-\tadAxioma{sancionesAgente($a$, cambiarPos($a$, $p$, $as$))}{sancionesAgente($a$, $as$)}
-\tadAxioma{sancionesAgente($a$, agregarCaptura($a$, $as$))}{sancionesAgente($a$, $as$)}
+\tadAxioma{sancionesAgente($a$, agregarSancion($a'$, $as$))}{\IF $a$ = $a'$ THEN 1 + sancionesAgente($a$, $as$) ELSE sancionesAgente($a$, $as$) FI}
+\tadAxioma{sancionesAgente($a$, cambiarPos($a'$, $p$, $as$))}{sancionesAgente($a$, $as$)}
+\tadAxioma{sancionesAgente($a$, agregarCaptura($a'$, $as$))}{sancionesAgente($a$, $as$)}
 
 \tadAxioma{capturasAgente($a$, nuevoAgentes($d$))}{0}
-\tadAxioma{capturasAgente($a$, agregarSancion($a$, $as$))}{capturasAgente($a$, $as$)}
-\tadAxioma{capturasAgente($a$, cambiarPos($a$, $p$, $as$))}{capturasAgente($a$, $as$)}
-\tadAxioma{capturasAgente($a$, agregarCaptura($a$, $as$))}{1 + capturasAgente($a$, $as$)}
+\tadAxioma{capturasAgente($a$, agregarSancion($a'$, $as$))}{capturasAgente($a$, $as$)}
+\tadAxioma{capturasAgente($a$, cambiarPos($a'$, $p$, $as$))}{capturasAgente($a$, $as$)}
+\tadAxioma{capturasAgente($a$, agregarCaptura($a'$, $as$))}{\IF $a$ = $a'$ THEN 1 + capturasAgente($a$, $as$) ELSE capturasAgente($a$, $as$) FI}
 
 \tadAxioma{masVigilante($as$)}{conMenorPlaca(conKCapturas( maxCapturas(agentes?($as$), $as$), agentes?($as$), $as$), $as$)}
 \tadAxioma{conMismasSanciones($a$, $as$)}{agentesConKSanciones(sancionesAgente($a$, $as$), agentes?($as$), $as$)}

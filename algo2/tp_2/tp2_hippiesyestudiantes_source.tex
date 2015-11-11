@@ -205,7 +205,7 @@
 
 \begin{Representacion}
   
-  \Titulo{Representacion del Conjunto}
+  \Titulo{Representacion de HippiesYEstudiantes}
 
   \begin{Estructura}{hipyest)}[estr]
     \begin{Tupla}
@@ -370,13 +370,13 @@
     \Begin{
       \eIf(\hfill \textbf{//O($n_{m}$)}){EsEst?($n, he$)}
         {
-          res $\leftarrow$ Borrar($n$, he.estudiantes) \hfill \textbf{//O(N)}
+          res $\leftarrow$ Borrar($n$, he.estudiantes) \hfill \textbf{//O($n_{m}$)}
         }
         {
-          res $\leftarrow$ Borrar($n$, he.hippies) \hfill \textbf{//O(N)}
+          res $\leftarrow$ Borrar($n$, he.hippies) \hfill \textbf{//O($n_{m}$)}
         }
     }
-    \KwData{O(N)}
+    \KwData{O($n_{m}$)}
   
     \caption{Borrar}
   \end{algorithm}
