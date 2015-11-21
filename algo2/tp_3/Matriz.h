@@ -13,6 +13,8 @@ namespace aed2 {
 
         Matriz(const  Nat al, const Nat an);
 
+        ~Matriz();
+
         void Definir (const Posicion p, const S& s);
 
         bool Def (const Posicion p) const;
@@ -25,11 +27,20 @@ namespace aed2 {
 
     private:
 
+        struct info {
+            bool _definido;
+            S _significado;
+            Conj::Iterador it;
+        };
+
+        Nat _alto;
+        Nat _ancho;
+        Conj _claves;
+        Vector<Vector<info>> _tablero;
 
     };
 
-    template<class S>
-    Matriz NuevaMatriz (const  Nat al, const Nat an){
+
     }
 }
 
