@@ -9,6 +9,11 @@ namespace aed2 {
     class DiccRapido {
 
     public:
+        struct tuplaSignificado;
+
+        class Iterador;
+        class const_Iterador;
+
         DiccRapido(Nat maxClaves);
         ~DiccRapido();
 
@@ -22,9 +27,83 @@ namespace aed2 {
 
         const Conj<Nat>& Claves();
 
+        Iterador CrearIt();
+        const_Iterador CrearIt() const;
+
+        class Iterador
+        {
+        public:
+
+            Iterador();
+
+            Iterador(const typename DiccRapido<S>::Iterador& otro);
+
+            Iterador& operator = (const typename DiccRapido<S>::Iterador& otro);
+
+            bool operator == (const typename DiccRapido<S>::Iterador&) const;
+
+            bool HaySiguiente() const;
+            bool HayAnterior() const;
+            const Nat& SiguienteClave() const;
+            S& SiguienteSignificado();
+            const Nat& AnteriorClave() const;
+            S& AnteriorSignificado();
+            tuplaSignificado& Siguiente();
+            tuplaSignificado& Anterior();
+            void Avanzar();
+            void Retroceder();
+            void EliminarSiguiente();
+            void EliminarAnterior();
+
+        private:
+
+            typename Conj<tuplaSignificado>::Iterador _it_tuplas;
+            Nat _indice_act;
+
+            Iterador(DiccRapido<S>* d);
+
+            friend typename DiccRapido<S>::Iterador DiccRapido<S>::CrearIt();
+            friend class DiccRapido<S>::const_Iterador;
+        };
+
+        class const_Iterador
+        {
+        public:
+
+            const_Iterador();
+
+            const_Iterador(const typename DiccRapido<S>::Iterador& otro);
+
+            const_Iterador(const typename DiccRapido<S>::const_Iterador& otro);
+
+            const_Iterador& operator = (const typename DiccRapido<S>::const_Iterador& otro);
+
+            bool operator==(const typename DiccRapido<S>::const_Iterador&) const;
+
+            bool HaySiguiente() const;
+            bool HayAnterior() const;
+            const Nat& SiguienteClave() const;
+            const S& SiguienteSignificado() const;
+            const Nat& AnteriorClave() const;
+            const S& AnteriorSignificado() const;
+            const tuplaSignificado& Siguiente() const;
+            const tuplaSignificado& Anterior() const;
+            void Avanzar();
+            void Retroceder();
+
+        private:
+
+            typename Conj<tuplaSignificado>::const_Iterador _it_tuplas;
+            Nat _indice_act;
+
+            const_Iterador(const DiccRapido<S>* d);
+
+            friend typename DiccRapido<S>::const_Iterador DiccRapido<S>::CrearIt() const;
+        };
+
     private:
         struct tuplaSignificado{
-            Nat _key;
+            const Nat _key;
             S& _significado;
             tuplaSignificado(){};
             tuplaSignificado(Nat k, S& s) : _key(k), _significado(s) {};
@@ -40,6 +119,9 @@ namespace aed2 {
         Nat Hash(Nat k);
 
     };
+
+
+    //IMPLEMENTACION DICCIONARIO
 
     template<class S>
     DiccRapido<S>::DiccRapido(Nat maxClaves){
@@ -98,7 +180,9 @@ namespace aed2 {
 
     template<class S>
     S& DiccRapido<S>::Obtener(Nat k){
-        //assert(Def(k));
+        #ifdef DEBUG
+        assert(Def(k));
+        #endif
 
         Nat i = 0;
         Nat posArreglo;
@@ -119,7 +203,9 @@ namespace aed2 {
 
     template<class S>
     void DiccRapido<S>::Borrar(Nat k){
-        //assert(Def(k));
+        #ifdef DEBUG
+        assert(Def(k));
+        #endif
 
         Nat i = 0;
         Nat posArreglo;
@@ -149,6 +235,9 @@ namespace aed2 {
         Nat val = _defs.Tamanho();
         return k % val;
     }
+
+
+    //IMPLEMENTACION ITERADOR
 }
 
 
