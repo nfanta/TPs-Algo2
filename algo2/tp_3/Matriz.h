@@ -23,19 +23,19 @@ namespace aed2 {
 
         void Eliminar (const Posicion p);
 
-        Conj Claves () const;
+        Conj<Posicion> Claves () const;
 
     private:
 
         struct info {
             bool _definido;
             S _significado;
-            Conj::Iterador it;
+            typename Conj<Posicion>::Iterador it;
         };
 
         Nat _alto;
         Nat _ancho;
-        Conj _claves;
+        Conj<Posicion> _claves;
         Arreglo<Arreglo<info>> _tablero;
 
     };
@@ -44,39 +44,42 @@ namespace aed2 {
     Matriz<S>::Matriz(const  Nat al, const Nat an){
         _alto = al;
         _ancho = an;
-        _claves = Conj();
-        _tablero = Arreglo(al);
+        _claves = Conj<Posicion>();
+        _tablero = Arreglo<Arreglo<info>>(al);
         for (int i = 0; i < al; ++i) {
-            _tablero[i] = Arreglo(an);
+            _tablero.Definir(i, Arreglo<info>(an));
         }
     }
 
     template <class S>
     Matriz<S>::~Matriz() {
-        for (int i = 0; i < _alto; ++i) {
-            delete _tablero[i];
-        }
+//        for (int i = 0; i < _alto-1; ++i) {
+//            _tablero[i].~Arreglo();
+//        }
 
-        delete _tablero;
+//        _tablero.~Arreglo();
     }
 
     template <class S>
     void Matriz<S>::Definir(const Posicion p, const S &s) {
         if (p.x < _alto && p.y < _ancho) {
-            if (!_tablero[p.x][p.y]._definido) {
-                Conj::Iterador temp;
-                temp = _claves.AgregarRapido(p);
-                _tablero[p.x][p.y].it = temp;
-                _tablero[p.x][p.y]._definido = true;
-                _tablero[p.x][p.y]._significado = s;
+            if (!_tablero[p.x].Definido(p.y)) { // Se agrego  guarda para evitar que se indefina arreglo.
+                info temp {true, s, _claves.AgregarRapido(p)};
+                _tablero[p.x].Definir(p.y, temp);
             } else {
-                _tablero[p.x][p.y]._significado = s;
+                if (!_tablero[p.x][p.y]._definido) { // Si el _definido esta en false (significa que ya se habia inici
+                                                     // ado la posicion del arreglo, pero se borro el significado)
+                    info temp {true, s, _claves.AgregarRapido(p)};
+                    _tablero[p.x][p.y] = temp;
+                } else { // si el _definido esta en true
+                    _tablero[p.x][p.y]._significado = s;
+                }
             }
         }
     }
 
     template <class S>
-    bool Matriz::Def(const Posicion p) const {
+    bool Matriz<S>::Def(const Posicion p) const {
         if (p.x > _alto || p.y > _ancho) {
             return false;
         } else {
@@ -90,20 +93,26 @@ namespace aed2 {
     }
 
     template <class S>
-    S Matriz::Obtener(const Posicion p) const {
+    S Matriz<S>::Obtener(const Posicion p) const {
+        #ifdef DEBUG
         assert(Def(p));
+        #endif
 
         return _tablero[p.x][p.y]._significado;
     }
 
     template <class S>
-    void Matriz::Eliminar(const Posicion p) {
+    void Matriz<S>::Eliminar(const Posicion p) {
+        #ifdef DEBUG
+        assert(Def(p));
+        #endif
+
         _tablero[p.x][p.y].it.EliminarSiguiente();
         _tablero[p.x][p.y]._definido = false;
     }
 
     template <class S>
-    Conj Matriz::Claves() const {
+    Conj<Posicion> Matriz<S>::Claves() const {
         return _claves;
     }
 }

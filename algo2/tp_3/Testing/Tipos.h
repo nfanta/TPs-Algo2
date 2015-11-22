@@ -10,6 +10,12 @@ namespace aed2{
 	typedef Nat Agente;
 	typedef String Nombre;
 
+	bool operator!=(const Posicion p1, const Posicion p2) {
+		return !(p1.x == p2.x) && !(p1.y == p2.y);
+	}
+	bool operator==(const Posicion p1, const Posicion p2) {
+		return (p1.x == p2.x) && (p1.y == p2.y);
+	}
 } // namespace aed2
 
 #endif // AED2_TIPOS_H_
