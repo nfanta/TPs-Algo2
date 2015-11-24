@@ -39,6 +39,42 @@ namespace aed2 {
 
     };
 
+
+    template <class S>
+    DCR<S>::DCR(){
+
+    }
+
+    template <class S>
+    DCR<S>::~DCR() {
+
+    }
+
+    template <class S>
+    void DCR<S>::Definir(const String n, const S &s) {
+
+    }
+
+    template <class S>
+    bool DCR<S>::Def(const String n) const {
+
+    }
+
+    template <class S>
+    S DCR<S>::Obtener(const String n) const {
+
+    }
+
+    template <class S>
+    void DCR<S>::Eliminar(const String n) {
+
+    }
+
+    template <class S>
+    Conj<String> DCR<S>::Claves() const {
+
+    }
+
 }
 
 #endif
