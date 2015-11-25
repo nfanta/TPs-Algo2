@@ -31,7 +31,7 @@ namespace aed2 {
             bool _definido;
             S _dato;
             Arreglo<Nodo*> _sig;
-            typename Conj<String>::Iterador it;
+            typename Conj<String>::Iterador _it;
         };
 
         Arreglo<Nodo*> _dicc;
@@ -42,7 +42,8 @@ namespace aed2 {
 
     template <class S>
     DCR<S>::DCR(){
-
+        _dicc = Arreglo<Nodo*>(256);
+        _claves = Conj<String>();
     }
 
     template <class S>
@@ -52,27 +53,106 @@ namespace aed2 {
 
     template <class S>
     void DCR<S>::Definir(const String n, const S &s) {
+        String str = n;
+        Nodo* p;
+
+        if ( !_dicc.Definido(str.front()) ) { // Si aun no se definio ningun string en _claves[x]...
+            Nodo* tmp = new Nodo{false, s, Arreglo<Nodo*>(256), _claves.CrearIt()};
+
+            _dicc.Definir(str.front(), tmp);
+            p = _dicc[str.front()];
+            str.erase(0, 1);
+        } else {
+            p = _dicc[str.front()];
+            str.erase(0, 1);
+        }
+        while (str.length() > 0) { // Si poseia una longitud mas grande...
+            if ( !p->_sig.Definido(str.front()) ) {
+                Nodo* tmp = new Nodo{false, s, Arreglo<Nodo*>(256), _claves.CrearIt()};
+
+                p->_sig.Definir(str.front(), tmp);
+                p = p->_sig[str.front()];
+                str.erase(0, 1);
+            } else {
+                p = p->_sig[str.front()];
+                str.erase(0, 1);
+            }
+        }
+
+        p->_definido = true;
+        p->_it = _claves.AgregarRapido(n);
 
     }
 
     template <class S>
     bool DCR<S>::Def(const String n) const {
+        String str = n;
+        Nodo* p;
 
+        if ( !_dicc.Definido(str.front()) ) {\
+            return false;
+        } else {
+            p = _dicc[str.front()];
+            str.erase(0, 1);
+        }
+
+        while (str.length() > 0) { // Si poseia una longitud mas grande...
+            if ( !p->_sig.Definido(str.front()) ) {
+                return false;
+            } else {
+                p = p->_sig[str.front()];
+                str.erase(0, 1);
+            }
+        }
+
+        return p->_definido;
     }
 
     template <class S>
     S DCR<S>::Obtener(const String n) const {
 
+        #ifdef DEBUG
+        assert(Def(n));
+        #endif
+
+        String str = n;
+        Nodo* p;
+
+        p = _dicc[str.front()];
+        str.erase(0, 1);
+
+        while (str.length() > 0) { // Si poseia una longitud mas grande...
+            p = p->_sig[str.front()];
+            str.erase(0, 1);
+        }
+
+        return p->_dato;
     }
 
     template <class S>
     void DCR<S>::Eliminar(const String n) {
+        #ifdef DEBUG
+        assert(Def(n));
+        #endif
 
+        String str = n;
+        Nodo* p;
+
+        p = _dicc[str.front()];
+        str.erase(0, 1);
+
+        while (str.length() > 0) { // Si poseia una longitud mas grande...
+            p = p->_sig[str.front()];
+            str.erase(0, 1);
+        }
+
+        p->_it.EliminarSiguiente();
+        p->_definido = false;
     }
 
     template <class S>
     Conj<String> DCR<S>::Claves() const {
-
+        return _claves;
     }
 
 }
