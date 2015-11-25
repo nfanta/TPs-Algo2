@@ -114,9 +114,9 @@ namespace aed2 {
         Posicion v1,v2,v3,v4;
 
         v1 = {p.x -1,p.y};
-        v2= {p.x +1,p.y};
-        v3={p.x,p.y -1};
-        v4={p.x,p.y +1};
+        v2 = {p.x +1,p.y};
+        v3 = {p.x,p.y -1};
+        v4 = {p.x,p.y +1};
 
         if(posValida(v1)) {
             res.Agregar(v1);
