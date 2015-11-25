@@ -37,6 +37,10 @@ namespace aed2 {
         Arreglo<Nodo*> _dicc;
         Conj<String> _claves;
 
+        bool hayNodo (Nodo* n);
+
+        Nodo* primerNodoDef (Nodo* n, Nat& pos);
+
     };
 
 
@@ -47,8 +51,54 @@ namespace aed2 {
     }
 
     template <class S>
-    DCR<S>::~DCR() {
+    bool DCR<S>::hayNodo (Nodo* n) {
+        for (int i = 0; i < n->_sig.Tamanho(); ++i) {
+            if (n->_sig.Definido(i)) {
+                return true;
+            }
+        }
 
+        return false;
+    }
+
+    template <class S>
+    typename DCR<S>::Nodo* DCR<S>::primerNodoDef (Nodo* n, Nat& pos) {
+        for (int i = 0; i < n->_sig.Tamanho(); ++i) {
+            if (n->_sig.Definido(i)) {
+                pos = i;
+                return n->_sig[i];
+            }
+        }
+    }
+
+    template <class S>
+    DCR<S>::~DCR() {
+        Nodo* cur;
+        Nodo* prev;
+
+        for (int i = 0; i < _dicc.Tamanho(); ++i) {
+            if (_dicc.Definido(i)){
+                cur = _dicc[i];
+
+                while (hayNodo(cur)) {
+                    Nat tmp = 0;
+
+                    while (hayNodo(cur)) {
+                        prev = cur;
+                        cur = primerNodoDef(cur, tmp);
+                    }
+
+                    if (cur == _dicc[i]) {
+                        break;
+                    } else {
+                        prev->_sig.Borrar(tmp);
+                        delete cur;
+                    }
+
+                    cur = _dicc[i];
+                }
+            }
+        }
     }
 
     template <class S>

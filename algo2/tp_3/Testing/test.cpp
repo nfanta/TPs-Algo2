@@ -384,14 +384,16 @@ void campus_ingresoMasCercano() {
 
 int main(int argc, char **argv)
 {
-    std::cout << "Comenzando Tests de Matriz:\n\n";
-    RUN_TEST(matriz_crear);
-    RUN_TEST(matriz_definirYdef);
-    RUN_TEST(matriz_obtener);
-    RUN_TEST(matriz_eliminar);
-    RUN_TEST(matriz_claves);
-    std::cout << "\nFinalizados Tests de Matriz.\n\n";
-
+//    std::cout << d.Obtener("1") << "\n";
+//    std::cout << d.Obtener("12") << "\n";
+//    std::cout << "Comenzando Tests de Matriz:\n\n";
+//    RUN_TEST(matriz_crear);
+//    RUN_TEST(matriz_definirYdef);
+//    RUN_TEST(matriz_obtener);
+//    RUN_TEST(matriz_eliminar);
+//    RUN_TEST(matriz_claves);
+//    std::cout << "\nFinalizados Tests de Matriz.\n\n";
+//
     std::cout << "Comenzando Tests de DiccClavesRapidas:\n\n";
     RUN_TEST(dcr_crear);
     RUN_TEST(dcr_definirYdef);
@@ -399,21 +401,21 @@ int main(int argc, char **argv)
     RUN_TEST(dcr_eliminar);
     RUN_TEST(dcr_claves);
     std::cout << "\nFinalizados Tests de DiccClavesRapidas.\n\n";
-
-    std::cout << "Comenzando Tests de Campus:\n\n";
-    RUN_TEST(campus_crear);
-    RUN_TEST(campus_agregarObstaculoYocupada);
-    RUN_TEST(campus_filas);
-    RUN_TEST(campus_columnas);
-    RUN_TEST(campus_posValida);
-    RUN_TEST(campus_esIngreso);
-    RUN_TEST(campus_ingresoSuperior);
-    RUN_TEST(campus_ingresoInferior);
-    RUN_TEST(campus_vecinos);
-    RUN_TEST(campus_distancia);
-    RUN_TEST(campus_proxPosicion);
-    RUN_TEST(campus_ingresoMasCercano);
-    std::cout << "\nFinalizados Tests de Campus.\n\n";
+//
+//    std::cout << "Comenzando Tests de Campus:\n\n";
+//    RUN_TEST(campus_crear);
+//    RUN_TEST(campus_agregarObstaculoYocupada);
+//    RUN_TEST(campus_filas);
+//    RUN_TEST(campus_columnas);
+//    RUN_TEST(campus_posValida);
+//    RUN_TEST(campus_esIngreso);
+//    RUN_TEST(campus_ingresoSuperior);
+//    RUN_TEST(campus_ingresoInferior);
+//    RUN_TEST(campus_vecinos);
+//    RUN_TEST(campus_distancia);
+//    RUN_TEST(campus_proxPosicion);
+//    RUN_TEST(campus_ingresoMasCercano);
+//    std::cout << "\nFinalizados Tests de Campus.\n\n";
 
 	return 0;
 }
