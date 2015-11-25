@@ -6,6 +6,8 @@
 #include "../DiccRapido.h"
 #include "../Agentes.h"
 #include "../Agentes.cpp"
+#include "../CampusSeguro.h"
+#include "../HippiesYEstudiantes.h"
 #include "Tipos.h"
 #include "aed2.h"
 
@@ -386,7 +388,7 @@ void campus_ingresoMasCercano() {
     ASSERT(!tmp.Pertenece({7,10}));
 }
 
-//Tests Dicc Rapido
+// DICCRAPIDO
 
 void dr_Crear(){
     DiccRapido<String> dicc(15);
@@ -465,6 +467,8 @@ void dr_Claves(){
     ASSERT(!dicc.Claves().Pertenece(16));
     ASSERT_EQ(dicc.Claves().Cardinal(), 0);
 }
+
+// AGENTES
 
 void agentes_Crear(){
     Dicc<Nat,Posicion> agentes;
@@ -613,8 +617,197 @@ void agentes_ConKSanciones() {
     ASSERT(!as.ConKSanciones(2).Pertenece(17));
 }
 
-int main(int argc, char **argv)
-{
+// HIPPIESYESTUDIANTES
+//void hyp_HippiesYEstudiantes() {
+//    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+//}
+//
+//void hyp_DefinirHippie_Esta_EsHippie() {
+//    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+//    hyp.DefinirHippie("Alice",{1,1});
+//    ASSERT(hyp.EsHippie("Alice"));
+//    ASSERT(hyp.Esta("Alice"));
+//    ASSERT(!hyp.Esta("alice"));
+//
+//    hyp.DefinirHippie("Bob",{5,5});
+//    ASSERT(hyp.EsHippie("Bob"));
+//    ASSERT(hyp.Esta("Bob"));
+//    ASSERT(!hyp.Esta("bob"));
+//
+//    hyp.DefinirHippie("7uV13)@",{7,3});
+//    ASSERT(hyp.EsHippie("7uV13)@"));
+//    ASSERT(hyp.Esta("7uV13)@"));
+//    ASSERT(!hyp.Esta("tuV13)@"));
+//}
+//
+//void hyp_DefinirEstudiante_Esta_EsEst() {
+//    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+//    hyp.DefinirEstudiante("Alice",{1,1});
+//    ASSERT(!hyp.EsHippie("Alice"));
+//    ASSERT(hyp.EsEst("Alice"));
+//    ASSERT(hyp.Esta("Alice"));
+//    ASSERT(!hyp.Esta("alice"));
+//
+//    hyp.DefinirEstudiante("Bob",{5,5});
+//    ASSERT(hyp.EsEst("Bob"));
+//    ASSERT(hyp.Esta("Bob"));
+//    ASSERT(!hyp.Esta("bob"));
+//
+//    hyp.DefinirEstudiante("7uV13)@",{7,3});
+//    ASSERT(hyp.EsEst("7uV13)@"));
+//    ASSERT(hyp.Esta("7uV13)@"));
+//    ASSERT(!hyp.Esta("tuV13)@"));
+//}
+//
+//void hyp_PosHippieYEstudiante() {
+//    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+//
+//    hyp.DefinirHippie("Alice",{1,1});
+//    ASSERT(hyp.EsHippie("Alice"));
+//    ASSERT(hyp.Esta("Alice"));
+//    ASSERT(!hyp.Esta("alice"));
+//
+//    hyp.DefinirHippie("Bob",{5,5});
+//    ASSERT(hyp.EsHippie("Bob"));
+//    ASSERT(hyp.Esta("Bob"));
+//    ASSERT(!hyp.Esta("bob"));
+//
+//    hyp.DefinirEstudiante("7uV13)@",{7,3});
+//    ASSERT(hyp.EsEst("7uV13)@"));
+//    ASSERT(hyp.Esta("7uV13)@"));
+//    ASSERT(!hyp.Esta("tuV13)@"));
+//
+//    Posicion tmp = hyp.PosHippieYEstudiante("Alice");
+//    ASSERT_EQ(tmp.x, 1);
+//    ASSERT_EQ(tmp.x, 1);
+//
+//    tmp = hyp.PosHippieYEstudiante("Bob");
+//    ASSERT_EQ(tmp.x, 5);
+//    ASSERT_EQ(tmp.x, 5);
+//
+//    tmp = hyp.PosHippieYEstudiante("7uV13)@");
+//    ASSERT_EQ(tmp.x, 7);
+//    ASSERT_EQ(tmp.x, 3);
+//}
+//
+//void hyp_Estudiantes() {
+//    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+//}
+//
+//void hyp_Hippies() {
+//    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+//}
+//
+//void hyp_Borrar() {
+//    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+//}
+
+// CAMPUSSEGURO
+//
+////CampusSeguro(const Campus& c, const Dicc<Nat,Posicion>& dA);
+//void cs_crear() {
+//    Campus c(10,10);
+//    c.AgregarObstaculo({1,1});
+//    c.AgregarObstaculo({5,5});
+//    c.AgregarObstaculo({3,7});
+//    c.AgregarObstaculo({7,3});
+//
+////    CampusSeguro cs(c,)
+//}
+//
+////void IngresarEstudiante(String nombre, Posicion p);
+//void IngresarEstudiante() {
+//
+//}
+//
+////void IngresarHippie(String nombre, Posicion p);
+//void IngresarHippie() {
+//
+//}
+//
+////void MoverEstudiante(String nombre, Direccion dir);
+//void MoverEstudiante() {
+//
+//}
+//
+////void MoverHippie(String nombre);
+//void MoverHippie() {
+//
+//}
+//
+////void MoverAgente(Nat placa);
+//void MoverAgente() {
+//
+//}
+//
+////const Campus& dameCampus();
+//void dameCampus() {
+//
+//}
+//
+////const Conj<String>& Estudiantes();
+//void Estudiantes() {
+//
+//}
+//
+////const Conj<String>& Hippies();
+//void Hippies() {
+//
+//}
+//
+////const Conj<Nat>& dameAgentes();
+//void dameAgentes() {
+//
+//}
+//
+////const Posicion& PosHippieYEstudiante(String nombre);
+//void PosHippieYEstudiante() {
+//
+//}
+//
+////const Posicion& PosAgente(Nat placa);
+//void PosAgente() {
+//
+//}
+//
+////const Nat& CantSanciones(Nat placa);
+//void CantSanciones() {
+//
+//}
+//
+////const Nat& CantHippiesAtrapados(Nat placa);
+//void CantHippiesAtrapados() {
+//
+//}
+//
+////Nat CantHippies();
+//void CantHippies() {
+//
+//}
+//
+////Nat CantEstudiantes();
+//void CantEstudiantes() {
+//
+//}
+//
+////const Nat& MasVigilante();
+//void MasVigilante() {
+//
+//}
+//
+////const Conj<Nat>& ConMismasSanciones(Nat placa);
+//void ConMismasSanciones() {
+//
+//}
+//
+////const Conj<Nat>& ConKSanciones(Nat k);
+//void ConKSanciones() {
+//
+//}
+
+// Tests Completos
+
+void testMatriz() {
     std::cout << "Comenzando Tests de Matriz:\n\n";
     RUN_TEST(matriz_crear);
     RUN_TEST(matriz_definirYdef);
@@ -622,7 +815,9 @@ int main(int argc, char **argv)
     RUN_TEST(matriz_eliminar);
     RUN_TEST(matriz_claves);
     std::cout << "\nFinalizados Tests de Matriz.\n\n";
+}
 
+void testDCR() {
     std::cout << "Comenzando Tests de DiccClavesRapidas:\n\n";
     RUN_TEST(dcr_crear);
     RUN_TEST(dcr_definirYdef);
@@ -630,7 +825,9 @@ int main(int argc, char **argv)
     RUN_TEST(dcr_eliminar);
     RUN_TEST(dcr_claves);
     std::cout << "\nFinalizados Tests de DiccClavesRapidas.\n\n";
+}
 
+void testCampus() {
     std::cout << "Comenzando Tests de Campus:\n\n";
     RUN_TEST(campus_crear);
     RUN_TEST(campus_agregarObstaculoYocupada);
@@ -645,7 +842,9 @@ int main(int argc, char **argv)
     RUN_TEST(campus_proxPosicion);
     RUN_TEST(campus_ingresoMasCercano);
     std::cout << "\nFinalizados Tests de Campus.\n\n";
+}
 
+void testDiccRapido() {
     std::cout << "Comenzando Tests de DiccRapido:\n\n";
     RUN_TEST(dr_Crear);
     RUN_TEST(dr_defYDefinido);
@@ -653,7 +852,9 @@ int main(int argc, char **argv)
     RUN_TEST(dr_Borrar);
     RUN_TEST(dr_Claves);
     std::cout << "\nFinalizados Tests de DiccRapido.\n\n";
+}
 
+void testAgentes() {
     std::cout << "Comenzando Tests de Agentes:\n\n";
     RUN_TEST(agentes_Crear);
     RUN_TEST(agentes_AgregarYPedir);
@@ -661,6 +862,15 @@ int main(int argc, char **argv)
     RUN_TEST(agentes_ConMismasSanciones);
     RUN_TEST(agentes_ConKSanciones);
     std::cout << "\nFinalizados Tests de Agentes.\n\n";
+}
+
+int main(int argc, char **argv)
+{    
+    RUN_TEST(testMatriz);
+    RUN_TEST(testDCR);
+    RUN_TEST(testCampus);
+    RUN_TEST(testDiccRapido);
+    RUN_TEST(testAgentes);
 
 	return 0;
 }
