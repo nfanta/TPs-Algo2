@@ -64,7 +64,7 @@ namespace aed2 {
             typename Conj<tuplaSignificado>::Iterador _it_tuplas;
             Conj<tuplaSignificado>* _conj_iterado; //Agregado para poder re-definir rapido
             Nat _indice_act;
-            Arreglo<Conj<tuplaSignificado>>* _dicc;
+            Arreglo<Conj<tuplaSignificado> >* _dicc;
 
             Iterador(DiccRapido<S>* d);
 
@@ -102,7 +102,7 @@ namespace aed2 {
 
             typename Conj<tuplaSignificado>::const_Iterador _it_tuplas;
             Nat _indice_act;
-            Arreglo<Conj<tuplaSignificado>>* _dicc;
+            Arreglo<Conj<tuplaSignificado> >* _dicc;
 
             const_Iterador(const DiccRapido<S>* d);
 
@@ -123,7 +123,7 @@ namespace aed2 {
 
     private:
 
-        Arreglo<Conj<tuplaSignificado>> _defs;
+        Arreglo<Conj<tuplaSignificado> > _defs;
         Conj<Nat> _claves;
 
         Nat Hash(Nat k) const;
@@ -137,7 +137,7 @@ namespace aed2 {
     DiccRapido<S>::DiccRapido(Nat maxClaves){
         Nat i = 0;
         _claves = Conj<Nat>::Conj();
-        _defs = typename Arreglo<Conj<DiccRapido<S>::tuplaSignificado>>::Arreglo(maxClaves);
+        _defs = typename Arreglo<Conj<DiccRapido<S>::tuplaSignificado> >::Arreglo(maxClaves);
 
         while (i < maxClaves) {
             _defs.Definir(i, typename Conj<DiccRapido<S>::tuplaSignificado>::Conj());
