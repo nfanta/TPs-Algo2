@@ -6,6 +6,7 @@
 #include "../DiccRapido.h"
 #include "../Agentes.h"
 #include "../Agentes.cpp"
+#include "../CampusSeguro.h"
 #include "Tipos.h"
 #include "aed2.h"
 

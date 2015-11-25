@@ -78,6 +78,51 @@ namespace aed2 {
     }
 
     void CampusSeguro::IngresarHippie(String nombre, Posicion p){
+        if(hippieCapturado(p)){
+            sumarCapturas(p);
+        }
+        if(hippieRodeadoEst(p)){
+            _HipYEst.DefinirEstudiante(nombre,p);
+            _posOcupadasEstudiantes.Definir(p,nombre);
+            Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+            Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
+            while(itvecinos.HaySiguiente()){
+                if(estudianteSancionar(itvecinos.Siguiente())){
+                    sancionar(itvecinos.Siguiente());
+
+                }
+                itvecinos.Avanzar();
+            }
+
+        }else{
+            _HipYEst.DefinirHippie(nombre,p);
+            _posOcupadasHippies.Definir(p,nombre);
+            Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+            Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
+            while(itvecinos.HaySiguiente()){
+                if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
+                    if(hippieCapturado(itvecinos.Siguiente())){
+                        eliminarHippie(itvecinos.Siguiente());
+                    }
+                }
+                if(_posOcupadasEstudiantes.Def(itvecinos.Siguiente())){
+                    if(estudianteHippificado(itvecinos.Siguiente()) && hippieCapturado(itvecinos.Siguiente())){
+                        sumarCapturas(itvecinos.Siguiente());
+                        _HipYEst.Borrar(_posOcupadasEstudiantes.Obtener(itvecinos.Siguiente()));
+                        _posOcupadasEstudiantes.Eliminar(itvecinos.Siguiente());
+
+                    }
+                    if(estudianteHippificado(itvecinos.Siguiente())){
+                        hippificar(itvecinos.Siguiente());
+                    }
+                    if(estudianteSancionar(itvecinos.Siguiente())){
+                        sancionar(itvecinos.Siguiente());
+                    }
+                }
+                itvecinos.Avanzar();
+            }
+
+        }
 
     }
 
