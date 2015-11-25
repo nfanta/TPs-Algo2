@@ -1,0 +1,239 @@
+==5055== Memcheck, a memory error detector
+==5055== Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.
+==5055== Using Valgrind-3.10.0.SVN and LibVEX; rerun with -h for copyright info
+==5055== Command: ./a.out
+==5055== 
+--5055-- Valgrind options:
+--5055--    --leak-check=full
+--5055--    -v
+--5055-- Contents of /proc/version:
+--5055--   Linux version 3.16.0-50-generic (buildd@lgw01-44) (gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1) ) #66~14.04.1-Ubuntu SMP Thu Sep 10 17:05:00 UTC 2015
+--5055-- Arch and hwcaps: AMD64, amd64-cx16-lzcnt-rdtscp-sse3-avx-avx2-bmi
+--5055-- Page sizes: currently 4096, max supported 4096
+--5055-- Valgrind library directory: /usr/lib/valgrind
+--5055-- Reading syms from /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out
+--5055-- Reading syms from /lib/x86_64-linux-gnu/ld-2.19.so
+--5055--   Considering /lib/x86_64-linux-gnu/ld-2.19.so ..
+--5055--   .. CRC mismatch (computed 4cbae35e wanted 8d683c31)
+--5055--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/ld-2.19.so ..
+--5055--   .. CRC is valid
+--5055-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+--5055--   Considering /usr/lib/valgrind/memcheck-amd64-linux ..
+--5055--   .. CRC mismatch (computed 37cdde19 wanted adc367dd)
+--5055--    object doesn't have a symbol table
+--5055--    object doesn't have a dynamic symbol table
+--5055-- Scheduler: using generic scheduler lock implementation.
+--5055-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==5055== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-5055-by-matias-on-???
+==5055== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-5055-by-matias-on-???
+==5055== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-5055-by-matias-on-???
+==5055== 
+==5055== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==5055== don't want to do, unless you know exactly what you're doing,
+==5055== or are doing some strange experiment):
+==5055==   /usr/lib/valgrind/../../bin/vgdb --pid=5055 ...command...
+==5055== 
+==5055== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==5055==   /path/to/gdb ./a.out
+==5055== and then give GDB the following command
+==5055==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=5055
+==5055== --pid is optional if only one valgrind process is running
+==5055== 
+--5055-- REDIR: 0x4019ca0 (strlen) redirected to 0x38068331 (???)
+--5055-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+--5055--   Considering /usr/lib/valgrind/vgpreload_core-amd64-linux.so ..
+--5055--   .. CRC mismatch (computed 329d6860 wanted c0186920)
+--5055--    object doesn't have a symbol table
+--5055-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+--5055--   Considering /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so ..
+--5055--   .. CRC mismatch (computed 1fb85af8 wanted 2e9e3c16)
+--5055--    object doesn't have a symbol table
+==5055== WARNING: new redirection conflicts with existing -- ignoring it
+--5055--     old: 0x04019ca0 (strlen              ) R-> (0000.0) 0x38068331 ???
+--5055--     new: 0x04019ca0 (strlen              ) R-> (2007.0) 0x04c2e1a0 strlen
+--5055-- REDIR: 0x4019a50 (index) redirected to 0x4c2dd50 (index)
+--5055-- REDIR: 0x4019c70 (strcmp) redirected to 0x4c2f2f0 (strcmp)
+--5055-- REDIR: 0x401a9c0 (mempcpy) redirected to 0x4c31da0 (mempcpy)
+--5055-- Reading syms from /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.19
+--5055--   Considering /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.19 ..
+--5055--   .. CRC mismatch (computed 0df13638 wanted 88e81a42)
+--5055--    object doesn't have a symbol table
+--5055-- Reading syms from /lib/x86_64-linux-gnu/libgcc_s.so.1
+--5055--   Considering /lib/x86_64-linux-gnu/libgcc_s.so.1 ..
+--5055--   .. CRC mismatch (computed ea519b66 wanted 0c00ddb3)
+--5055--    object doesn't have a symbol table
+--5055-- Reading syms from /lib/x86_64-linux-gnu/libc-2.19.so
+--5055--   Considering /lib/x86_64-linux-gnu/libc-2.19.so ..
+--5055--   .. CRC mismatch (computed dc620abc wanted 148cbd6e)
+--5055--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libc-2.19.so ..
+--5055--   .. CRC is valid
+--5055-- Reading syms from /lib/x86_64-linux-gnu/libm-2.19.so
+--5055--   Considering /lib/x86_64-linux-gnu/libm-2.19.so ..
+--5055--   .. CRC mismatch (computed a46ef660 wanted 767bfa33)
+--5055--   Considering /usr/lib/debug/lib/x86_64-linux-gnu/libm-2.19.so ..
+--5055--   .. CRC is valid
+--5055-- REDIR: 0x53ddd60 (strcasecmp) redirected to 0x4a25720 (_vgnU_ifunc_wrapper)
+--5055-- REDIR: 0x53e0050 (strncasecmp) redirected to 0x4a25720 (_vgnU_ifunc_wrapper)
+--5055-- REDIR: 0x53dd530 (memcpy@GLIBC_2.2.5) redirected to 0x4a25720 (_vgnU_ifunc_wrapper)
+--5055-- REDIR: 0x53db7c0 (rindex) redirected to 0x4c2da30 (rindex)
+--5055-- REDIR: 0x53d9ac0 (strlen) redirected to 0x4c2e0e0 (strlen)
+--5055-- REDIR: 0x53dcfa0 (__GI_memcmp) redirected to 0x4c30b80 (__GI_memcmp)
+--5055-- REDIR: 0x53d8070 (strcmp) redirected to 0x4a25720 (_vgnU_ifunc_wrapper)
+--5055-- REDIR: 0x5491200 (__strcmp_ssse3) redirected to 0x4c2f1b0 (strcmp)
+Comenzando Tests de DiccClavesRapidas:
+
+dcr_crear...--5055-- REDIR: 0x4e95ea0 (operator new[](unsigned long)) redirected to 0x4c2b790 (operator new[](unsigned long))
+--5055-- REDIR: 0x4e94120 (operator delete[](void*)) redirected to 0x4c2c7d0 (operator delete[](void*))
+--5055-- REDIR: 0x4e95d90 (operator new(unsigned long)) redirected to 0x4c2b070 (operator new(unsigned long))
+--5055-- REDIR: 0x53e2730 (memcpy@@GLIBC_2.14) redirected to 0x4a25720 (_vgnU_ifunc_wrapper)
+--5055-- REDIR: 0x53e8fd0 (__memcpy_sse2_unaligned) redirected to 0x4c2f6b0 (memcpy@@GLIBC_2.14)
+--5055-- REDIR: 0x53dcf60 (bcmp) redirected to 0x4a25720 (_vgnU_ifunc_wrapper)
+--5055-- REDIR: 0x54b1060 (__memcmp_sse4_1) redirected to 0x4c30c00 (__memcmp_sse4_1)
+--5055-- REDIR: 0x4e940f0 (operator delete(void*)) redirected to 0x4c2c250 (operator delete(void*))
+ok
+dcr_definirYdef...--5055-- REDIR: 0x54a1090 (__memmove_ssse3_back) redirected to 0x4c2f450 (memcpy@GLIBC_2.2.5)
+ok
+dcr_obtener...ok
+dcr_eliminar...ok
+dcr_claves...ok
+
+Finalizados Tests de DiccClavesRapidas.
+
+--5055-- REDIR: 0x53d3df0 (free) redirected to 0x4c2bd80 (free)
+==5055== 
+==5055== HEAP SUMMARY:
+==5055==     in use at exit: 177,248 bytes in 232 blocks
+==5055==   total heap usage: 853 allocs, 621 frees, 246,859 bytes allocated
+==5055== 
+==5055== Searching for pointers to 232 not-freed blocks
+==5055== Checked 193,448 bytes
+==5055== 
+==5055== 2,104 (56 direct, 2,048 indirect) bytes in 1 blocks are definitely lost in loss record 57 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4059F2: dcr_definirYdef() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41100A: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 2,104 (56 direct, 2,048 indirect) bytes in 1 blocks are definitely lost in loss record 58 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4061EC: dcr_obtener() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41106D: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 2,104 (56 direct, 2,048 indirect) bytes in 1 blocks are definitely lost in loss record 59 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x406BB6: dcr_eliminar() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4110D0: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 2,104 (56 direct, 2,048 indirect) bytes in 1 blocks are definitely lost in loss record 60 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x407A7A: dcr_claves() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x411133: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 4,216 (56 direct, 4,160 indirect) bytes in 1 blocks are definitely lost in loss record 61 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x40580C: dcr_definirYdef() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41100A: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 4,216 (56 direct, 4,160 indirect) bytes in 1 blocks are definitely lost in loss record 62 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x40600C: dcr_obtener() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41106D: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 4,216 (56 direct, 4,160 indirect) bytes in 1 blocks are definitely lost in loss record 63 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4067FA: dcr_eliminar() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4110D0: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 4,216 (56 direct, 4,160 indirect) bytes in 1 blocks are definitely lost in loss record 64 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4077B6: dcr_claves() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x411133: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 8,440 (56 direct, 8,384 indirect) bytes in 1 blocks are definitely lost in loss record 69 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x405AE5: dcr_definirYdef() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41100A: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 8,440 (56 direct, 8,384 indirect) bytes in 1 blocks are definitely lost in loss record 70 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4062DC: dcr_obtener() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41106D: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 8,440 (56 direct, 8,384 indirect) bytes in 1 blocks are definitely lost in loss record 71 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x406D94: dcr_eliminar() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4110D0: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 8,440 (56 direct, 8,384 indirect) bytes in 1 blocks are definitely lost in loss record 72 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x407BDC: dcr_claves() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x411133: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 14,776 (56 direct, 14,720 indirect) bytes in 1 blocks are definitely lost in loss record 81 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x405BD8: dcr_definirYdef() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41100A: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 14,776 (56 direct, 14,720 indirect) bytes in 1 blocks are definitely lost in loss record 82 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x405CBC: dcr_definirYdef() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41100A: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 14,776 (56 direct, 14,720 indirect) bytes in 1 blocks are definitely lost in loss record 83 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4063CC: dcr_obtener() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41106D: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 14,776 (56 direct, 14,720 indirect) bytes in 1 blocks are definitely lost in loss record 84 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4064AD: dcr_obtener() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x41106D: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 14,776 (56 direct, 14,720 indirect) bytes in 1 blocks are definitely lost in loss record 85 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x406F72: dcr_eliminar() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4110D0: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 14,776 (56 direct, 14,720 indirect) bytes in 1 blocks are definitely lost in loss record 86 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x407150: dcr_eliminar() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x4110D0: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 14,776 (56 direct, 14,720 indirect) bytes in 1 blocks are definitely lost in loss record 87 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x407D3E: dcr_claves() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x411133: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== 14,776 (56 direct, 14,720 indirect) bytes in 1 blocks are definitely lost in loss record 88 of 88
+==5055==    at 0x4C2B0E0: operator new(unsigned long) (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==5055==    by 0x4142DF: aed2::DCR<unsigned int>::Definir(std::string, unsigned int const&) (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x407EA0: dcr_claves() (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055==    by 0x411133: main (in /home/matias/Documents/Algo2/TPs/algo2/tp_3/Testing/a.out)
+==5055== 
+==5055== LEAK SUMMARY:
+==5055==    definitely lost: 1,120 bytes in 20 blocks
+==5055==    indirectly lost: 176,128 bytes in 212 blocks
+==5055==      possibly lost: 0 bytes in 0 blocks
+==5055==    still reachable: 0 bytes in 0 blocks
+==5055==         suppressed: 0 bytes in 0 blocks
+==5055== 
+==5055== ERROR SUMMARY: 20 errors from 20 contexts (suppressed: 0 from 0)
+==5055== ERROR SUMMARY: 20 errors from 20 contexts (suppressed: 0 from 0)
