@@ -16,12 +16,65 @@ namespace aed2 {
             itAgentes.Avanzar();
         }
 
-        Ordenar(_agentesOrdenados); //HACCER ALGUN SORT, NO IMPORTA LA COMPLEJIDAD
+       // Ordenar(_agentesOrdenados); //HACCER ALGUN SORT, NO IMPORTA LA COMPLEJIDAD
         //Los algoritmos no cambian, excepto moverAgente, que tiene que buscar el iterador del agente en _agentesOrdenados (busqueda binaria) en vez de en la matriz _posOcupadasAgentes
     }
 
     void CampusSeguro::IngresarEstudiante(String nombre, Posicion p){
+    	if(estudianteHippificado(p)){
+    		_HipYEst.DefinirHippie(nombre,p);
+    		_posOcupadasHippies.Definir(p,nombre);
+    		Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+    		Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
+    		while(itvecinos.HaySiguiente()){
+    			if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
+    				if(hippieCapturado(itvecinos.Siguiente())){
+    					_HipYEst.Borrar(_posOcupadasHippies.Obtener(itvecinos.Siguiente()));
+    				}
+    			}
+    			if(_posOcupadasEstudiantes.Def(itvecinos.Siguiente())){
+    				if(estudianteHippificado(itvecinos.Siguiente())){
+    					hippificar(itvecinos.Siguiente());
+    				}
+    				if(estudianteSancionar(itvecinos.Siguiente())){
+    					sancionar(itvecinos.Siguiente());
+    				}
+    			}
+    			itvecinos.Avanzar();
+    		}
+    	}else{
+    		_HipYEst.DefinirEstudiante(nombre,p);
+			_posOcupadasEstudiantes.Definir(p,nombre);
+			Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+			Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
+			while(itvecinos.HaySiguiente()){
+				if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
+					if(hippieRodeadoEst(itvecinos.Siguiente())){
+						transformarHippie(itvecinos.Siguiente());
+					}
+					if(hippieCapturado(itvecinos.Siguiente())){
+						eliminarHippie(itvecinos.Siguiente());
+					}
+				}
+				if(_posOcupadasEstudiantes.Def(itvecinos.Siguiente())){
+					if(estudianteSancionar(itvecinos.Siguiente())){
+						sancionar(itvecinos.Siguiente());
+					}
+				}
+				itvecinos.Avanzar();
+			}
 
+    	}
+    	if(estudianteSancionar(p)){
+    		Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+    		Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
+    		while(itvecinos.HaySiguiente()){
+    			if(_posOcupadasAgentes.Def(itvecinos.Siguiente())){
+    				_agentes.AgregarSancion(_posOcupadasAgentes.Obtener(itvecinos.Siguiente()));
+    			}
+    			itvecinos.Avanzar();
+    		}
+		}
     }
 
     void CampusSeguro::IngresarHippie(String nombre, Posicion p){
@@ -32,7 +85,7 @@ namespace aed2 {
 
     }
 
-    void CampusSeguro::MoverHippie(String nombre)
+    void CampusSeguro::MoverHippie(String nombre){
 }
 
     void CampusSeguro::MoverAgente(Nat placa){
@@ -51,7 +104,7 @@ namespace aed2 {
 
     }
 
-    const Conj<Placa>& CampusSeguro::dameAgentes(){
+    const Conj<Nat>& CampusSeguro::dameAgentes(){
 
     }
 
