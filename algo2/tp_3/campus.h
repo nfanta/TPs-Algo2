@@ -1,6 +1,5 @@
 #ifndef CAMPUS_SEGURO_CAMPSEG_H
 #define CAMPUS_SEGURO_CAMPSEG_H
-#endif //CAMPUS_SEGURO_CAMPSEG_H
 
 #include <string>
 #include <iostream>
@@ -194,3 +193,4 @@ namespace aed2 {
 
     };
 
+#endif //CAMPUS_SEGURO_CAMPSEG_H
