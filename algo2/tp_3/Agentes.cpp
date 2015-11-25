@@ -6,14 +6,14 @@
 
 namespace aed2{
 
-    Agentes::Agentes(Dicc<Nat, Posicion> &d) {
+    Agentes::Agentes(Dicc<Nat, Posicion> &d) : _as(d.CantClaves()){
         Conj<Nat>::Iterador itAConjMismSanciones;
         Lista<itemMismSanciones>::Iterador itAMismSanciones;
-        itDicc<Nat,Posicion>::Iterador itDicc;
+        Dicc<Nat,Posicion>::Iterador itDicc;
         Nat i = 0;
 
-        _as = DiccRapido<DatosAgente>::DiccRapido(d.CantClaves());
-        _claves = Conj<Nat>::Conj();
+        //_as = DiccRapido<DatosAgente>::DiccRapido(d.CantClaves());
+        _claves = Conj<Nat>();
         itDicc = d.CrearIt();
 
         /*while(itDicc.HaySiguiente()){
@@ -23,10 +23,10 @@ namespace aed2{
 
         _masVig = 0;
         _capturas_masVig = 0;
-        _mismSanciones = Lista<itemMismSanciones>::Lista();
-        _mismSanciones.AgregarAtras( itemMismSanciones(Conj<Nat>::Conj(), 0) );
+        _mismSanciones = Lista<itemMismSanciones>();
+        _mismSanciones.AgregarAtras( itemMismSanciones(Conj<Nat>(), 0) );
         itAMismSanciones = _mismSanciones.CrearIt();
-        _kSanciones = Arreglo<tuplaK>::Arreglo(_claves.Cardinal());
+        _kSanciones = Arreglo<tuplaK>(d.CantClaves());
         itDicc = d.CrearIt();
 
         while(itDicc.HaySiguiente()){
@@ -44,7 +44,7 @@ namespace aed2{
 
             _as.Definir(itDicc.SiguienteClave(), DatosAgente(itDicc.SiguienteSignificado(), 0, 0, itAMismSanciones, itAConjMismSanciones));
             //En kSanciones voy a guardar tambien un iterador a Lista(itemMismSanciones)
-            _kSanciones.Definir(i, tuplaK(itDicc.SiguienteClave(), 0, itAMismSanciones));
+            _kSanciones.Definir(i, tuplaK(0, itDicc.SiguienteClave(), itAMismSanciones));
             i++;
 
             itDicc.Avanzar();
@@ -61,7 +61,12 @@ namespace aed2{
         Lista<itemMismSanciones>::Iterador itLista;
         Conj<Nat>::Iterador itConj;
 
-        _as.Obtener(placa)._sanciones = _as.Obtener(placa)._sanciones + 1;
+
+        //_as.Obtener(placa)._sanciones = _as.Obtener(placa)._sanciones + 1;
+        //MODIFICADO PARA PERMITIR TRABAJAR CON REFERENCIAS CONSTANTES EN DICCRAPIDO (Esto deriva de que Conj::Iterador me devuelve el elemento como una referencia constante, no una referencia)
+        DatosAgente antiguosDatos = _as.Obtener(placa);
+        DatosAgente nuevosDatos(antiguosDatos._posicion, antiguosDatos._sanciones + 1, antiguosDatos._capturas, antiguosDatos._conMismSanciones, antiguosDatos._itConjMismSanciones);
+        _as.Definir(placa, nuevosDatos);
 
         itLista = _as.Obtener(placa)._conMismSanciones;
         itConj = _as.Obtener(placa)._itConjMismSanciones;
@@ -76,7 +81,7 @@ namespace aed2{
 
         if (! itLista.HaySiguiente()){
             //CAMBIOS ACA PARA AJUSTAR LA COMPLEJIDAD DE KSANCIONES (guardo tambien las sanciones en cada item de la lista conMismSanciones)
-            itLista.AgregarComoSiguiente( itemMismSanciones(Conj<Nat>::Conj(), _as.Obtener(placa)._sanciones) );
+            itLista.AgregarComoSiguiente( itemMismSanciones(Conj<Nat>(), _as.Obtener(placa)._sanciones) );
             itConj = itLista.Siguiente()._agentes.AgregarRapido(placa);
         } else {
             //Cambio aca para no usar DameUno que no esta definido, uso un iterador para tomar el primero del conjunto.
@@ -84,7 +89,7 @@ namespace aed2{
             //No se indefine el Siguiente porque nunca hay un Conj vacio en un item de la lista (lo borro mas arriba)
             if(_as.Obtener(itConj.Siguiente())._sanciones > _as.Obtener(placa)._sanciones){
                 //CAMBIOS ACA PARA AJUSTAR LA COMPLEJIDAD DE KSANCIONES (guardo tambien las sanciones en cada item de la lista conMismSanciones)
-                itLista.AgregarComoAnterior( itemMismSanciones(Conj<Nat>::Conj(), _as.Obtener(placa)._sanciones) );
+                itLista.AgregarComoAnterior( itemMismSanciones(Conj<Nat>(), _as.Obtener(placa)._sanciones) );
                 itConj = itLista.Anterior()._agentes.AgregarRapido(placa);
                 itLista.Retroceder();
             } else {
@@ -92,18 +97,28 @@ namespace aed2{
             }
         }
 
-        _as.Obtener(placa)._conMismSanciones = itLista;
-        _as.Obtener(placa)._itConjMismSanciones = itConj;
+        //_as.Obtener(placa)._conMismSanciones = itLista;
+        //_as.Obtener(placa)._itConjMismSanciones = itConj;
+        antiguosDatos = _as.Obtener(placa);
+        nuevosDatos = DatosAgente(antiguosDatos._posicion, antiguosDatos._sanciones, antiguosDatos._capturas, itLista, itConj);
+        _as.Definir(placa, nuevosDatos);
 
         _huboSanciones = true;
     }
 
-    void Agentes::CambiarPosicion(Nat placa, Posicion p) {
-        _as.Obtener(placa)._posicion = p;
+    void Agentes::CambiarPosicion(Nat placa, const Posicion& p) {
+        //as.Obtener(placa)._posicion = p;
+        DatosAgente antiguosDatos = _as.Obtener(placa);
+        DatosAgente nuevosDatos(p, antiguosDatos._sanciones, antiguosDatos._capturas, antiguosDatos._conMismSanciones, antiguosDatos._itConjMismSanciones);
+        _as.Definir(placa, nuevosDatos);
+
     }
 
     void Agentes::AgregarCaptura(Nat placa) {
-        _as.Obtener(placa)._capturas = _as.Obtener(placa)._capturas + 1;
+        DatosAgente antiguosDatos = _as.Obtener(placa);
+        DatosAgente nuevosDatos(antiguosDatos._posicion, antiguosDatos._sanciones, antiguosDatos._capturas + 1, antiguosDatos._conMismSanciones, antiguosDatos._itConjMismSanciones);
+        _as.Definir(placa, nuevosDatos);
+        //_as.Obtener(placa)._capturas = _as.Obtener(placa)._capturas + 1;
         if(_as.Obtener(placa)._capturas > _as.Obtener(_masVig)._capturas){
             _masVig = placa;
             _capturas_masVig = _as.Obtener(placa)._capturas; //Agregado para poder trabajar con iteradores
@@ -117,15 +132,15 @@ namespace aed2{
         }
     }
 
-    Posicion Agentes::PosAgente(Nat placa) const {
+    const Posicion& Agentes::PosAgente(Nat placa) const {
         return _as.Obtener(placa)._posicion;
     }
 
-    Nat Agentes::SancionesAgente(Nat placa) const {
+    const Nat& Agentes::SancionesAgente(Nat placa) const {
         return _as.Obtener(placa)._sanciones;
     }
 
-    Nat Agentes::CapturasAgente(Nat placa) const {
+    const Nat& Agentes::CapturasAgente(Nat placa) const {
         return _as.Obtener(placa)._capturas;
     }
 
@@ -134,7 +149,7 @@ namespace aed2{
     }
 
     const Conj<Nat>& Agentes::ConMismasSanciones(Nat placa) {
-        return _as.Obtener(placa)._conMismSanciones.Siguiente();
+        return _as.Obtener(placa)._conMismSanciones.Siguiente()._agentes;
     }
 
     const Conj<Nat>& Agentes::ConKSanciones(Nat k) {
@@ -149,7 +164,7 @@ namespace aed2{
             _huboSanciones = false;
             itLista = _mismSanciones.CrearIt();
             while(itLista.HaySiguiente()){
-                itConj = itLista.Siguiente()._agentes;
+                itConj = itLista.Siguiente()._agentes.CrearIt();
                 while(itConj.HaySiguiente()){
                     //Cambios para arreglar la complejidad
                     _kSanciones[i]._placa = itConj.Siguiente();                     //O(1)
@@ -164,17 +179,23 @@ namespace aed2{
 
         encontrado = BusquedaBinariaSanciones(k, _kSanciones, i);
         if(encontrado){
-            return _kSanciones[i]._conMismSanciones;                                //O(1)
+            #ifdef DEBUG
+                if (i >= _kSanciones.Tamanho()){
+                    std::cout << "SE ROMPIO LA BUSQUEDA";
+                }
+            #endif
+            return _kSanciones[i]._conMismSanciones.Siguiente()._agentes;                                //O(1)
+
         } else {
-            return Conj<Nat>::Conj();
+            return Conj<Nat>();
         }
     }
     //Complejidad: Ahora la complejidad del caso promedio [O(Na) / O(log(Na))] es la complejidad del peor caso. (reemplaze los lugares donde habia un O(Na) por operaciones O(1) )
 
-    bool Agentes::BusquedaBinariaSanciones(Nat k, Arreglo<tuplaK> arreglo, Nat &i) const {
+    bool Agentes::BusquedaBinariaSanciones(Nat k, Arreglo<tuplaK>& arreglo, Nat& i) const {
         Nat iMin, iMax, iMed;
         iMin = 0;
-        iMax = arreglo.Tamanho();
+        iMax = arreglo.Tamanho() - 1;
         bool res = false;
 
         while(iMin <= iMax){
@@ -185,12 +206,13 @@ namespace aed2{
                 iMin = iMax + 1;
             } else {
                 if(arreglo[iMed]._sanciones < k) {
-                    iMin = iMax + 1;
+                    iMin = iMed + 1;
                 } else{
                     iMax = iMed - 1;
                 }
             }
         }
+        return res;
     }
 
 
@@ -239,7 +261,7 @@ namespace aed2{
         return _it_as.SiguienteClave();
     }
 
-    DatosAgente& Agentes::Iterador::SiguienteDatos() {
+    const Agentes::DatosAgente& Agentes::Iterador::SiguienteDatos() {
         return _it_as.SiguienteSignificado();
     }
 
@@ -250,7 +272,11 @@ namespace aed2{
         Lista<itemMismSanciones>::Iterador itLista;
         Conj<Nat>::Iterador itConj;
 
-        agente.SiguienteDatos()._sanciones = agente.SiguienteDatos()._sanciones + 1;
+        //agente.SiguienteDatos()._sanciones = agente.SiguienteDatos()._sanciones + 1;
+        //MODIFICADO PARA PERMITIR TRABAJAR CON REFERENCIAS CONSTANTES EN DICCRAPIDO (Esto deriva de que Conj::Iterador me devuelve el elemento como una referencia constante, no una referencia)
+        DatosAgente antiguosDatos = agente.SiguienteDatos();
+        DatosAgente nuevosDatos(antiguosDatos._posicion, antiguosDatos._sanciones + 1, antiguosDatos._capturas, antiguosDatos._conMismSanciones, antiguosDatos._itConjMismSanciones);
+        agente.DefinirSiguiente(nuevosDatos);
 
         itLista = agente.SiguienteDatos()._conMismSanciones;
         itConj = agente.SiguienteDatos()._itConjMismSanciones;
@@ -265,45 +291,58 @@ namespace aed2{
 
         if (! itLista.HaySiguiente()){
             //CAMBIOS ACA PARA AJUSTAR LA COMPLEJIDAD DE KSANCIONES (guardo tambien las sanciones en cada item de la lista conMismSanciones)
-            itLista.AgregarComoSiguiente( itemMismSanciones(Conj<Nat>::Conj(), agente.SiguienteDatos()._sanciones) );
-            itConj = itLista.Siguiente()._agentes.AgregarRapido(placa);
+            itLista.AgregarComoSiguiente( itemMismSanciones(Conj<Nat>(), agente.SiguienteDatos()._sanciones) );
+            itConj = itLista.Siguiente()._agentes.AgregarRapido(agente.SiguientePlaca());
         } else {
             //Cambio aca para no usar DameUno que no esta definido, uso un iterador para tomar el primero del conjunto.
             itConj = itLista.Siguiente()._agentes.CrearIt();
             //No se indefine el Siguiente porque nunca hay un Conj vacio en un item de la lista (lo borro mas arriba)
             if(_as.Obtener(itConj.Siguiente())._sanciones > agente.SiguienteDatos()._sanciones){
                 //CAMBIOS ACA PARA AJUSTAR LA COMPLEJIDAD DE KSANCIONES (guardo tambien las sanciones en cada item de la lista conMismSanciones)
-                itLista.AgregarComoAnterior( itemMismSanciones(Conj<Nat>::Conj(), agente.SiguienteDatos()._sanciones) );
-                itConj = itLista.Anterior()._agentes.AgregarRapido(placa);
+                itLista.AgregarComoAnterior( itemMismSanciones(Conj<Nat>(), agente.SiguienteDatos()._sanciones) );
+                itConj = itLista.Anterior()._agentes.AgregarRapido(agente.SiguientePlaca());
                 itLista.Retroceder();
             } else {
-                itConj = itLista.Siguiente()._agentes.AgregarRapido(placa);
+                itConj = itLista.Siguiente()._agentes.AgregarRapido(agente.SiguientePlaca());
             }
         }
 
-        agente.SiguienteDatos()._conMismSanciones = itLista;
-        agente.SiguienteDatos()._itConjMismSanciones = itConj;
+        //agente.SiguienteDatos()._conMismSanciones = itLista;
+        //agente.SiguienteDatos()._itConjMismSanciones = itConj;
+        antiguosDatos = agente.SiguienteDatos();
+        nuevosDatos = DatosAgente(antiguosDatos._posicion, antiguosDatos._sanciones, antiguosDatos._capturas, itLista, itConj);
+        agente.DefinirSiguiente(nuevosDatos);
 
         _huboSanciones = true;
     }
 
     void Agentes::AgregarCaptura(Iterador agente) {
-        agente.SiguienteDatos()._capturas = agente.SiguienteDatos()._capturas + 1;
+        DatosAgente antiguosDatos = agente.SiguienteDatos();
+        DatosAgente nuevosDatos(antiguosDatos._posicion, antiguosDatos._sanciones, antiguosDatos._capturas + 1, antiguosDatos._conMismSanciones, antiguosDatos._itConjMismSanciones);
+        agente.DefinirSiguiente(nuevosDatos);
+        //agente.SiguienteDatos()._capturas = agente.SiguienteDatos()._capturas + 1;
         if(agente.SiguienteDatos()._capturas > _capturas_masVig){ //Reemplazado Obtener de masVig por _capturas_masVig para ser O(1) en peor caso
-            _masVig = placa;
+            _masVig = agente.SiguientePlaca();
             _capturas_masVig = agente.SiguienteDatos()._capturas; //Agregado para poder trabajar con iteradores
         } else {
             if(agente.SiguienteDatos()._capturas == _capturas_masVig){ //Reemplazado Obtener de masVig por _capturas_masVig para ser O(1) en peor caso
-                if(placa < _masVig){
-                    _masVig = placa;
+                if(agente.SiguientePlaca() < _masVig){
+                    _masVig = agente.SiguientePlaca();
                     _capturas_masVig = agente.SiguienteDatos()._capturas; //Agregado para poder trabajar con iteradores
                 }
             }
         }
     }
 
-    void Agentes::CambiarPosicion(Iterador agente, Posicion p) {
-        agente.SiguienteDatos()._posicion = p;
+    void Agentes::CambiarPosicion(Iterador agente, const Posicion& p) {
+        //agente.SiguienteDatos()._posicion = p;
+        DatosAgente antiguosDatos = agente.SiguienteDatos();
+        DatosAgente nuevosDatos(p, antiguosDatos._sanciones, antiguosDatos._capturas, antiguosDatos._conMismSanciones, antiguosDatos._itConjMismSanciones);
+        agente.DefinirSiguiente(nuevosDatos);
+    }
+
+    void Agentes::Iterador::DefinirSiguiente(DatosAgente datos) {
+        _it_as.DefinirSiguiente(datos);
     }
 }
 

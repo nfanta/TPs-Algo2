@@ -24,9 +24,9 @@ namespace aed2{
         void AgregarCaptura(Nat placa);
         void AgregarCaptura(Iterador agente);
 
-        Posicion PosAgente(Nat placa) const;
-        Nat SancionesAgente(Nat placa) const;
-        Nat CapturasAgente(Nat placa) const;
+        const Posicion& PosAgente(Nat placa) const;
+        const Nat& SancionesAgente(Nat placa) const;
+        const Nat& CapturasAgente(Nat placa) const;
 
         Nat MasVigilante() const;
         const Conj<Nat>& ConMismasSanciones(Nat placa);
@@ -53,7 +53,7 @@ namespace aed2{
 
             itemMismSanciones(Conj<Nat> as, Nat s) : _agentes(as), _sanciones(s) {}
         };
-
+    public:
         class Iterador {
         public:
             Iterador();
@@ -65,9 +65,10 @@ namespace aed2{
             bool HaySiguiente() const;
 
             const Nat& SiguientePlaca() const;
-            DatosAgente& SiguienteDatos();
+            const DatosAgente& SiguienteDatos();
 
             void Avanzar();
+            void DefinirSiguiente(DatosAgente datos);
 
         private:
 
@@ -75,6 +76,8 @@ namespace aed2{
 
             Iterador(Agentes* a);
             Iterador(Agentes* a, Nat placa);
+
+
 
             friend Agentes::Iterador Agentes::CrearIt();
             friend Agentes::Iterador Agentes::Buscar(Nat placa);
@@ -93,11 +96,12 @@ namespace aed2{
         Nat _masVig;
         Nat _capturas_masVig; //Guardo las capturas para poder trabajar con iteradores y no tener que Obtener(_masVig) que tardaria O(Na) en
         bool _huboSanciones;
-        Lista<Conj<Nat>> _mismSanciones;
+        Lista<itemMismSanciones> _mismSanciones;
         Arreglo<tuplaK> _kSanciones;
 
 
-        bool BusquedaBinariaSanciones(Nat k, Arreglo<tuplaK> arreglo, Nat& i) const;
+
+        bool BusquedaBinariaSanciones(Nat k, Arreglo<tuplaK>& arreglo, Nat& i) const;
     };
 }
 
