@@ -3,7 +3,11 @@
 #include "../Matriz.h"
 #include "../campus.h"
 #include "../DiccClavesRapidas.h"
+#include "../DiccRapido.h"
+#include "../Agentes.h"
+#include "../Agentes.cpp"
 #include "Tipos.h"
+#include "aed2.h"
 
 #include <string>
 #include <iostream>
@@ -382,6 +386,233 @@ void campus_ingresoMasCercano() {
     ASSERT(!tmp.Pertenece({7,10}));
 }
 
+//Tests Dicc Rapido
+
+void dr_Crear(){
+    DiccRapido<String> dicc(15);
+    ASSERT(!dicc.Def(1));
+    ASSERT(!dicc.Def(5));
+    ASSERT(!dicc.Def(15));
+}
+
+void dr_defYDefinido(){
+    DiccRapido<String> dicc(15);
+    dicc.Definir(1, "Alberto");
+    dicc.Definir(5, "Jose");
+    dicc.Definir(25, "Pedro");
+    dicc.Definir(16, "Pepe");
+    ASSERT(dicc.Def(1));
+    ASSERT(dicc.Def(5));
+    ASSERT(dicc.Def(25));
+    ASSERT(dicc.Def(16));
+    ASSERT(!dicc.Def(15));
+}
+
+void dr_Obtener(){
+    DiccRapido<String> dicc(15);
+    dicc.Definir(5, "Alberto");
+    ASSERT_EQ(dicc.Obtener(5), "Alberto");
+    dicc.Definir(7, "Jose");
+    ASSERT_EQ(dicc.Obtener(7), "Jose");
+    dicc.Definir(14, "Pedro");
+    ASSERT_EQ(dicc.Obtener(14), "Pedro");
+    dicc.Definir(64, "Pepe");
+    ASSERT_EQ(dicc.Obtener(64), "Pepe");
+}
+
+void dr_Borrar(){
+    DiccRapido<String> dicc(15);
+    dicc.Definir(1, "Alberto");
+    ASSERT(dicc.Def(1));
+    dicc.Definir(5, "Jose");
+    ASSERT(dicc.Def(5));
+    dicc.Definir(25, "Pedro");
+    ASSERT(dicc.Def(25));
+    dicc.Definir(16, "Pepe");
+    ASSERT(dicc.Def(16));
+    ASSERT(!dicc.Def(15));
+
+    dicc.Borrar(25);
+    ASSERT(!dicc.Def(25));
+}
+
+void dr_Claves(){
+    DiccRapido<String> dicc(15);
+
+    dicc.Definir(1, "Alberto");
+    ASSERT(dicc.Claves().Pertenece(1));
+    ASSERT_EQ(dicc.Claves().Cardinal(), 1);
+    dicc.Definir(5, "Jose");
+    ASSERT(dicc.Claves().Pertenece(5));
+    ASSERT_EQ(dicc.Claves().Cardinal(), 2);
+    dicc.Definir(25, "Pedro");
+    ASSERT(dicc.Claves().Pertenece(25));
+    ASSERT_EQ(dicc.Claves().Cardinal(), 3);
+    dicc.Definir(16, "Pepe");
+    ASSERT(dicc.Claves().Pertenece(16));
+    ASSERT_EQ(dicc.Claves().Cardinal(), 4);
+
+    dicc.Borrar(1);
+    ASSERT(!dicc.Claves().Pertenece(1));
+    ASSERT_EQ(dicc.Claves().Cardinal(), 3);
+    dicc.Borrar(5);
+    ASSERT(!dicc.Claves().Pertenece(5));
+    ASSERT_EQ(dicc.Claves().Cardinal(), 2);
+    dicc.Borrar(25);
+    ASSERT(!dicc.Claves().Pertenece(25));
+    ASSERT_EQ(dicc.Claves().Cardinal(), 1);
+    dicc.Borrar(16);
+    ASSERT(!dicc.Claves().Pertenece(16));
+    ASSERT_EQ(dicc.Claves().Cardinal(), 0);
+}
+
+void agentes_Crear(){
+    Dicc<Nat,Posicion> agentes;
+    agentes.Definir(1, {1, 4});
+    agentes.Definir(5, {3, 3});
+    agentes.Definir(9, {1, 1});
+    agentes.Definir(13, {5, 2});
+    agentes.Definir(17, {3, 2});
+
+    Agentes as(agentes);
+    ASSERT_EQ(as.dameAgentes().Cardinal(), 5);
+    ASSERT(as.dameAgentes().Pertenece(1));
+    ASSERT(as.dameAgentes().Pertenece(5));
+    ASSERT(as.dameAgentes().Pertenece(9));
+    ASSERT(as.dameAgentes().Pertenece(13));
+    ASSERT(as.dameAgentes().Pertenece(17));
+    ASSERT(!as.dameAgentes().Pertenece(20));
+    ASSERT_EQ(as.PosAgente(1).x, 1);
+    ASSERT_EQ(as.PosAgente(1).y, 4);
+    ASSERT_EQ(as.PosAgente(5).x, 3);
+    ASSERT_EQ(as.PosAgente(5).y, 3);
+}
+
+void agentes_AgregarYPedir(){
+    Dicc<Nat,Posicion> agentes;
+    agentes.Definir(1, {1, 4});
+    agentes.Definir(5, {3, 3});
+    agentes.Definir(9, {1, 1});
+    agentes.Definir(13, {5, 2});
+    agentes.Definir(17, {3, 2});
+
+    Agentes as(agentes);
+
+    ASSERT_EQ(as.SancionesAgente(1), 0);
+    as.AgregarSancion(1);
+    ASSERT_EQ(as.SancionesAgente(1), 1);
+    as.AgregarSancion(1);
+    ASSERT_EQ(as.SancionesAgente(1), 2);
+    as.AgregarSancion(13);
+    ASSERT_EQ(as.SancionesAgente(13), 1);
+
+    as.AgregarCaptura(9);
+    ASSERT_EQ(as.CapturasAgente(9), 1);
+    as.AgregarCaptura(9);
+    ASSERT_EQ(as.CapturasAgente(9), 2);
+    as.AgregarCaptura(17);
+    ASSERT_EQ(as.CapturasAgente(17), 1);
+
+    as.CambiarPosicion(5, {1,3});
+    ASSERT_EQ(as.PosAgente(5).x, 1);
+    ASSERT_EQ(as.PosAgente(5).y, 3);
+}
+
+void agentes_MasVigilante() {
+    Dicc<Nat, Posicion> agentes;
+    agentes.Definir(1, {1, 4});
+    agentes.Definir(5, {3, 3});
+    agentes.Definir(9, {1, 1});
+    agentes.Definir(13, {5, 2});
+    agentes.Definir(17, {3, 2});
+
+    Agentes as(agentes);
+
+    ASSERT_EQ(as.MasVigilante(), 1);
+    as.AgregarCaptura(1);
+    ASSERT_EQ(as.MasVigilante(), 1);
+    as.AgregarCaptura(13);
+    ASSERT_EQ(as.MasVigilante(), 1);
+    as.AgregarCaptura(13);
+    ASSERT_EQ(as.MasVigilante(), 13);
+    as.AgregarCaptura(9);
+    ASSERT_EQ(as.MasVigilante(), 13);
+    as.AgregarCaptura(9);
+    ASSERT_EQ(as.MasVigilante(), 9);
+    as.AgregarCaptura(13);
+    ASSERT_EQ(as.MasVigilante(), 13);
+}
+
+void agentes_ConMismasSanciones() {
+    Dicc<Nat, Posicion> agentes;
+    agentes.Definir(1, {1, 4});
+    agentes.Definir(5, {3, 3});
+    agentes.Definir(9, {1, 1});
+    agentes.Definir(13, {5, 2});
+    agentes.Definir(17, {3, 2});
+
+    Agentes as(agentes);
+    ASSERT(as.ConMismasSanciones(1).Pertenece(1));
+    ASSERT(as.ConMismasSanciones(1).Pertenece(5));
+    ASSERT(as.ConMismasSanciones(1).Pertenece(9));
+    ASSERT(as.ConMismasSanciones(1).Pertenece(13));
+    ASSERT(as.ConMismasSanciones(1).Pertenece(17));
+    as.AgregarSancion(1);
+    ASSERT(as.ConMismasSanciones(1).Pertenece(1));
+    ASSERT(!as.ConMismasSanciones(1).Pertenece(5));
+    ASSERT(!as.ConMismasSanciones(1).Pertenece(9));
+    ASSERT(!as.ConMismasSanciones(1).Pertenece(13));
+    ASSERT(!as.ConMismasSanciones(1).Pertenece(17));
+    as.AgregarSancion(1);
+    as.AgregarSancion(5);
+    ASSERT(!as.ConMismasSanciones(5).Pertenece(1));
+    ASSERT(as.ConMismasSanciones(5).Pertenece(5));
+    ASSERT(!as.ConMismasSanciones(5).Pertenece(9));
+    ASSERT(!as.ConMismasSanciones(5).Pertenece(13));
+    ASSERT(!as.ConMismasSanciones(5).Pertenece(17));
+    as.AgregarSancion(5);
+    ASSERT(as.ConMismasSanciones(5).Pertenece(1));
+    ASSERT(as.ConMismasSanciones(5).Pertenece(5));
+    ASSERT(!as.ConMismasSanciones(5).Pertenece(9));
+    ASSERT(!as.ConMismasSanciones(5).Pertenece(13));
+    ASSERT(!as.ConMismasSanciones(5).Pertenece(17));
+}
+
+void agentes_ConKSanciones() {
+    Dicc<Nat, Posicion> agentes;
+    agentes.Definir(1, {1, 4});
+    agentes.Definir(5, {3, 3});
+    agentes.Definir(9, {1, 1});
+    agentes.Definir(13, {5, 2});
+    agentes.Definir(17, {3, 2});
+
+    Agentes as(agentes);
+    ASSERT(as.ConKSanciones(0).Pertenece(1));
+    ASSERT(as.ConKSanciones(0).Pertenece(5));
+    ASSERT(as.ConKSanciones(0).Pertenece(9));
+    ASSERT(as.ConKSanciones(0).Pertenece(13));
+    ASSERT(as.ConKSanciones(0).Pertenece(17));
+    as.AgregarSancion(1);
+    ASSERT(as.ConKSanciones(1).Pertenece(1));
+    ASSERT(!as.ConKSanciones(1).Pertenece(5));
+    ASSERT(!as.ConKSanciones(1).Pertenece(9));
+    ASSERT(!as.ConKSanciones(1).Pertenece(13));
+    ASSERT(!as.ConKSanciones(1).Pertenece(17));
+    as.AgregarSancion(1);
+    as.AgregarSancion(5);
+    ASSERT(!as.ConKSanciones(1).Pertenece(1));
+    ASSERT(as.ConKSanciones(1).Pertenece(5));
+    ASSERT(!as.ConKSanciones(1).Pertenece(9));
+    ASSERT(!as.ConKSanciones(1).Pertenece(13));
+    ASSERT(!as.ConKSanciones(1).Pertenece(17));
+    as.AgregarSancion(5);
+    ASSERT(as.ConKSanciones(2).Pertenece(1));
+    ASSERT(as.ConKSanciones(2).Pertenece(5));
+    ASSERT(!as.ConKSanciones(2).Pertenece(9));
+    ASSERT(!as.ConKSanciones(2).Pertenece(13));
+    ASSERT(!as.ConKSanciones(2).Pertenece(17));
+}
+
 int main(int argc, char **argv)
 {
 //    std::cout << d.Obtener("1") << "\n";
@@ -416,6 +647,22 @@ int main(int argc, char **argv)
 //    RUN_TEST(campus_proxPosicion);
 //    RUN_TEST(campus_ingresoMasCercano);
 //    std::cout << "\nFinalizados Tests de Campus.\n\n";
+
+    std::cout << "Comenzando Tests de DiccRapido:\n\n";
+    RUN_TEST(dr_Crear);
+    RUN_TEST(dr_defYDefinido);
+    RUN_TEST(dr_Obtener);
+    RUN_TEST(dr_Borrar);
+    RUN_TEST(dr_Claves);
+    std::cout << "\nFinalizados Tests de DiccRapido.\n\n";
+
+    std::cout << "Comenzando Tests de Agentes:\n\n";
+    RUN_TEST(agentes_Crear);
+    RUN_TEST(agentes_AgregarYPedir);
+    RUN_TEST(agentes_MasVigilante);
+    RUN_TEST(agentes_ConMismasSanciones);
+    RUN_TEST(agentes_ConKSanciones);
+    std::cout << "\nFinalizados Tests de Agentes.\n\n";
 
 	return 0;
 }

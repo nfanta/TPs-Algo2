@@ -106,25 +106,25 @@ namespace aed2 {
         String str = n;
         Nodo* p;
 
-        if ( !_dicc.Definido(str.front()) ) { // Si aun no se definio ningun string en _claves[x]...
+        if ( !_dicc.Definido(str[0]) ) { // Si aun no se definio ningun string en _claves[x]...
             Nodo* tmp = new Nodo{false, s, Arreglo<Nodo*>(256), _claves.CrearIt()};
 
-            _dicc.Definir(str.front(), tmp);
-            p = _dicc[str.front()];
+            _dicc.Definir(str[0], tmp);
+            p = _dicc[str[0]];
             str.erase(0, 1);
         } else {
-            p = _dicc[str.front()];
+            p = _dicc[str[0]];
             str.erase(0, 1);
         }
         while (str.length() > 0) { // Si poseia una longitud mas grande...
-            if ( !p->_sig.Definido(str.front()) ) {
+            if ( !p->_sig.Definido(str[0]) ) {
                 Nodo* tmp = new Nodo{false, s, Arreglo<Nodo*>(256), _claves.CrearIt()};
 
-                p->_sig.Definir(str.front(), tmp);
-                p = p->_sig[str.front()];
+                p->_sig.Definir(str[0], tmp);
+                p = p->_sig[str[0]];
                 str.erase(0, 1);
             } else {
-                p = p->_sig[str.front()];
+                p = p->_sig[str[0]];
                 str.erase(0, 1);
             }
         }
@@ -139,18 +139,18 @@ namespace aed2 {
         String str = n;
         Nodo* p;
 
-        if ( !_dicc.Definido(str.front()) ) {\
+        if ( !_dicc.Definido(str[0]) ) {\
             return false;
         } else {
-            p = _dicc[str.front()];
+            p = _dicc[str[0]];
             str.erase(0, 1);
         }
 
         while (str.length() > 0) { // Si poseia una longitud mas grande...
-            if ( !p->_sig.Definido(str.front()) ) {
+            if ( !p->_sig.Definido(str[0]) ) {
                 return false;
             } else {
-                p = p->_sig[str.front()];
+                p = p->_sig[str[0]];
                 str.erase(0, 1);
             }
         }
@@ -168,11 +168,11 @@ namespace aed2 {
         String str = n;
         Nodo* p;
 
-        p = _dicc[str.front()];
+        p = _dicc[str[0]];
         str.erase(0, 1);
 
         while (str.length() > 0) { // Si poseia una longitud mas grande...
-            p = p->_sig[str.front()];
+            p = p->_sig[str[0]];
             str.erase(0, 1);
         }
 
@@ -188,11 +188,11 @@ namespace aed2 {
         String str = n;
         Nodo* p;
 
-        p = _dicc[str.front()];
+        p = _dicc[str[0]];
         str.erase(0, 1);
 
         while (str.length() > 0) { // Si poseia una longitud mas grande...
-            p = p->_sig[str.front()];
+            p = p->_sig[str[0]];
             str.erase(0, 1);
         }
 
