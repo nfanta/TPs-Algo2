@@ -24,23 +24,23 @@ namespace aed2{
         }
     }
 
-    bool HippiesYEstudiantes::Esta(String nombre) {
+    bool HippiesYEstudiantes::Esta(String nombre) const {
         return (_estudiantes.Def(nombre)) || (_hippies.Def(nombre));
     }
 
-    bool HippiesYEstudiantes::EsEst(String nombre) {
+    bool HippiesYEstudiantes::EsEst(String nombre) const {
         return _estudiantes.Def(nombre);
     }
 
-    bool HippiesYEstudiantes::EsHippie(String nombre) {
-        return _hippiess.Def(nombre);
+    bool HippiesYEstudiantes::EsHippie(String nombre) const {
+        return _hippies.Def(nombre);
     }
 
-    const Conj<String>& HippiesYEstudiantes::Estudiantes() {
+    const Conj<String>& HippiesYEstudiantes::Estudiantes() const {
         return _estudiantes.Claves();
     }
 
-    const Conj<String>& HippiesYEstudiantes::Hippies() {
+    const Conj<String>& HippiesYEstudiantes::Hippies() const {
         return _hippies.Claves();
     }
 

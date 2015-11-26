@@ -618,7 +618,7 @@ void agentes_ConKSanciones() {
 }
 
 // HIPPIESYESTUDIANTES
-/*
+
 void hyp_HippiesYEstudiantes() {
     HippiesYEstudiantes hyp = HippiesYEstudiantes();
 }
@@ -693,16 +693,54 @@ void hyp_PosHippieYEstudiante() {
 
 void hyp_Estudiantes() {
     HippiesYEstudiantes hyp = HippiesYEstudiantes();
+    hyp.DefinirEstudiante("Alice",{1,1});
+    hyp.DefinirEstudiante("Bob",{2,1});
+    hyp.DefinirHippie("Laquonda",{6,3});
+    hyp.DefinirHippie("Tristan",{3,4});
+
+    ASSERT(hyp.Estudiantes().Pertenece("Alice"));
+    ASSERT(hyp.Estudiantes().Pertenece("Bob"));
+    ASSERT(!hyp.Estudiantes().Pertenece("Laquonda"));
+    ASSERT(!hyp.Estudiantes().Pertenece("Tristan"));
 }
 
 void hyp_Hippies() {
     HippiesYEstudiantes hyp = HippiesYEstudiantes();
+    hyp.DefinirEstudiante("Alice",{1,1});
+    hyp.DefinirEstudiante("Bob",{2,1});
+    hyp.DefinirHippie("Laquonda",{6,3});
+    hyp.DefinirHippie("Tristan",{3,4});
+
+    ASSERT(!hyp.Hippies().Pertenece("Alice"));
+    ASSERT(!hyp.Hippies().Pertenece("Bob"));
+    ASSERT(hyp.Hippies().Pertenece("Laquonda"));
+    ASSERT(hyp.Hippies().Pertenece("Tristan"));
 }
 
 void hyp_Borrar() {
     HippiesYEstudiantes hyp = HippiesYEstudiantes();
+
+    hyp.DefinirEstudiante("Alice",{1,1});
+    hyp.DefinirEstudiante("Bob",{2,1});
+    hyp.DefinirHippie("Laquonda",{6,3});
+
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(hyp.Esta("Bob"));
+    ASSERT(hyp.Esta("Laquonda"));
+
+    hyp.Borrar("Bob");
+
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(!hyp.Esta("Bob"));
+    ASSERT(hyp.Esta("Laquonda"));
+
+    hyp.Borrar("Laquonda");
+
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(!hyp.Esta("Bob"));
+    ASSERT(!hyp.Esta("Laquonda"));
 }
-*/
+
 
 // CAMPUSSEGURO
 
@@ -946,6 +984,18 @@ void testAgentes() {
     std::cout << "\nFinalizados Tests de Agentes.\n\n";
 }
 
+void testHypYEst(){
+    std::cout << "Comenzando Tests de Agentes:\n\n";
+    RUN_TEST(hyp_HippiesYEstudiantes);
+    RUN_TEST(hyp_DefinirHippie_Esta_EsHippie);
+    RUN_TEST(hyp_DefinirEstudiante_Esta_EsEst);
+    RUN_TEST(hyp_PosHippieYEstudiante);
+    RUN_TEST(hyp_Estudiantes);
+    RUN_TEST(hyp_Hippies);
+    RUN_TEST(hyp_Borrar);
+    std::cout << "\nFinalizados Tests de Agentes.\n\n";
+}
+
 int main(int argc, char **argv)
 {
     RUN_TEST(testMatriz);
@@ -953,6 +1003,6 @@ int main(int argc, char **argv)
     RUN_TEST(testCampus);
     RUN_TEST(testDiccRapido);
     RUN_TEST(testAgentes);
-
+    RUN_TEST(testHypYEst);
 	return 0;
 }
