@@ -7,6 +7,9 @@
 #include "../Agentes.h"
 #include "../Agentes.cpp"
 #include "../CampusSeguro.h"
+#include "../CampusSeguro.cpp"
+//#include "../HippiesYEstudiantes.h"
+//#include "../HippiesYEstudiantes.cpp"
 #include "Tipos.h"
 #include "aed2.h"
 

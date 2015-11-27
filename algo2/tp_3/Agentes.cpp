@@ -6,10 +6,10 @@
 
 namespace aed2{
 
-    Agentes::Agentes(Dicc<Nat, Posicion> &d) : _as(d.CantClaves()){
+    Agentes::Agentes(const Dicc<Nat, Posicion> &d) : _as(d.CantClaves()){
         Conj<Nat>::Iterador itAConjMismSanciones;
         Lista<itemMismSanciones>::Iterador itAMismSanciones;
-        Dicc<Nat,Posicion>::Iterador itDicc;
+        Dicc<Nat,Posicion>::const_Iterador itDicc;
         Nat i = 0;
 
         //_as = DiccRapido<DatosAgente>::DiccRapido(d.CantClaves());
