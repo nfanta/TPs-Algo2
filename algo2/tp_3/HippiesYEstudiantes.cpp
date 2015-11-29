@@ -36,11 +36,11 @@ namespace aed2{
         return _hippies.Def(nombre);
     }
 
-    const Conj<String>& HippiesYEstudiantes::Estudiantes() const {
+    const Conj<String> HippiesYEstudiantes::Estudiantes() const {
         return _estudiantes.Claves();
     }
 
-    const Conj<String>& HippiesYEstudiantes::Hippies() const {
+    const Conj<String> HippiesYEstudiantes::Hippies() const {
         return _hippies.Claves();
     }
 

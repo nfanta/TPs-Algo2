@@ -23,8 +23,8 @@ namespace aed2{
 
         bool EsHippie(String nombre) const;
         bool EsEst(String nombre) const;
-        const Conj<String>& Estudiantes() const;
-        const Conj<String>& Hippies() const;
+        const Conj<String> Estudiantes() const;
+        const Conj<String> Hippies() const;
 
         void Borrar(String nombre);
 
