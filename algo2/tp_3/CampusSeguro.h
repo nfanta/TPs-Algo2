@@ -20,9 +20,9 @@ namespace aed2{
 
         const Campus& dameCampus();
 
-        const Conj<String>& Estudiantes();
-        const Conj<String>& Hippies();
-        const Conj<Nat>& dameAgentes();
+         Conj<String>::const_Iterador& Estudiantes();
+         Conj<String>::const_Iterador& Hippies();
+         Conj<Nat>::const_Iterador& dameAgentes();
 
         const Posicion& PosHippieYEstudiante(String nombre);
         const Posicion& PosAgente(Nat placa);
