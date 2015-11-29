@@ -18,12 +18,12 @@ namespace aed2{
 
         Posicion PosHippieYEstudiante(String nombre) const;
 
-        bool Esta(String nombre);
+        bool Esta(String nombre) const;
 
-        bool EsHippie(String nombre);
-        bool EsEst(String nombre);
-        const Conj<String>& Estudiantes();
-        const Conj<String>& Hippies();
+        bool EsHippie(String nombre) const;
+        bool EsEst(String nombre) const;
+        const Conj<String>& Estudiantes() const;
+        const Conj<String>& Hippies() const;
 
         void Borrar(String nombre);
 
