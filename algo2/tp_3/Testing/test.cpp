@@ -7,9 +7,13 @@
 #include "../Agentes.h"
 #include "../Agentes.cpp"
 #include "../CampusSeguro.h"
+<<<<<<< HEAD
 #include "../CampusSeguro.cpp"
 //#include "../HippiesYEstudiantes.h"
 //#include "../HippiesYEstudiantes.cpp"
+=======
+#include "../HippiesYEstudiantes.h"
+>>>>>>> master
 #include "Tipos.h"
 #include "aed2.h"
 
@@ -22,7 +26,7 @@ using namespace aed2;
 // ---------------------------------------------------------------------
 
 /**
- * Ejemplo de caso de test, con llamadas a las rutinas de aserción 
+ * Ejemplo de caso de test, con llamadas a las rutinas de aserción
  * definidas en mini_test.h
  */
 
@@ -390,7 +394,7 @@ void campus_ingresoMasCercano() {
     ASSERT(!tmp.Pertenece({7,10}));
 }
 
-//Tests Dicc Rapido
+// DICCRAPIDO
 
 void dr_Crear(){
     DiccRapido<String> dicc(15);
@@ -469,6 +473,8 @@ void dr_Claves(){
     ASSERT(!dicc.Claves().Pertenece(16));
     ASSERT_EQ(dicc.Claves().Cardinal(), 0);
 }
+
+// AGENTES
 
 void agentes_Crear(){
     Dicc<Nat,Posicion> agentes;
@@ -617,8 +623,443 @@ void agentes_ConKSanciones() {
     ASSERT(!as.ConKSanciones(2).Pertenece(17));
 }
 
-int main(int argc, char **argv)
-{
+// HIPPIESYESTUDIANTES
+
+void hyp_HippiesYEstudiantes() {
+    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+}
+
+void hyp_DefinirHippie_Esta_EsHippie() {
+    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+    hyp.DefinirHippie("Alice",{1,1});
+    ASSERT(hyp.EsHippie("Alice"));
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(!hyp.Esta("alice"));
+
+    hyp.DefinirHippie("Bob",{5,5});
+    ASSERT(hyp.EsHippie("Bob"));
+    ASSERT(hyp.Esta("Bob"));
+    ASSERT(!hyp.Esta("bob"));
+
+    hyp.DefinirHippie("7uV13)@",{7,3});
+    ASSERT(hyp.EsHippie("7uV13)@"));
+    ASSERT(hyp.Esta("7uV13)@"));
+    ASSERT(!hyp.Esta("tuV13)@"));
+}
+
+void hyp_DefinirEstudiante_Esta_EsEst() {
+    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+    hyp.DefinirEstudiante("Alice",{1,1});
+    ASSERT(!hyp.EsHippie("Alice"));
+    ASSERT(hyp.EsEst("Alice"));
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(!hyp.Esta("alice"));
+
+    hyp.DefinirEstudiante("Bob",{5,5});
+    ASSERT(hyp.EsEst("Bob"));
+    ASSERT(hyp.Esta("Bob"));
+    ASSERT(!hyp.Esta("bob"));
+
+    hyp.DefinirEstudiante("7uV13)@",{7,3});
+    ASSERT(hyp.EsEst("7uV13)@"));
+    ASSERT(hyp.Esta("7uV13)@"));
+    ASSERT(!hyp.Esta("tuV13)@"));
+}
+
+void hyp_PosHippieYEstudiante() {
+    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+
+    hyp.DefinirHippie("Alice",{1,1});
+    ASSERT(hyp.EsHippie("Alice"));
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(!hyp.Esta("alice"));
+
+    hyp.DefinirHippie("Bob",{5,5});
+    ASSERT(hyp.EsHippie("Bob"));
+    ASSERT(hyp.Esta("Bob"));
+    ASSERT(!hyp.Esta("bob"));
+
+    hyp.DefinirEstudiante("7uV13)@",{7,3});
+    ASSERT(hyp.EsEst("7uV13)@"));
+    ASSERT(hyp.Esta("7uV13)@"));
+    ASSERT(!hyp.Esta("tuV13)@"));
+
+    Posicion tmp = hyp.PosHippieYEstudiante("Alice");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.x, 1);
+
+    tmp = hyp.PosHippieYEstudiante("Bob");
+    ASSERT_EQ(tmp.x, 5);
+    ASSERT_EQ(tmp.x, 5);
+
+    tmp = hyp.PosHippieYEstudiante("7uV13)@");
+    ASSERT_EQ(tmp.x, 7);
+    ASSERT_EQ(tmp.x, 3);
+}
+
+void hyp_Estudiantes() {
+    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+    hyp.DefinirEstudiante("Alice",{1,1});
+    hyp.DefinirEstudiante("Bob",{2,1});
+    hyp.DefinirHippie("Laquonda",{6,3});
+    hyp.DefinirHippie("Tristan",{3,4});
+
+    ASSERT(hyp.Estudiantes().Pertenece("Alice"));
+    ASSERT(hyp.Estudiantes().Pertenece("Bob"));
+    ASSERT(!hyp.Estudiantes().Pertenece("Laquonda"));
+    ASSERT(!hyp.Estudiantes().Pertenece("Tristan"));
+}
+
+void hyp_Hippies() {
+    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+    hyp.DefinirEstudiante("Alice",{1,1});
+    hyp.DefinirEstudiante("Bob",{2,1});
+    hyp.DefinirHippie("Laquonda",{6,3});
+    hyp.DefinirHippie("Tristan",{3,4});
+
+    ASSERT(!hyp.Hippies().Pertenece("Alice"));
+    ASSERT(!hyp.Hippies().Pertenece("Bob"));
+    ASSERT(hyp.Hippies().Pertenece("Laquonda"));
+    ASSERT(hyp.Hippies().Pertenece("Tristan"));
+}
+
+void hyp_Borrar() {
+    HippiesYEstudiantes hyp = HippiesYEstudiantes();
+
+    hyp.DefinirEstudiante("Alice",{1,1});
+    hyp.DefinirEstudiante("Bob",{2,1});
+    hyp.DefinirHippie("Laquonda",{6,3});
+
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(hyp.Esta("Bob"));
+    ASSERT(hyp.Esta("Laquonda"));
+
+    hyp.Borrar("Bob");
+
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(!hyp.Esta("Bob"));
+    ASSERT(hyp.Esta("Laquonda"));
+
+    hyp.Borrar("Laquonda");
+
+    ASSERT(hyp.Esta("Alice"));
+    ASSERT(!hyp.Esta("Bob"));
+    ASSERT(!hyp.Esta("Laquonda"));
+}
+
+// CAMPUSSEGURO
+
+CampusSeguro* crearCampusGenerico() {
+    Campus c(10,10);
+    c.AgregarObstaculo({1,1});
+    c.AgregarObstaculo({5,5});
+    c.AgregarObstaculo({3,7});
+    c.AgregarObstaculo({7,3});
+
+    Dicc<Nat, Posicion> d = Dicc<Nat, Posicion>();
+    d.Definir(1,{2,2});
+    d.Definir(5,{3,3});
+    d.Definir(10,{4,4});
+    d.Definir(20,{9,9});
+
+    CampusSeguro* cs = new CampusSeguro(c,d);
+
+    return cs;
+}
+
+CampusSeguro* crearCampusConEstYHippies() {
+    CampusSeguro* cs = crearCampusGenerico();
+
+    cs->IngresarEstudiante("Alice", {1,2});
+    cs->IngresarEstudiante("Bob", {1,3});
+    cs->IngresarEstudiante("Charlie", {1,4});
+    cs->IngresarHippie("Alba", {9,1});
+    cs->IngresarHippie("Brisa", {9,2});
+    cs->IngresarHippie("Cielo", {9,3});
+
+    return cs;
+}
+
+//CampusSeguro(const Campus& c, const Dicc<Nat,Posicion>& dA);
+void cs_crear() {
+    CampusSeguro* cs = crearCampusGenerico();
+    delete cs;
+}
+
+//void IngresarEstudiante(String nombre, Posicion p);
+void IngresarEstudiante() {
+    CampusSeguro* cs = crearCampusGenerico();
+
+    cs->IngresarEstudiante("Alice", {1,2});
+    cs->IngresarEstudiante("Bob", {1,3});
+    cs->IngresarEstudiante("Charlie", {1,4});
+
+    Posicion tmp = cs->PosHippieYEstudiante("Alice");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 2);
+
+    tmp = cs->PosHippieYEstudiante("Bob");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 3);
+
+    tmp = cs->PosHippieYEstudiante("Charlie");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 4);
+
+    delete cs;
+
+}
+
+//void IngresarHippie(String nombre, Posicion p);
+void IngresarHippie() {
+    CampusSeguro* cs = crearCampusGenerico();
+
+    cs->IngresarHippie("Alice", {1,2});
+    cs->IngresarHippie("Bob", {1,3});
+    cs->IngresarHippie("Charlie", {1,4});
+
+    Posicion tmp = cs->PosHippieYEstudiante("Alice");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 2);
+
+    tmp = cs->PosHippieYEstudiante("Bob");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 3);
+
+    tmp = cs->PosHippieYEstudiante("Charlie");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 4);
+
+    delete cs;
+}
+
+//void MoverEstudiante(String nombre, Direccion dir);
+void MoverEstudiante() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+
+    cs->MoverEstudiante("Alice", abajo);
+    Posicion tmp = cs->PosHippieYEstudiante("Alice");
+    ASSERT_EQ(tmp.x, 2);
+    ASSERT_EQ(tmp.y, 2);
+
+    cs->MoverEstudiante("Alice", der);
+    tmp = cs->PosHippieYEstudiante("Alice");
+    ASSERT_EQ(tmp.x, 2);
+    ASSERT_EQ(tmp.y, 3);
+
+    cs->MoverEstudiante("Bob", izq);
+    tmp = cs->PosHippieYEstudiante("Bob");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 2);
+
+    cs->MoverEstudiante("Alice", arriba);
+    tmp = cs->PosHippieYEstudiante("Alice");
+    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 3);
+
+    delete cs;
+}
+
+//void MoverHippie(String nombre);
+void MoverHippie() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    Posicion tmp = cs->PosHippieYEstudiante("Brisa");
+
+    ASSERT_EQ(tmp.x, 9);
+    ASSERT_EQ(tmp.y, 2);
+    cs->MoverHippie("Brisa");
+    tmp = cs->PosHippieYEstudiante("Brisa");
+    ASSERT_EQ(tmp.x, 8);
+    ASSERT_EQ(tmp.y, 2);
+    cs->MoverHippie("Brisa");
+    tmp = cs->PosHippieYEstudiante("Brisa");
+    ASSERT_EQ(tmp.x, 7);
+    ASSERT_EQ(tmp.y, 2);
+    cs->MoverHippie("Brisa");
+    tmp = cs->PosHippieYEstudiante("Brisa");
+    ASSERT_EQ(tmp.x, 6);
+    ASSERT_EQ(tmp.y, 2);
+    cs->MoverHippie("Brisa");
+    tmp = cs->PosHippieYEstudiante("Brisa");
+    ASSERT_EQ(tmp.x, 5);
+    ASSERT_EQ(tmp.y, 2);
+
+    ASSERT_EQ(tmp.x, 9);
+    ASSERT_EQ(tmp.y, 3);
+    cs->MoverHippie("Cielo");
+    tmp = cs->PosHippieYEstudiante("Cielo");
+    ASSERT_EQ(tmp.x, 8);
+    ASSERT_EQ(tmp.y, 3);
+    cs->MoverHippie("Cielo");
+    tmp = cs->PosHippieYEstudiante("Cielo");
+    ASSERT_EQ(tmp.x, 7);
+    ASSERT_EQ(tmp.y, 3);
+    cs->MoverHippie("Cielo");
+    tmp = cs->PosHippieYEstudiante("Cielo");
+    ASSERT_EQ(tmp.x, 6);
+    ASSERT_EQ(tmp.y, 3);
+    cs->MoverHippie("Cielo");
+    tmp = cs->PosHippieYEstudiante("Cielo");
+    ASSERT_EQ(tmp.x, 5);
+    ASSERT_EQ(tmp.y, 3);
+
+    delete cs;
+}
+
+//void MoverAgente(Nat placa);
+void MoverAgente() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    Posicion tmp = cs->PosAgente(20);
+
+    ASSERT_EQ(tmp.x, 9);
+    ASSERT_EQ(tmp.y, 9);
+    cs->MoverAgente(20);
+    tmp = cs->PosAgente(20);
+    ASSERT_EQ(tmp.x, 9);
+    ASSERT_EQ(tmp.y, 8);
+    cs->MoverAgente(20);
+    tmp = cs->PosAgente(20);
+    ASSERT_EQ(tmp.x, 9);
+    ASSERT_EQ(tmp.y, 7);
+    cs->MoverAgente(20);
+    tmp = cs->PosAgente(20);
+    ASSERT_EQ(tmp.x, 9);
+    ASSERT_EQ(tmp.y, 6);
+    cs->MoverAgente(20);
+    tmp = cs->PosAgente(20);
+    ASSERT_EQ(tmp.x, 9);
+    ASSERT_EQ(tmp.y, 5);
+    cs->MoverAgente(20);
+    tmp = cs->PosAgente(20);
+    ASSERT_EQ(tmp.x, 9);
+    ASSERT_EQ(tmp.y, 4);
+
+    tmp = cs->PosAgente(10);
+    ASSERT_EQ(tmp.x, 4);
+    ASSERT_EQ(tmp.y, 4);
+    cs->MoverAgente(10);
+    tmp = cs->PosAgente(10);
+    ASSERT_EQ(tmp.x, 3);
+    ASSERT_EQ(tmp.y, 4);
+    cs->MoverAgente(10);
+    tmp = cs->PosAgente(10);
+    ASSERT_EQ(tmp.x, 2);
+    ASSERT_EQ(tmp.y, 4);
+
+    delete cs;
+}
+
+//const Campus& dameCampus();
+void dameCampus() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    Campus c = cs->dameCampus();
+    Campus tmp(10,10);
+    tmp.AgregarObstaculo({1,1});
+    tmp.AgregarObstaculo({5,5});
+    tmp.AgregarObstaculo({3,7});
+    tmp.AgregarObstaculo({7,3});
+
+    ASSERT_EQ(c.Ocupada({1,1}),tmp.Ocupada({1,1}));
+    ASSERT_EQ(c.Ocupada({5,5}),tmp.Ocupada({5,5}));
+    ASSERT_EQ(c.Ocupada({3,7}),tmp.Ocupada({3,7}));
+    ASSERT_EQ(c.Ocupada({7,3}),tmp.Ocupada({7,3}));
+    ASSERT_EQ(c.Ocupada({6,4}),tmp.Ocupada({6,4}));
+    ASSERT_EQ(c.Ocupada({8,2}),tmp.Ocupada({8,2}));
+
+    delete cs;
+}
+
+//const Conj<String>& Estudiantes();
+void Estudiantes() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    Conj<String> est = cs->Estudiantes();
+
+    ASSERT(est.Pertenece("Alice"));
+    ASSERT(est.Pertenece("Bob"));
+    ASSERT(est.Pertenece("Charlie"));
+    ASSERT(!est.Pertenece("tuVieja"));
+
+    delete cs;
+}
+
+//const Conj<String>& Hippies();
+void Hippies() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    Conj<String> hip = cs->Hippies();
+
+    ASSERT(hip.Pertenece("Alba"));
+    ASSERT(hip.Pertenece("Brisa"));
+    ASSERT(hip.Pertenece("Cielo"));
+    ASSERT(!hip.Pertenece("tuVieja"));
+
+    delete cs;
+}
+
+//const Conj<Nat>& dameAgentes();
+void dameAgentes() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    Conj<Nat> as = cs->dameAgentes();
+
+    ASSERT(as.Pertenece(1));
+    ASSERT(as.Pertenece(5));
+    ASSERT(as.Pertenece(10));
+    ASSERT(as.Pertenece(20));
+    ASSERT(!as.Pertenece(3));
+
+    delete cs;
+}
+
+//const Nat& CantSanciones(Nat placa);
+void CantSanciones() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    delete cs;
+}
+
+//const Nat& CantHippiesAtrapados(Nat placa);
+void CantHippiesAtrapados() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    delete cs;
+}
+
+//Nat CantHippies();
+void CantHippies() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+
+    ASSERT_EQ(cs->CantHippies(),3);
+
+    delete cs;
+}
+
+//Nat CantEstudiantes();
+void CantEstudiantes() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+
+    ASSERT_EQ(cs->CantEstudiantes(),3);
+
+    delete cs;
+}
+
+//const Nat& MasVigilante();
+void MasVigilante() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    delete cs;
+}
+
+//const Conj<Nat>& ConMismasSanciones(Nat placa);
+void ConMismasSanciones() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    delete cs;
+}
+
+//const Conj<Nat>& ConKSanciones(Nat k);
+void ConKSanciones() {
+    CampusSeguro* cs = crearCampusConEstYHippies();
+    delete cs;
+}
+
+// Tests Completos
+
+void testMatriz() {
     std::cout << "Comenzando Tests de Matriz:\n\n";
     RUN_TEST(matriz_crear);
     RUN_TEST(matriz_definirYdef);
@@ -626,7 +1067,9 @@ int main(int argc, char **argv)
     RUN_TEST(matriz_eliminar);
     RUN_TEST(matriz_claves);
     std::cout << "\nFinalizados Tests de Matriz.\n\n";
+}
 
+void testDCR() {
     std::cout << "Comenzando Tests de DiccClavesRapidas:\n\n";
     RUN_TEST(dcr_crear);
     RUN_TEST(dcr_definirYdef);
@@ -634,7 +1077,9 @@ int main(int argc, char **argv)
     RUN_TEST(dcr_eliminar);
     RUN_TEST(dcr_claves);
     std::cout << "\nFinalizados Tests de DiccClavesRapidas.\n\n";
+}
 
+void testCampus() {
     std::cout << "Comenzando Tests de Campus:\n\n";
     RUN_TEST(campus_crear);
     RUN_TEST(campus_agregarObstaculoYocupada);
@@ -649,7 +1094,9 @@ int main(int argc, char **argv)
     RUN_TEST(campus_proxPosicion);
     RUN_TEST(campus_ingresoMasCercano);
     std::cout << "\nFinalizados Tests de Campus.\n\n";
+}
 
+void testDiccRapido() {
     std::cout << "Comenzando Tests de DiccRapido:\n\n";
     RUN_TEST(dr_Crear);
     RUN_TEST(dr_defYDefinido);
@@ -657,7 +1104,9 @@ int main(int argc, char **argv)
     RUN_TEST(dr_Borrar);
     RUN_TEST(dr_Claves);
     std::cout << "\nFinalizados Tests de DiccRapido.\n\n";
+}
 
+void testAgentes() {
     std::cout << "Comenzando Tests de Agentes:\n\n";
     RUN_TEST(agentes_Crear);
     RUN_TEST(agentes_AgregarYPedir);
@@ -665,6 +1114,52 @@ int main(int argc, char **argv)
     RUN_TEST(agentes_ConMismasSanciones);
     RUN_TEST(agentes_ConKSanciones);
     std::cout << "\nFinalizados Tests de Agentes.\n\n";
+}
 
-	return 0;
+void testHypYEst(){
+    std::cout << "Comenzando Tests de Hippies y Est:\n\n";
+    RUN_TEST(hyp_HippiesYEstudiantes);
+    RUN_TEST(hyp_DefinirHippie_Esta_EsHippie);
+    RUN_TEST(hyp_DefinirEstudiante_Esta_EsEst);
+    RUN_TEST(hyp_PosHippieYEstudiante);
+    RUN_TEST(hyp_Estudiantes);
+    RUN_TEST(hyp_Hippies);
+    RUN_TEST(hyp_Borrar);
+    std::cout << "\nFinalizados Tests de Hippies y Est.\n\n";
+}
+
+void testCampusSeguro(){
+    std::cout << "Comenzando Tests de Campus Seguro:\n\n";
+    RUN_TEST(cs_crear);
+    RUN_TEST(IngresarEstudiante);
+    RUN_TEST(IngresarHippie);
+    RUN_TEST(MoverEstudiante);
+    RUN_TEST(MoverHippie);
+    RUN_TEST(MoverAgente);
+    RUN_TEST(dameCampus);
+    RUN_TEST(Estudiantes);
+    RUN_TEST(Hippies);
+    RUN_TEST(dameAgentes);
+
+//    RUN_TEST(CantSanciones);
+//    RUN_TEST(CantHippiesAtrapados);
+    RUN_TEST(CantHippies);
+    RUN_TEST(CantEstudiantes);
+//    RUN_TEST(MasVigilante);
+//    RUN_TEST(ConMismasSanciones);
+//    RUN_TEST(ConKSanciones);
+
+    std::cout << "\nFinalizados Tests de Campus Seguro.\n\n";
+}
+
+int main(int argc, char **argv)
+{
+    RUN_TEST(testMatriz);
+    RUN_TEST(testDCR);
+    RUN_TEST(testCampus);
+    RUN_TEST(testDiccRapido);
+    RUN_TEST(testAgentes);
+    RUN_TEST(testHypYEst);
+    RUN_TEST(testCampusSeguro);
+    return 0;
 }
