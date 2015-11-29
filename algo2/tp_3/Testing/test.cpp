@@ -7,7 +7,13 @@
 #include "../Agentes.h"
 #include "../Agentes.cpp"
 #include "../CampusSeguro.h"
+<<<<<<< HEAD
+#include "../CampusSeguro.cpp"
+//#include "../HippiesYEstudiantes.h"
+//#include "../HippiesYEstudiantes.cpp"
+=======
 #include "../HippiesYEstudiantes.h"
+>>>>>>> master
 #include "Tipos.h"
 #include "aed2.h"
 
@@ -20,7 +26,7 @@ using namespace aed2;
 // ---------------------------------------------------------------------
 
 /**
- * Ejemplo de caso de test, con llamadas a las rutinas de aserción 
+ * Ejemplo de caso de test, con llamadas a las rutinas de aserción
  * definidas en mini_test.h
  */
 
@@ -1155,5 +1161,5 @@ int main(int argc, char **argv)
     RUN_TEST(testAgentes);
     RUN_TEST(testHypYEst);
     RUN_TEST(testCampusSeguro);
-	return 0;
+    return 0;
 }

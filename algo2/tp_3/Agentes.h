@@ -13,7 +13,7 @@ namespace aed2{
 
         class Iterador;
 
-        Agentes(Dicc<Nat,Posicion>& d);
+        Agentes(const Dicc<Nat,Posicion>& d);
 
         const Conj<Nat>& dameAgentes();
 

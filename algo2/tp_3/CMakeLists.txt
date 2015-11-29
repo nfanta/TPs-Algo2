@@ -15,8 +15,8 @@ set(SOURCE_FILES
 #        Testing/aed2.h
 #        Testing/Driver.cpp
 #        Testing/Driver.h
-        Testing/mini_test.h
-        Testing/test.cpp
+         Testing/mini_test.h
+         Testing/test.cpp
 #        Testing/Tipos.h
 #        DiccRapido.h Matriz.h
         )
