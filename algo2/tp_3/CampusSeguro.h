@@ -263,7 +263,8 @@ namespace aed2{
 				if(estaOcupado(_campus.ProxPosicion(posVieja,dameDireccion(posVieja,posDestino)))){
 					_HipYEst.DefinirHippie(nombrehip,damePosLibre(posVieja));
 					_posOcupadasHippies.Definir(damePosLibre(posVieja),nombrehip);
-					_posOcupadasHippies.Eliminar(damePosLibre(posVieja));
+//					_posOcupadasHippies.Eliminar(damePosLibre(posVieja));
+					_posOcupadasHippies.Eliminar(posVieja);
 				}else{
 					_HipYEst.DefinirHippie(nombrehip,_campus.ProxPosicion(posVieja,dameDireccion(posVieja,posDestino)));
 					_posOcupadasHippies.Definir(_campus.ProxPosicion(posVieja,dameDireccion(posVieja,posDestino)),nombrehip);
@@ -273,7 +274,7 @@ namespace aed2{
 			}
 
 		}
-		void Ordenar(Arreglo<aOrdenadoItem> arre){
+		void Ordenar(Arreglo<aOrdenadoItem>& arre){
 			Nat iterador = 0;
 			Nat itero = 0;
 			while(iterador  < arre.Tamanho()){
