@@ -273,7 +273,7 @@ namespace aed2{
 			}
 
 		}
-		void Ordenar(Arreglo<aOrdenadoItem> arre){
+		void Ordenar(Arreglo<aOrdenadoItem>& arre){
 			Nat iterador = 0;
 			Nat itero = 0;
 			while(iterador  < arre.Tamanho()){

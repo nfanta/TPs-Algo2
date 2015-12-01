@@ -935,7 +935,7 @@ void MoverAgente() {
     cs->MoverAgente(20);
     tmp = cs->PosAgente(20);
     ASSERT_EQ(tmp.x, 9);
-    ASSERT_EQ(tmp.y, 9);
+    ASSERT_EQ(tmp.y, 8);
     cs->MoverAgente(20);
     tmp = cs->PosAgente(20);
     ASSERT_EQ(tmp.x, 9);
@@ -958,11 +958,11 @@ void MoverAgente() {
     ASSERT_EQ(tmp.y, 4);
     cs->MoverAgente(10);
     tmp = cs->PosAgente(10);
-    ASSERT_EQ(tmp.x, 3);
+    ASSERT_EQ(tmp.x, 5);
     ASSERT_EQ(tmp.y, 4);
     cs->MoverAgente(10);
     tmp = cs->PosAgente(10);
-    ASSERT_EQ(tmp.x, 2);
+    ASSERT_EQ(tmp.x, 6);
     ASSERT_EQ(tmp.y, 4);
 
     delete cs;
