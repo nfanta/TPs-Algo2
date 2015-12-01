@@ -21,7 +21,7 @@ namespace aed2 {
 
         bool Def(Nat k) const;
 
-        const S& Obtener(Nat k) const;
+        S& Obtener(Nat k);
 
         void Borrar(Nat k);
 
@@ -47,7 +47,7 @@ namespace aed2 {
             bool HaySiguiente() const;
 //            bool HayAnterior() const;
             const Nat& SiguienteClave() const;
-            const S& SiguienteSignificado();
+            S& SiguienteSignificado();
 //            const Nat& AnteriorClave() const;
 //            S& AnteriorSignificado();
             tuplaSignificado& Siguiente();
@@ -57,14 +57,14 @@ namespace aed2 {
 //            void EliminarSiguiente();
 //            void EliminarAnterior();
         //AGREGADO para poder modificar desde un iterador el significado.
-            void DefinirSiguiente(S significado);
+//            void DefinirSiguiente(S significado);
 
         private:
 
-            typename Conj<tuplaSignificado>::Iterador _it_tuplas;
-            Conj<tuplaSignificado>* _conj_iterado; //Agregado para poder re-definir rapido
+            typename Lista<tuplaSignificado>::Iterador _it_tuplas;
+//            Lista<tuplaSignificado>* _conj_iterado; //Agregado para poder re-definir rapido
             Nat _indice_act;
-            Arreglo<Conj<tuplaSignificado> >* _dicc;
+            Arreglo<Lista<tuplaSignificado> >* _dicc;
 
             Iterador(DiccRapido<S>* d);
 
@@ -100,9 +100,9 @@ namespace aed2 {
 
         private:
 
-            typename Conj<tuplaSignificado>::const_Iterador _it_tuplas;
+            typename Lista<tuplaSignificado>::const_Iterador _it_tuplas;
             Nat _indice_act;
-            Arreglo<Conj<tuplaSignificado> >* _dicc;
+            Arreglo<Lista<tuplaSignificado> >* _dicc;
 
             const_Iterador(const DiccRapido<S>* d);
 
@@ -123,8 +123,11 @@ namespace aed2 {
 
     private:
 
-        Arreglo<Conj<tuplaSignificado> > _defs;
+        Arreglo<Lista<tuplaSignificado> > _defs;
         Conj<Nat> _claves;
+
+//        friend void typename DiccRapido<S>::Iterador::Avanzar();
+//        friend void typename DiccRapido<S>::const_Iterador::Avanzar();
 
         Nat Hash(Nat k) const;
 
@@ -137,26 +140,16 @@ namespace aed2 {
     DiccRapido<S>::DiccRapido(Nat maxClaves){
         Nat i = 0;
         _claves = Conj<Nat>::Conj();
-        _defs = typename Arreglo<Conj<DiccRapido<S>::tuplaSignificado> >::Arreglo(maxClaves);
+        _defs = typename Arreglo<Lista<DiccRapido<S>::tuplaSignificado> >::Arreglo(maxClaves);
 
         while (i < maxClaves) {
-            _defs.Definir(i, typename Conj<DiccRapido<S>::tuplaSignificado>::Conj());
+            _defs.Definir(i, typename Lista<DiccRapido<S>::tuplaSignificado>::Lista());
             i++;
         }
     }
 
     template<class S>
     DiccRapido<S>::~DiccRapido(){
-        Nat i = 0;
-
-        /*while (i < Tamanho(_defs)){
-            Conj<DiccRapido<S>::tuplaSignificado>::Iterador itConj = _defs[i].CrearIt();
-            while(itConj.HaySiguiente()){
-                itConj.EliminarSiguiente();
-                itConj.Avanzar();
-            }
-            i++;
-        }*/
     }
 
     template<class S>
@@ -166,23 +159,20 @@ namespace aed2 {
         bool encontrado = false;
 
         posArreglo = Hash(k);
-        typename Conj<DiccRapido<S>::tuplaSignificado>::Iterador itConjunto = _defs[posArreglo].CrearIt();
+        typename Lista<DiccRapido<S>::tuplaSignificado>::Iterador itLista = _defs[posArreglo].CrearIt();
 
-        while(itConjunto.HaySiguiente()){
-            if (itConjunto.Siguiente()._key == k){
+        while(itLista.HaySiguiente()){
+            if (itLista.Siguiente()._key == k){
                 encontrado = true;
-                //itConjunto.Siguiente()._significado = s;
-                itConjunto.EliminarSiguiente();
-                _defs[posArreglo].AgregarRapido(tuplaSignificado(k, s));
+                itLista.Siguiente()._significado = s;
             } else{
-                itConjunto.Avanzar();
+                itLista.Avanzar();
             }
         }
 
         if (!encontrado) {
             _claves.AgregarRapido(k);
-            //DiccRapido<S>::tuplaSignificado* tupla = new DiccRapido<S>::tuplaSignificado(k, s);
-            _defs[posArreglo].AgregarRapido(tuplaSignificado(k, s));
+            _defs[posArreglo].AgregarAtras(tuplaSignificado(k, s));
         }
     }
 
@@ -192,26 +182,23 @@ namespace aed2 {
     }
 
     template<class S>
-    const S& DiccRapido<S>::Obtener(Nat k) const{
+    S& DiccRapido<S>::Obtener(Nat k) {
         #ifdef DEBUG
         assert(Def(k));
         #endif
 
         Nat i = 0;
         Nat posArreglo;
-        //S& significado;
 
         posArreglo = Hash(k);
-        typename Conj<DiccRapido<S>::tuplaSignificado>::const_Iterador itConjunto = _defs[posArreglo].CrearIt();
+        typename Lista<DiccRapido<S>::tuplaSignificado>::Iterador itLista = _defs[posArreglo].CrearIt();
 
-        while(itConjunto.HaySiguiente()){
-            if (itConjunto.Siguiente()._key == k){
-                return itConjunto.Siguiente()._significado;
+        while(itLista.HaySiguiente()){
+            if (itLista.Siguiente()._key == k){
+                return itLista.Siguiente()._significado;
             }
-            itConjunto.Avanzar();
+            itLista.Avanzar();
         }
-
-        //return significado;
     }
 
     template<class S>
@@ -222,16 +209,16 @@ namespace aed2 {
 
         Nat i = 0;
         Nat posArreglo;
-        typename Conj<DiccRapido<S>::tuplaSignificado>::Iterador itConjunto;
+        typename Lista<DiccRapido<S>::tuplaSignificado>::Iterador itLista;
 
         posArreglo = Hash(k);
-        itConjunto = _defs[posArreglo].CrearIt();
+        itLista = _defs[posArreglo].CrearIt();
 
-        while(itConjunto.HaySiguiente()){
-            if (itConjunto.Siguiente()._key == k){
-                itConjunto.EliminarSiguiente();
+        while(itLista.HaySiguiente()){
+            if (itLista.Siguiente()._key == k){
+                itLista.EliminarSiguiente();
             } else {
-                itConjunto.Avanzar();
+                itLista.Avanzar();
             }
         }
 
@@ -248,6 +235,8 @@ namespace aed2 {
         Nat val = _defs.Tamanho();
         return k % val;
     }
+
+    // COMIENZA IMPLEMENTACION DE ITERADOR
 
     template<class S>
     typename DiccRapido<S>::Iterador DiccRapido<S>::Buscar(Nat c) {
@@ -298,7 +287,7 @@ namespace aed2 {
 
     template<class S>
     DiccRapido<S>::Iterador::Iterador(const typename DiccRapido<S>::Iterador& otro)
-            : _it_tuplas(otro._it_tuplas), _indice_act(otro._indice_act), _conj_iterado(otro._conj_iterado)
+            : _it_tuplas(otro._it_tuplas), _indice_act(otro._indice_act), _dicc(otro._dicc)
     {}
 
     template<class S>
@@ -306,7 +295,7 @@ namespace aed2 {
     {
         _it_tuplas = otro._it_tuplas;
         _indice_act = otro._indice_act;
-        _conj_iterado = otro._conj_iterado;
+        _dicc = otro._dicc;
 
         return *this;
     }
@@ -314,32 +303,8 @@ namespace aed2 {
     template<class S>
     bool DiccRapido<S>::Iterador::HaySiguiente() const
     {
-        bool haySiguiente = _it_tuplas.HaySiguiente();
-
-        /*Nat i = _indice_act + 1;
-
-        while(!haySiguiente && i < _defs.Tamanho()){
-            haySiguiente = !_defs[i].EsVacio();
-            i++;
-        }*/
-
-        return haySiguiente;
+        return _it_tuplas.HaySiguiente();
     }
-
-    /*template<class S>
-    bool DiccRapido<S>::Iterador::HayAnterior() const
-    {
-        bool hayAnterior = _it_tuplas.HaySiguiente();
-
-        Nat i = _indice_act - 1;
-
-        while(!hayAnterior && i > 0){
-            hayAnterior = !_defs[i].EsVacio();
-            i--;
-        }
-
-        return hayAnterior;
-    }*/
 
     template<class S>
     const Nat& DiccRapido<S>::Iterador::SiguienteClave() const
@@ -352,7 +317,7 @@ namespace aed2 {
     }
 
     template<class S>
-    const S& DiccRapido<S>::Iterador::SiguienteSignificado()
+    S& DiccRapido<S>::Iterador::SiguienteSignificado()
     {
         #ifdef DEBUG
         assert( HaySiguiente() );
@@ -371,36 +336,6 @@ namespace aed2 {
         return _it_tuplas.Siguiente();
     }
 
-    /*template<class S>
-    const K& DiccRapido<S>::Iterador::AnteriorClave() const
-    {
-        #ifdef DEBUG
-        assert( HayAnterior() );
-        #endif
-
-        return Anterior()._key;
-    }
-
-    template<class S>
-    S& DiccRapido<S>::Iterador::AnteriorSignificado()
-    {
-        #ifdef DEBUG
-        assert(HayAnterior());
-        #endif
-
-        return Anterior()._significado;
-    }
-
-    template<class S>
-    typename DiccRapido<S>::tuplaSignificado& DiccRapido<S>::Iterador::Anterior()
-    {
-        #ifdef DEBUG
-        assert(HayAnterior());
-        #endif
-
-        return _it_tuplas.Anterior(); //Rehacer si hace falta retroceder
-    }*/
-
     template<class S>
     void DiccRapido<S>::Iterador::Avanzar() {
         #ifdef DEBUG
@@ -409,52 +344,32 @@ namespace aed2 {
 
         _it_tuplas.Avanzar();
 
-        while(!_it_tuplas.HaySiguiente() && _indice_act < _dicc->Tamanho() - 1){
+        Nat aux = _dicc->Tamanho();
+
+        while(!_it_tuplas.HaySiguiente() && _indice_act < (aux - 1)){
             _indice_act++;
             _it_tuplas = (*_dicc)[_indice_act].CrearIt();
-            _conj_iterado = &((*_dicc)[_indice_act]);
         }
     }
-
-    /*template<class S>
-    void DiccRapido<S>::Iterador::Retroceder()
-    {
-        #ifdef DEBUG
-        assert(HayAnterior());
-        #endif
-
-        _it_tuplas.Retroceder();
-
-        while(!_it_tuplas.HayAnterior() && _indice_act > 1){
-            _indice_act--;
-            _it_tuplas = _defs[_indice_act].CrearIt();
-
-            while(_it_tuplas.HaySiguiente()){
-                _it_tuplas.Avanzar();
-            }
-        }
-    }*/
 
     template<class S>
     DiccRapido<S>::Iterador::Iterador(DiccRapido<S>* d) {
         _indice_act = 0;
         _dicc = &(d->_defs);
         _it_tuplas = (*_dicc)[0].CrearIt();
-        _conj_iterado = &((*_dicc)[0]);
 
         while(!_it_tuplas.HaySiguiente() && _indice_act < _dicc->Tamanho() - 1){
             _indice_act++;
             _it_tuplas = (*_dicc)[_indice_act].CrearIt();
-            _conj_iterado = &((*_dicc)[_indice_act]);
         }
     }
 
-    template<class S>
-    void DiccRapido<S>::Iterador::DefinirSiguiente(S significado) {
-        Nat clave = SiguienteClave();
-        _it_tuplas.EliminarSiguiente();
-        _it_tuplas = _conj_iterado->AgregarRapido(tuplaSignificado(clave, significado));
-    }
+//    template<class S>
+//    void DiccRapido<S>::Iterador::DefinirSiguiente(S significado) {
+//        Nat clave = SiguienteClave();
+//        _it_tuplas.EliminarSiguiente();
+//        //_it_tuplas = _conj_iterado->AgregarRapido(tuplaSignificado(clave, significado));
+//    }
 
     
     //IMPLEMENTACION ITERADOR CONSTANTE
@@ -465,7 +380,7 @@ namespace aed2 {
 
     template<class S>
     DiccRapido<S>::const_Iterador::const_Iterador(const typename DiccRapido<S>::const_Iterador& otro)
-            : _it_tuplas(otro._it_tuplas), _indice_act(otro._indice_act)
+            : _it_tuplas(otro._it_tuplas), _indice_act(otro._indice_act), _dicc(otro._dicc)
     {}
 
     template<class S>
@@ -473,6 +388,7 @@ namespace aed2 {
     {
         _it_tuplas = otro._it_tuplas;
         _indice_act = otro._indice_act;
+        _dicc = otro._dicc;
 
         return *this;
     }
@@ -480,39 +396,15 @@ namespace aed2 {
     template<class S>
     bool DiccRapido<S>::const_Iterador::HaySiguiente() const
     {
-        bool haySiguiente = _it_tuplas.HaySiguiente();
-
-        /*Nat i = _indice_act + 1;
-
-        while(!haySiguiente && i < _defs.Tamanho()){
-            haySiguiente = !_defs[i].EsVacio();
-            i++;
-        }*/
-
-        return haySiguiente;
+        return _it_tuplas.HaySiguiente();
     }
-
-    /*template<class S>
-    bool DiccRapido<S>::const_Iterador::HayAnterior() const
-    {
-        bool hayAnterior = _it_tuplas.HaySiguiente();
-
-        Nat i = _indice_act - 1;
-
-        while(!hayAnterior && i > 0){
-            hayAnterior = !_defs[i].EsVacio();
-            i--;
-        }
-
-        return hayAnterior;
-    }*/
 
     template<class S>
     const Nat& DiccRapido<S>::const_Iterador::SiguienteClave() const
     {
-#ifdef DEBUG
+        #ifdef DEBUG
         assert(HaySiguiente());
-#endif
+        #endif
 
         return _it_tuplas.Siguiente()._key;
     }
@@ -520,9 +412,9 @@ namespace aed2 {
     template<class S>
     const S& DiccRapido<S>::const_Iterador::SiguienteSignificado() const
     {
-#ifdef DEBUG
+        #ifdef DEBUG
         assert( HaySiguiente() );
-#endif
+        #endif
 
         return _it_tuplas.Siguiente()._significado;
     }
@@ -530,48 +422,18 @@ namespace aed2 {
     template<class S>
     const typename DiccRapido<S>::tuplaSignificado& DiccRapido<S>::const_Iterador::Siguiente() const
     {
-#ifdef DEBUG
+        #ifdef DEBUG
         assert( HaySiguiente() );
-#endif
+        #endif
 
         return _it_tuplas.Siguiente();
     }
 
-    /*template<class S>
-    const K& DiccRapido<S>::const_Iterador::AnteriorClave() const
-    {
-        #ifdef DEBUG
-        assert( HayAnterior() );
-        #endif
-
-        return Anterior()._key;
-    }
-
-    template<class S>
-    S& DiccRapido<S>::const_Iterador::AnteriorSignificado()
-    {
-        #ifdef DEBUG
-        assert(HayAnterior());
-        #endif
-
-        return Anterior()._significado;
-    }
-
-    template<class S>
-    typename DiccRapido<S>::tuplaSignificado& DiccRapido<S>::const_Iterador::Anterior()
-    {
-        #ifdef DEBUG
-        assert(HayAnterior());
-        #endif
-
-        return _it_tuplas.Anterior(); //Rehacer si hace falta retroceder
-    }*/
-
     template<class S>
     void DiccRapido<S>::const_Iterador::Avanzar() {
-#ifdef DEBUG
+        #ifdef DEBUG
         assert(HaySiguiente());
-#endif
+        #endif
 
         _it_tuplas.Avanzar();
 
@@ -580,25 +442,6 @@ namespace aed2 {
             _it_tuplas = (*_dicc)[_indice_act].CrearIt();
         }
     }
-
-    /*template<class S>
-    void DiccRapido<S>::const_Iterador::Retroceder()
-    {
-        #ifdef DEBUG
-        assert(HayAnterior());
-        #endif
-
-        _it_tuplas.Retroceder();
-
-        while(!_it_tuplas.HayAnterior() && _indice_act > 1){
-            _indice_act--;
-            _it_tuplas = _defs[_indice_act].CrearIt();
-
-            while(_it_tuplas.HaySiguiente()){
-                _it_tuplas.Avanzar();
-            }
-        }
-    }*/
 
     template<class S>
     DiccRapido<S>::const_Iterador::const_Iterador(const DiccRapido<S>* d) {
@@ -611,28 +454,6 @@ namespace aed2 {
             _it_tuplas = (*_dicc)[_indice_act].CrearIt();
         }
     }
-
-    /*template<class S>
-    void DiccRapido<S>::const_Iterador::EliminarSiguiente()
-    {
-        #ifdef DEBUG
-        assert( HaySiguiente() );
-        #endif
-
-        it_claves_.EliminarSiguiente();
-        it_significados_.EliminarSiguiente();
-    }*/
-
-    /*template<class S>
-    void DiccRapido<S>::const_Iterador::EliminarAnterior()
-    {
-        #ifdef DEBUG
-        assert( HayAnterior() );
-        #endif
-
-        it_claves_.EliminarAnterior();
-        it_significados_.EliminarAnterior();
-    }*/
 }
 
 
