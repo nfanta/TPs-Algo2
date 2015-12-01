@@ -23,7 +23,7 @@ namespace aed2 {
 
         void Eliminar (const String n);
 
-        Conj<String> Claves () const;
+        const Conj<String>& Claves () const;
 
     private:
 
@@ -106,7 +106,6 @@ namespace aed2 {
 
         p->_definido = true;
         p->_it = _claves.AgregarRapido(n);
-
     }
 
     template <class S>
@@ -176,7 +175,7 @@ namespace aed2 {
     }
 
     template <class S>
-    Conj<String> DCR<S>::Claves() const {
+    const Conj<String>& DCR<S>::Claves() const {
         return _claves;
     }
 

@@ -84,8 +84,12 @@ namespace aed2 {
             return false;
         } else {
             // Me aseguro de que haya sido definido con anterioridad (sino se puede romper)
-            if (_tablero[p.x].Definido(p.y)) {
-                return _tablero[p.x][p.y]._definido;
+            if (_tablero.Definido(p.x)) {
+                if (_tablero[p.x].Definido(p.y)) {
+                    return _tablero[p.x][p.y]._definido;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }

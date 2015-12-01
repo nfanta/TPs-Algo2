@@ -794,6 +794,7 @@ CampusSeguro* crearCampusConEstYHippies() {
     cs->IngresarEstudiante("Alice", {1,2});
     cs->IngresarEstudiante("Bob", {1,3});
     cs->IngresarEstudiante("Charlie", {1,4});
+    std::cout << "La posicion esta ocupada o no?" << cs->dameCampus().Ocupada({9,1});
     cs->IngresarHippie("Alba", {9,1});
     cs->IngresarHippie("Brisa", {9,2});
     cs->IngresarHippie("Cielo", {9,3});
@@ -1176,12 +1177,12 @@ void testCampusSeguro(){
 
 int main(int argc, char **argv)
 {
-//    RUN_TEST(testMatriz);
-//    RUN_TEST(testDCR);
-//    RUN_TEST(testCampus);
-//    RUN_TEST(testDiccRapido);
-//    RUN_TEST(testAgentes);
-//    RUN_TEST(testHypYEst);
+    RUN_TEST(testMatriz);
+    RUN_TEST(testDCR);
+    RUN_TEST(testCampus);
+    RUN_TEST(testDiccRapido);
+    RUN_TEST(testAgentes);
+    RUN_TEST(testHypYEst);
     RUN_TEST(testCampusSeguro);
     return 0;
 }
