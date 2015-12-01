@@ -993,11 +993,17 @@ void dameCampus() {
 void Estudiantes() {
     CampusSeguro* cs = crearCampusConEstYHippies();
     Conj<String>::const_Iterador est = cs->Estudiantes();
+    Conj<String> tmp;
 
-//    ASSERT(est.Pertenece("Alice"));
-//    ASSERT(est.Pertenece("Bob"));
-//    ASSERT(est.Pertenece("Charlie"));
-//    ASSERT(!est.Pertenece("tuVieja"));
+    while (est.HaySiguiente()) {
+        tmp.Agregar(est.Siguiente());
+        est.Avanzar();
+    }
+
+    ASSERT(tmp.Pertenece("Alice"));
+    ASSERT(tmp.Pertenece("Bob"));
+    ASSERT(tmp.Pertenece("Charlie"));
+    ASSERT(!tmp.Pertenece("tuVieja"));
 
     delete cs;
 }
@@ -1006,11 +1012,17 @@ void Estudiantes() {
 void Hippies() {
     CampusSeguro* cs = crearCampusConEstYHippies();
     Conj<String>::const_Iterador hip = cs->Hippies();
+    Conj<String> tmp;
 
-//    ASSERT(hip.Pertenece("Alba"));
-//    ASSERT(hip.Pertenece("Brisa"));
-//    ASSERT(hip.Pertenece("Cielo"));
-//    ASSERT(!hip.Pertenece("tuVieja"));
+    while (hip.HaySiguiente()) {
+        tmp.Agregar(hip.Siguiente());
+        hip.Avanzar();
+    }
+    
+    ASSERT(tmp.Pertenece("Alba"));
+    ASSERT(tmp.Pertenece("Brisa"));
+    ASSERT(tmp.Pertenece("Cielo"));
+    ASSERT(!tmp.Pertenece("tuVieja"));
 
     delete cs;
 }
@@ -1019,12 +1031,18 @@ void Hippies() {
 void dameAgentes() {
     CampusSeguro* cs = crearCampusConEstYHippies();
     Conj<Nat>::const_Iterador as = cs->dameAgentes();
+    Conj<Nat> tmp;
+    
+    while (as.HaySiguiente()) {
+        tmp.Agregar(as.Siguiente());
+        as.Avanzar();
+    }
 
-//    ASSERT(as.Pertenece(1));
-//    ASSERT(as.Pertenece(5));
-//    ASSERT(as.Pertenece(10));
-//    ASSERT(as.Pertenece(20));
-//    ASSERT(!as.Pertenece(3));
+    ASSERT(tmp.Pertenece(1));
+    ASSERT(tmp.Pertenece(5));
+    ASSERT(tmp.Pertenece(10));
+    ASSERT(tmp.Pertenece(20));
+    ASSERT(!tmp.Pertenece(3));
 
     delete cs;
 }

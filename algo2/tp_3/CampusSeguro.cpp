@@ -240,18 +240,19 @@ namespace aed2 {
         return _campus;
     }
 //TODO REVISAR QUE ONDA LO QUE DEVUELVEN ESTAS FUNCIONES XQ ENE L DISE�O DICEN QUE DEVUELVEN UN ITERADOR NO AL CONJUNTO
-     Conj<String>::const_Iterador& CampusSeguro::Estudiantes(){
+     Conj<String>::const_Iterador CampusSeguro::Estudiantes(){
         Conj<String>::const_Iterador itRes =  _HipYEst.Estudiantes().CrearIt();
+        String tmp = itRes.Siguiente();
         //return _HipYEst.Estudiantes().CrearIt();
         return itRes;
     }
 
-     Conj<String>::const_Iterador& CampusSeguro::Hippies(){
+     Conj<String>::const_Iterador CampusSeguro::Hippies(){
          Conj<String>::const_Iterador itRes = _HipYEst.Hippies().CrearIt();
          return itRes;
     }
 
-     Conj<Nat>::const_Iterador& CampusSeguro::dameAgentes(){
+     Conj<Nat>::const_Iterador CampusSeguro::dameAgentes(){
          Conj<Nat>::const_Iterador itRes = _agentes.dameAgentes().CrearIt();
          return itRes;
     }

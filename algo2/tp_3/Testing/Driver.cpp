@@ -19,14 +19,12 @@ Driver::~Driver()
 
 void Driver::crearCampus(Nat ancho, Nat alto)
 {
-    // TODO
-	assert(false);
+	_c = Campus(ancho, alto);
 }
 
 void Driver::agregarObstaculo(Posicion p)
 {
-    // TODO
-	assert(false);
+    _c.AgregarObstaculo(p);
 }
 
 
@@ -34,57 +32,48 @@ void Driver::agregarObstaculo(Posicion p)
 
 Nat Driver::filas() const
 {
-    // TODO
-	assert(false);
+	return _c.Filas();
 }
 
 Nat Driver::columnas() const
 {
-    // TODO
-	assert(false);
+	return _c.Columnas();
 }
 
 bool Driver::ocupada(Posicion p) const
 {
-    // TODO
-	assert(false);
+	return _c.Ocupada(p);
 }
 
 
 /// Generadores de CampusSeguro
 void  Driver::comenzarRastrillaje(const Dicc<Agente,Posicion>& d) {
-    // TODO
-	assert(false);
+    _cs = CampusSeguro(_c, d);
 }
 
 void Driver::ingresarEstudiante(Nombre n, Posicion p)
 {
-    // TODO
-	assert(false);
+    _cs.IngresarEstudiante(n, p);
 }
 
 void Driver::ingresarHippie(Nombre n, Posicion p)
 {
-    // TODO
-	assert(false);
+	_cs.IngresarHippie(n, p);
 }
 
 void Driver::moverEstudiante(Nombre n, Direccion d)
 {
-    // TODO
-	assert(false);
+	_cs.MoverEstudiante(n, d);
 }
 
 void Driver::moverHippie(Nombre n)
 {
-    // TODO
-	assert(false);
+	_cs.MoverHippie(n);
 }
 
 void Driver::moverAgente(Agente pl)
 {
-    // TODO
-	assert(false);
+	_cs.MoverAgente(pl);
 }
 
 
@@ -127,26 +116,22 @@ Nat Driver::cantAgentes() const
 
 Posicion Driver::posEstudianteYHippie(Nombre n) const
 {
-    // TODO
-	assert(false);
+    _cs.PosHippieYEstudiante(n);
 }
 
 Posicion Driver::posAgente(Agente pl) const
 {
-    // TODO
-	assert(false);
+    _cs.PosAgente(pl);
 }
 
 Nat Driver::cantSanciones(Agente pl) const
 {
-    // TODO
-	assert(false);
+    _cs.CantSanciones(pl);
 }
 
 Nat Driver::cantHippiesAtrapados(Agente pl) const
 {
-    // TODO
-	assert(false);
+    _cs.CantHippiesAtrapados(pl);
 }
 
 
@@ -154,20 +139,17 @@ Nat Driver::cantHippiesAtrapados(Agente pl) const
 
 Agente Driver::másVigilante() const
 {
-    // TODO
-	assert(false);
+    _cs.MasVigilante();
 }
 
-const Driver::Conj<Agente> conMismasSanciones(Agente a) const
+const Conj<Agente> Driver::conMismasSanciones(Agente a) const
 {
-    // TODO
-	assert(false);
+	return _cs.ConMismasSanciones();
 }
 
-const Driver::Conj<Agente> conKSanciones(Nat k)
+const Conj<Agente> Driver::conKSanciones(Nat k)
 {
-    // TODO
-	assert(false);
+    return _cs.ConKSanciones(k);
 }
 
 

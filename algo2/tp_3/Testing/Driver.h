@@ -6,7 +6,7 @@
 #include "aed2/Conj.h"
 #include "aed2/Dicc.h"
 
-//#include ...
+#include "../CampusSeguro.cpp"
 
 namespace aed2 {
 
@@ -56,11 +56,8 @@ class Driver
    
     private:
 
-    /************************************************************************
-     * TODO: Va a ser necesario instanciar privadamente el Modulo principal *
-     * con el cuál interactuar. Además, pueden declarar todas las           *
-     * funciones auxiliares que les hagan falta.                            *
-     ************************************************************************/
+	Campus _c;
+    CampusSeguro _cs;
 
 }; // class Driver
 
