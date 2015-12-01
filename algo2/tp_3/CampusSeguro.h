@@ -9,6 +9,7 @@
 namespace aed2{
     class CampusSeguro{
     public:
+		CampusSeguro();
         CampusSeguro(const Campus& c, const Dicc<Nat,Posicion>& dA);
 
         void IngresarEstudiante(String nombre, Posicion p);
@@ -20,21 +21,21 @@ namespace aed2{
 
         const Campus& dameCampus();
 
-         Conj<String>::const_Iterador Estudiantes();
-         Conj<String>::const_Iterador Hippies();
-         Conj<Nat>::const_Iterador dameAgentes();
+         Conj<String>::const_Iterador Estudiantes() const;
+         Conj<String>::const_Iterador Hippies() const;
+         Conj<Nat>::const_Iterador dameAgentes() const;
 
-        const Posicion& PosHippieYEstudiante(String nombre);
-        const Posicion& PosAgente(Nat placa);
+        const Posicion& PosHippieYEstudiante(String nombre) const;
+        const Posicion& PosAgente(Nat placa) const;
 
-        const Nat& CantSanciones(Nat placa);
-        const Nat& CantHippiesAtrapados(Nat placa);
+        const Nat& CantSanciones(Nat placa) const;
+        const Nat& CantHippiesAtrapados(Nat placa) const;
 
         Nat CantHippies();
         Nat CantEstudiantes();
 
-        const Nat& MasVigilante();
-        const Conj<Nat>& ConMismasSanciones(Nat placa);
+        const Nat& MasVigilante() const;
+        const Conj<Nat>& ConMismasSanciones(Nat placa) const;
         const Conj<Nat>& ConKSanciones(Nat k);
 
     private:

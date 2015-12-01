@@ -6,7 +6,7 @@
 #include "aed2/Conj.h"
 #include "aed2/Dicc.h"
 
-#include "../CampusSeguro.cpp"
+#include "../CampusSeguro.h"
 
 namespace aed2 {
 

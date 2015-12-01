@@ -6,6 +6,8 @@
 
 namespace aed2{
 
+    Agentes::Agentes() : _as(1){ }
+
     Agentes::Agentes(const Dicc<Nat, Posicion> &d) : _as(d.CantClaves()){
         Conj<Nat>::Iterador itAConjMismSanciones;
         Lista<itemMismSanciones>::Iterador itAMismSanciones;
@@ -53,7 +55,7 @@ namespace aed2{
         _huboSanciones = false;
     }
 
-    const Conj<Nat>& Agentes::dameAgentes() {
+    const Conj<Nat>& Agentes::dameAgentes() const{
         return _claves;
     }
 
@@ -132,15 +134,15 @@ namespace aed2{
         }
     }
 
-    const Posicion& Agentes::PosAgente(Nat placa)  {
+    const Posicion& Agentes::PosAgente(Nat placa)  const{
         return _as.Obtener(placa)._posicion;
     }
 
-    const Nat& Agentes::SancionesAgente(Nat placa)  {
+    const Nat& Agentes::SancionesAgente(Nat placa)  const{
         return _as.Obtener(placa)._sanciones;
     }
 
-    const Nat& Agentes::CapturasAgente(Nat placa)  {
+    const Nat& Agentes::CapturasAgente(Nat placa)  const{
         return _as.Obtener(placa)._capturas;
     }
 
@@ -148,11 +150,11 @@ namespace aed2{
         return _masVig;
     }
 
-    const Conj<Nat>& Agentes::ConMismasSanciones(Nat placa) {
+    const Conj<Nat>& Agentes::ConMismasSanciones(Nat placa) const{
         return _as.Obtener(placa)._conMismSanciones.Siguiente()._agentes;
     }
 
-    const Conj<Nat>& Agentes::ConKSanciones(Nat k) {
+    const Conj<Nat>& Agentes::ConKSanciones(Nat k){
         //
         Nat i = 0;
         bool encontrado = false;
