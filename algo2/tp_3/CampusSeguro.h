@@ -183,15 +183,19 @@ namespace aed2{
 			Direccion dirFinal;
 			if(modulo(p1.x,p2.x) >= modulo(p1.y,p2.y)){
 				if(p1.x >= p2.x){
-					dirFinal = izq;
+//					dirFinal = izq;
+					dirFinal = arriba;
 				}else{
-					dirFinal = der;
+//					dirFinal = der;
+					dirFinal = abajo;
 				}
 			}else{
 				if(p1.y >= p2.y){
-					dirFinal = abajo;
+//					dirFinal = abajo;
+					dirFinal = izq;
 				}else{
-					dirFinal = arriba;
+//					dirFinal = arriba;
+					dirFinal = der;
 				}
 			}
 			return dirFinal;
@@ -200,6 +204,7 @@ namespace aed2{
 		void muevoEstudiante(String nombre,Posicion posVieja,Direccion dir){
 			Posicion posNueva = _campus.ProxPosicion(posVieja,dir);
 			_HipYEst.DefinirEstudiante(nombre,posNueva);
+			Posicion temp = _HipYEst.PosHippieYEstudiante(nombre);
 			_posOcupadasEstudiantes.Definir(posNueva,nombre);
 			_posOcupadasEstudiantes.Eliminar(posVieja);
 		}
@@ -262,7 +267,7 @@ namespace aed2{
 				}else{
 					_HipYEst.DefinirHippie(nombrehip,_campus.ProxPosicion(posVieja,dameDireccion(posVieja,posDestino)));
 					_posOcupadasHippies.Definir(_campus.ProxPosicion(posVieja,dameDireccion(posVieja,posDestino)),nombrehip);
-					_posOcupadasHippies.Eliminar(posVieja);//TODO revisar si esta bien xq me parece que en el diseño definia la poss y dsp la borraba
+					_posOcupadasHippies.Eliminar(posVieja);//TODO revisar si esta bien xq me parece que en el diseï¿½o definia la poss y dsp la borraba
 
 				}
 			}
@@ -313,7 +318,7 @@ namespace aed2{
 				if(estaOcupado(_campus.ProxPosicion(p,dameDireccion(p,pD)))){
 					_agentes.CambiarPosicion(itagente,damePosLibre(p));
 					_posOcupadasAgentes.Definir(damePosLibre(p),itagente);
-					_posOcupadasAgentes.Eliminar(p);//TODO CAMBIO DEL DISEÑO XQ ME PARECE QUE ESTABA MAL EL MISMO ERRROR QUE EL DE ARRIBA
+					_posOcupadasAgentes.Eliminar(p);//TODO CAMBIO DEL DISEï¿½O XQ ME PARECE QUE ESTABA MAL EL MISMO ERRROR QUE EL DE ARRIBA
 				}else{
 					_agentes.CambiarPosicion(itagente,_campus.ProxPosicion(p,dameDireccion(p,pD)));
 					_posOcupadasAgentes.Definir(_campus.ProxPosicion(p,dameDireccion(p,pD)),itagente);

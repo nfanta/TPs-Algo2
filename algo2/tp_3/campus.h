@@ -98,7 +98,7 @@ namespace aed2 {
     bool Campus::posValida(Posicion p) const{
         bool res = true;
 
-        if (p.x > _Alto || p.y > _Ancho) {
+        if (p.x > _Alto || p.y > _Ancho || p.x == 0 || p.y == 0) {
             res = false;
         }
 

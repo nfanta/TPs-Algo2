@@ -29,8 +29,8 @@ using namespace aed2;
 
 void matriz_crear() {
     Matriz<Nat> mat(10,10);
-    for (unsigned int i = 0; i < 10; ++i) {
-        for (unsigned int j = 0; j < 10; ++j) {
+    for (unsigned int i = 1; i <= 10; ++i) {
+        for (unsigned int j = 1; j <= 10; ++j) {
             ASSERT(!mat.Def({i,j}));
         }
     }
@@ -54,8 +54,8 @@ void matriz_obtener() {
     mat.Definir({1,1},4);
     ASSERT(mat.Def({1,1}));
     ASSERT_EQ(mat.Obtener({1,1}), 4);
-    for (unsigned int i = 0; i < 10; ++i) {
-        for (unsigned int j = 0; j < 10; ++j) {
+    for (unsigned int i = 1; i <= 10; ++i) {
+        for (unsigned int j = 1; j <= 10; ++j) {
             mat.Definir({i,j},7);
             ASSERT(mat.Def({i,j}));
             ASSERT_EQ(mat.Obtener({i,j}), 7);
@@ -76,8 +76,8 @@ void matriz_eliminar() {
     ASSERT_EQ(mat.Obtener({1,1}), 4);
     mat.Eliminar({1,1});
     ASSERT(!mat.Def({1,1}))
-    for (unsigned int i = 0; i < 10; ++i) {
-        for (unsigned int j = 0; j < 10; ++j) {
+    for (unsigned int i = 1; i <= 10; ++i) {
+        for (unsigned int j = 1; j <= 10; ++j) {
             mat.Definir({i,j},7);
             ASSERT(mat.Def({i,j}));
             ASSERT_EQ(mat.Obtener({i,j}), 7);
@@ -778,7 +778,7 @@ CampusSeguro* crearCampusGenerico() {
     c.AgregarObstaculo({7,3});
 
     Dicc<Nat, Posicion> d = Dicc<Nat, Posicion>();
-    d.Definir(1,{2,2});
+    d.Definir(1,{2,9});
     d.Definir(5,{3,3});
     d.Definir(10,{4,4});
     d.Definir(20,{9,9});
@@ -794,7 +794,6 @@ CampusSeguro* crearCampusConEstYHippies() {
     cs->IngresarEstudiante("Alice", {1,2});
     cs->IngresarEstudiante("Bob", {1,3});
     cs->IngresarEstudiante("Charlie", {1,4});
-    std::cout << "La posicion esta ocupada o no?" << cs->dameCampus().Ocupada({9,1});
     cs->IngresarHippie("Alba", {9,1});
     cs->IngresarHippie("Brisa", {9,2});
     cs->IngresarHippie("Cielo", {9,3});
@@ -906,8 +905,6 @@ void MoverHippie() {
     ASSERT_EQ(tmp.x, 5);
     ASSERT_EQ(tmp.y, 2);
 
-    ASSERT_EQ(tmp.x, 9);
-    ASSERT_EQ(tmp.y, 3);
     cs->MoverHippie("Cielo");
     tmp = cs->PosHippieYEstudiante("Cielo");
     ASSERT_EQ(tmp.x, 8);
@@ -938,7 +935,7 @@ void MoverAgente() {
     cs->MoverAgente(20);
     tmp = cs->PosAgente(20);
     ASSERT_EQ(tmp.x, 9);
-    ASSERT_EQ(tmp.y, 8);
+    ASSERT_EQ(tmp.y, 9);
     cs->MoverAgente(20);
     tmp = cs->PosAgente(20);
     ASSERT_EQ(tmp.x, 9);

@@ -132,7 +132,7 @@ namespace aed2 {
         if(meVoy(posVieja,dir)){
             _HipYEst.Borrar(nombre);
             _posOcupadasEstudiantes.Eliminar(posVieja);
-        }else{
+        } else if (!_posOcupadasAgentes.Def(proxPosicion)) {
             muevoEstudiante(nombre,posVieja,dir);
             Posicion posNueva = _HipYEst.PosHippieYEstudiante(nombre);
             if(estudianteHippificado(posNueva)){
@@ -238,7 +238,7 @@ namespace aed2 {
     const Campus& CampusSeguro::dameCampus(){
         return _campus;
     }
-//TODO REVISAR QUE ONDA LO QUE DEVUELVEN ESTAS FUNCIONES XQ ENE L DISEÑO DICEN QUE DEVUELVEN UN ITERADOR NO AL CONJUNTO
+//TODO REVISAR QUE ONDA LO QUE DEVUELVEN ESTAS FUNCIONES XQ ENE L DISEï¿½O DICEN QUE DEVUELVEN UN ITERADOR NO AL CONJUNTO
      Conj<String>::const_Iterador& CampusSeguro::Estudiantes(){
         Conj<String>::const_Iterador itRes =  _HipYEst.Estudiantes().CrearIt();
         //return _HipYEst.Estudiantes().CrearIt();

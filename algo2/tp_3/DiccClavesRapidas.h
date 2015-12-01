@@ -104,8 +104,12 @@ namespace aed2 {
             }
         }
 
-        p->_definido = true;
-        p->_it = _claves.AgregarRapido(n);
+        if (p->_definido) {
+            p->_dato = s;
+        } else {
+            p->_definido = true;
+            p->_it = _claves.AgregarRapido(n);
+        }
     }
 
     template <class S>
