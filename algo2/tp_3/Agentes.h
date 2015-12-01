@@ -24,9 +24,9 @@ namespace aed2{
         void AgregarCaptura(Nat placa);
         void AgregarCaptura(Iterador agente);
 
-        const Posicion& PosAgente(Nat placa) const;
-        const Nat& SancionesAgente(Nat placa) const;
-        const Nat& CapturasAgente(Nat placa) const;
+        const Posicion& PosAgente(Nat placa) ;
+        const Nat& SancionesAgente(Nat placa) ;
+        const Nat& CapturasAgente(Nat placa) ;
 
         Nat MasVigilante() const;
         const Conj<Nat>& ConMismasSanciones(Nat placa);
@@ -65,10 +65,10 @@ namespace aed2{
             bool HaySiguiente() const;
 
             const Nat& SiguientePlaca() const;
-            const DatosAgente& SiguienteDatos();
+            DatosAgente& SiguienteDatos();
 
             void Avanzar();
-            void DefinirSiguiente(DatosAgente datos);
+//            void DefinirSiguiente(DatosAgente datos);
 
         private:
 

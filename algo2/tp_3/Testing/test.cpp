@@ -618,6 +618,32 @@ void agentes_ConKSanciones() {
     ASSERT(!as.ConKSanciones(2).Pertenece(17));
 }
 
+void agentes_Iterador() {
+    Dicc<Nat, Posicion> agentes;
+    agentes.Definir(1, {1, 4});
+    agentes.Definir(5, {3, 3});
+    agentes.Definir(9, {1, 1});
+    agentes.Definir(13, {5, 2});
+    agentes.Definir(17, {3, 2});
+
+    Agentes as(agentes);
+
+    Nat i = 0;
+
+    Agentes::Iterador itAs = as.CrearIt();
+
+    while(itAs.HaySiguiente()){
+        ASSERT(as.dameAgentes().Pertenece(itAs.SiguientePlaca()));
+        ASSERT (itAs.SiguienteDatos()._posicion == as.PosAgente(itAs.SiguientePlaca()));
+        ASSERT(itAs.SiguienteDatos()._capturas == as.CapturasAgente(itAs.SiguientePlaca()));
+        ASSERT(itAs.SiguienteDatos()._sanciones == as.SancionesAgente(itAs.SiguientePlaca()));
+        i++;
+        itAs.Avanzar();
+    }
+
+    ASSERT_EQ(i, 5);
+}
+
 // HIPPIESYESTUDIANTES
 
 void hyp_HippiesYEstudiantes() {
@@ -681,15 +707,15 @@ void hyp_PosHippieYEstudiante() {
 
     Posicion tmp = hyp.PosHippieYEstudiante("Alice");
     ASSERT_EQ(tmp.x, 1);
-    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 1);
 
     tmp = hyp.PosHippieYEstudiante("Bob");
     ASSERT_EQ(tmp.x, 5);
-    ASSERT_EQ(tmp.x, 5);
+    ASSERT_EQ(tmp.y, 5);
 
     tmp = hyp.PosHippieYEstudiante("7uV13)@");
     ASSERT_EQ(tmp.x, 7);
-    ASSERT_EQ(tmp.x, 3);
+    ASSERT_EQ(tmp.y, 3);
 }
 
 void hyp_Estudiantes() {
@@ -1108,6 +1134,7 @@ void testAgentes() {
     RUN_TEST(agentes_MasVigilante);
     RUN_TEST(agentes_ConMismasSanciones);
     RUN_TEST(agentes_ConKSanciones);
+    RUN_TEST(agentes_Iterador);
     std::cout << "\nFinalizados Tests de Agentes.\n\n";
 }
 
@@ -1151,7 +1178,7 @@ int main(int argc, char **argv)
 {
 //    RUN_TEST(testMatriz);
 //    RUN_TEST(testDCR);
-    RUN_TEST(testCampus);
+//    RUN_TEST(testCampus);
 //    RUN_TEST(testDiccRapido);
 //    RUN_TEST(testAgentes);
 //    RUN_TEST(testHypYEst);
