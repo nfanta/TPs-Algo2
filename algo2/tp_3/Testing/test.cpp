@@ -783,7 +783,7 @@ CampusSeguro* crearCampusGenerico() {
     d.Definir(10,{4,4});
     d.Definir(20,{9,9});
 
-    CampusSeguro* cs = new CampusSeguro(c,d);
+    CampusSeguro* cs = new CampusSeguro(c, d);
 
     return cs;
 }
@@ -1182,6 +1182,6 @@ int main(int argc, char **argv)
 //    RUN_TEST(testDiccRapido);
 //    RUN_TEST(testAgentes);
 //    RUN_TEST(testHypYEst);
-//    RUN_TEST(testCampusSeguro);
+    RUN_TEST(testCampusSeguro);
     return 0;
 }

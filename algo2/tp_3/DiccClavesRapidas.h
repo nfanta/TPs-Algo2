@@ -30,11 +30,11 @@ namespace aed2 {
         struct Nodo {
             bool _definido;
             S _dato;
-            Arreglo<Nodo*> _sig;
+            Arreglo<Nodo> _sig;
             typename Conj<String>::Iterador _it;
         };
 
-        Arreglo<Nodo*> _dicc;
+        Arreglo<Nodo> _dicc;
         Conj<String> _claves;
 
         bool hayNodo (Nodo* n);
@@ -46,59 +46,38 @@ namespace aed2 {
 
     template <class S>
     DCR<S>::DCR(){
-        _dicc = Arreglo<Nodo*>(256);
+        _dicc = Arreglo<Nodo>(256);
         _claves = Conj<String>();
     }
 
     template <class S>
-    bool DCR<S>::hayNodo (Nodo* n) {
-        for (int i = 0; i < n->_sig.Tamanho(); ++i) {
-            if (n->_sig.Definido(i)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    template <class S>
-    typename DCR<S>::Nodo* DCR<S>::primerNodoDef (Nodo* n, Nat& pos) {
-        for (int i = 0; i < n->_sig.Tamanho(); ++i) {
-            if (n->_sig.Definido(i)) {
-                pos = i;
-                return n->_sig[i];
-            }
-        }
-    }
-
-    template <class S>
     DCR<S>::~DCR() {
-        Nodo* cur;
-        Nodo* prev;
-
-        for (int i = 0; i < _dicc.Tamanho(); ++i) {
-            if (_dicc.Definido(i)){
-                cur = _dicc[i];
-
-                while (hayNodo(cur)) {
-                    Nat tmp = 0;
-
-                    while (hayNodo(cur)) {
-                        prev = cur;
-                        cur = primerNodoDef(cur, tmp);
-                    }
-
-                    if (cur == _dicc[i]) {
-                        break;
-                    } else {
-                        prev->_sig.Borrar(tmp);
-                        delete cur;
-                    }
-
-                    cur = _dicc[i];
-                }
-            }
-        }
+//        Nodo* cur;
+//        Nodo* prev;
+//
+//        for (int i = 0; i < _dicc.Tamanho(); ++i) {
+//            if (_dicc.Definido(i)){
+//                cur = _dicc[i];
+//
+//                while (hayNodo(cur)) {
+//                    Nat tmp = 0;
+//
+//                    while (hayNodo(cur)) {
+//                        prev = cur;
+//                        cur = primerNodoDef(cur, tmp);
+//                    }
+//
+//                    if (cur == _dicc[i]) {
+//                        break;
+//                    } else {
+//                        prev->_sig.Borrar(tmp);
+//                        delete cur;
+//                    }
+//
+//                    cur = _dicc[i];
+//                }
+//            }
+//        }
     }
 
     template <class S>
@@ -107,24 +86,20 @@ namespace aed2 {
         Nodo* p;
 
         if ( !_dicc.Definido(str[0]) ) { // Si aun no se definio ningun string en _claves[x]...
-            Nodo* tmp = new Nodo{false, s, Arreglo<Nodo*>(256), _claves.CrearIt()};
-
-            _dicc.Definir(str[0], tmp);
-            p = _dicc[str[0]];
+            _dicc.Definir(str[0], Nodo{false, s, Arreglo<Nodo>(256), _claves.CrearIt()});
+            p = &_dicc[str[0]];
             str.erase(0, 1);
         } else {
-            p = _dicc[str[0]];
+            p = &_dicc[str[0]];
             str.erase(0, 1);
         }
         while (str.length() > 0) { // Si poseia una longitud mas grande...
             if ( !p->_sig.Definido(str[0]) ) {
-                Nodo* tmp = new Nodo{false, s, Arreglo<Nodo*>(256), _claves.CrearIt()};
-
-                p->_sig.Definir(str[0], tmp);
-                p = p->_sig[str[0]];
+                p->_sig.Definir(str[0], Nodo{false, s, Arreglo<Nodo>(256), _claves.CrearIt()});
+                p = &(p->_sig[str[0]]);
                 str.erase(0, 1);
             } else {
-                p = p->_sig[str[0]];
+                p = &(p->_sig[str[0]]);
                 str.erase(0, 1);
             }
         }
@@ -137,12 +112,12 @@ namespace aed2 {
     template <class S>
     bool DCR<S>::Def(const String n) const {
         String str = n;
-        Nodo* p;
+        const Nodo* p;
 
         if ( !_dicc.Definido(str[0]) ) {\
             return false;
         } else {
-            p = _dicc[str[0]];
+            p = &_dicc[str[0]];
             str.erase(0, 1);
         }
 
@@ -150,7 +125,7 @@ namespace aed2 {
             if ( !p->_sig.Definido(str[0]) ) {
                 return false;
             } else {
-                p = p->_sig[str[0]];
+                p = &(p->_sig[str[0]]);
                 str.erase(0, 1);
             }
         }
@@ -166,13 +141,13 @@ namespace aed2 {
         #endif
 
         String str = n;
-        Nodo* p;
+        const Nodo* p;
 
-        p = _dicc[str[0]];
+        p = &_dicc[str[0]];
         str.erase(0, 1);
 
         while (str.length() > 0) { // Si poseia una longitud mas grande...
-            p = p->_sig[str[0]];
+            p = &(p->_sig[str[0]]);
             str.erase(0, 1);
         }
 
@@ -188,11 +163,11 @@ namespace aed2 {
         String str = n;
         Nodo* p;
 
-        p = _dicc[str[0]];
+        p = &_dicc[str[0]];
         str.erase(0, 1);
 
         while (str.length() > 0) { // Si poseia una longitud mas grande...
-            p = p->_sig[str[0]];
+            p = &(p->_sig[str[0]]);
             str.erase(0, 1);
         }
 
