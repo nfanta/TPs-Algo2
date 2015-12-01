@@ -681,15 +681,15 @@ void hyp_PosHippieYEstudiante() {
 
     Posicion tmp = hyp.PosHippieYEstudiante("Alice");
     ASSERT_EQ(tmp.x, 1);
-    ASSERT_EQ(tmp.x, 1);
+    ASSERT_EQ(tmp.y, 1);
 
     tmp = hyp.PosHippieYEstudiante("Bob");
     ASSERT_EQ(tmp.x, 5);
-    ASSERT_EQ(tmp.x, 5);
+    ASSERT_EQ(tmp.y, 5);
 
     tmp = hyp.PosHippieYEstudiante("7uV13)@");
     ASSERT_EQ(tmp.x, 7);
-    ASSERT_EQ(tmp.x, 3);
+    ASSERT_EQ(tmp.y, 3);
 }
 
 void hyp_Estudiantes() {
@@ -757,7 +757,7 @@ CampusSeguro* crearCampusGenerico() {
     d.Definir(10,{4,4});
     d.Definir(20,{9,9});
 
-    CampusSeguro* cs = new CampusSeguro(c,d);
+    CampusSeguro* cs = new CampusSeguro(c, d);
 
     return cs;
 }
@@ -1151,10 +1151,10 @@ int main(int argc, char **argv)
 {
 //    RUN_TEST(testMatriz);
 //    RUN_TEST(testDCR);
-    RUN_TEST(testCampus);
+//    RUN_TEST(testCampus);
 //    RUN_TEST(testDiccRapido);
 //    RUN_TEST(testAgentes);
 //    RUN_TEST(testHypYEst);
-//    RUN_TEST(testCampusSeguro);
+    RUN_TEST(testCampusSeguro);
     return 0;
 }
