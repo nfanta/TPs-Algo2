@@ -98,24 +98,22 @@ namespace aed2 {
     bool Campus::posValida(Posicion p) const{
         bool res = true;
 
-        if (p.y > _Alto || p.x > _Ancho) {
+        if (p.x > _Alto || p.y > _Ancho) {
             res = false;
         }
-        if(0>=p.y || 0>= p.x) {
-            res = false;
-        }
+
         return res;
     }
 
     Conj<Posicion> Campus::Vecinos(Posicion p) const{
         Conj<Posicion> res = Conj<Posicion>();
 
-        Posicion v1,v2,v3,v4;
+        Posicion v1, v2, v3, v4;
 
-        v1 = {p.x -1,p.y};
-        v2 = {p.x +1,p.y};
-        v3 = {p.x,p.y -1};
-        v4 = {p.x,p.y +1};
+        v1 = {p.x -1 , p.y};
+        v2 = {p.x +1 , p.y};
+        v3 = {p.x , p.y -1};
+        v4 = {p.x , p.y +1};
 
         if(posValida(v1)) {
             res.Agregar(v1);
@@ -139,31 +137,31 @@ namespace aed2 {
     Posicion Campus::ProxPosicion(Posicion p1, Direccion d) const{
        Posicion res;
         if(d == izq){
-            res = {p1.x-1,p1.y};
+            res = {p1.x, p1.y - 1};
         }
 
         if(d == der){
-            res = {p1.x+1,p1.y};
+            res = {p1.x, p1.y + 1};
         }
 
         if(d == arriba){
-            res = {p1.x,p1.y+1};
+            res = {p1.x - 1, p1.y};
         }
 
         if(d == abajo){
-            res = {p1.x,p1.y-1};
+            res = {p1.x + 1, p1.y};
         }
         return res;
     }
 
     bool Campus ::ingresoSuperior(Posicion p) const{
     // No es al revez el superior el alto e inferior el 1 revisar!?
-        return p.y == 1;
+        return p.x == 1;
     }
 
     bool Campus::ingresoInferior(Posicion p) const{
 
-        return p.y == _Alto;
+        return p.x == _Alto;
     }
 
     bool Campus::esIngreso(Posicion p) const{
@@ -172,18 +170,18 @@ namespace aed2 {
 
     Conj<Posicion> Campus::IngresoMasCercano(Posicion p) const{
         Conj<Posicion> res = Conj<Posicion>();
-        Posicion v1,v2;
-        if( p.y-1 < _Alto - p.y ) {
-            v1 = {p.x,1};
+        Posicion v1, v2;
+        if( p.x - 1 < _Alto - p.x ) {
+            v1 = {1, p.y};
             res.Agregar(v1);
         }else {
-            if( p.y-1 > _Alto - p.y) {
-                v2 = {p.x,_Alto};
+            if( p.x - 1 > _Alto - p.x) {
+                v2 = {_Alto, p.y};
                 res.Agregar(v2);
             }else {
-                v1 = {p.x,1};
+                v1 = {1, p.y};
                 res.Agregar(v1);
-                v2 = {p.x,_Alto};
+                v2 = {_Alto, p.y};
                 res.Agregar(v2);
             }
 
