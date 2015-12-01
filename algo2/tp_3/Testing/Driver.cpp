@@ -81,37 +81,73 @@ void Driver::moverAgente(Agente pl)
 
 Nombre Driver::iesimoEstudiante(Nat i) const
 {
-    // TODO
-	assert(false);
+	Conj<String>::Iterador tmp = _cs.Estudiantes();
+
+	for (int j = 0; j < i; ++j) {
+		tmp.Avanzar();
+	}
+
+	return tmp.Siguiente();
 }
 
 Nombre Driver::iesimoHippie(Nat i) const
 {
-    // TODO
-	assert(false);
+	Conj<String>::Iterador tmp = _cs.Hippies();
+
+	for (int j = 0; j < i; ++j) {
+		tmp.Avanzar();
+	}
+
+	return tmp.Siguiente();
 }
 
 Nat Driver::iesimoAgente(Nat i) const
 {
-    // TODO
-	assert(false);
+	Conj<Nat>::Iterador tmp = _cs.dameAgentes();
+
+	for (int j = 0; j < i; ++j) {
+		tmp.Avanzar();
+	}
+
+	return tmp.Siguiente();
 }
 
 Nat Driver::cantEstudiantes() const {
-    // TODO
-	assert(false);
+	Conj<String>::Iterador tmp = _cs.Estudiantes();
+	Nat i = 0;
 
+	while (tmp.HaySiguiente()) {
+		i++;
+		tmp.Avanzar();
+	}
+
+	return i;
 }
 
 Nat Driver::cantHippies() const
-{    // TODO
-	assert(false);
+{
+	Conj<String>::Iterador tmp = _cs.Hippies();
+	Nat i = 0;
+
+	while (tmp.HaySiguiente()) {
+		i++;
+		tmp.Avanzar();
+	}
+
+	return i;
 }
 
 Nat Driver::cantAgentes() const
 {
-    // TODO
-	assert(false);
+	Conj<Nat>::Iterador tmp = _cs.dameAgentes();
+	Nat i = 0;
+
+	while (tmp.HaySiguiente()) {
+		i++;
+		tmp.Avanzar();
+	}
+
+	return i;
 }
 
 Posicion Driver::posEstudianteYHippie(Nombre n) const
