@@ -8,6 +8,7 @@ namespace aed2 {
 
     CampusSeguro::CampusSeguro(const Campus& c, const Dicc<Nat, Posicion>& dA) : _campus(c.Filas(), c.Columnas()), _agentes(dA), _HipYEst(), _posOcupadasAgentes(c.Filas(), c.Columnas()), _posOcupadasEstudiantes(c.Filas(), c.Columnas()), _posOcupadasHippies(c.Filas(), c.Columnas()), _agentesOrdenados(dA.CantClaves()) {
         Agentes::Iterador itAgentes = _agentes.CrearIt();
+        _campus = c;
         Nat i = 0;
         while(itAgentes.HaySiguiente()) {
             _posOcupadasAgentes.Definir(itAgentes.SiguienteDatos()._posicion, itAgentes);
