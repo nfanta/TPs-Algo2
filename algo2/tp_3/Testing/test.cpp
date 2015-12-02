@@ -1758,7 +1758,7 @@ int main(int argc, char **argv)
 //    RUN_TEST(testDiccRapido);
 //    RUN_TEST(testAgentes);
 //    RUN_TEST(testHypYEst);
-    RUN_TEST(testCampusSeguro);
+//    RUN_TEST(testCampusSeguro);
 
 
     //Tests de la catedra
@@ -1773,7 +1773,7 @@ int main(int argc, char **argv)
 //    RUN_TEST(test_ingresa_hippie_y_convierte);
 //    RUN_TEST(test_mueve_estudiante_y_convierte);
 //    RUN_TEST(test_comenzar_rastrillaje_simple);
-//    RUN_TEST(test_rastrillaje_mover_hacia_hippie);
+    RUN_TEST(test_rastrillaje_mover_hacia_hippie);
 //    RUN_TEST(test_captura_hippie_entre_agentes);
     //RUN_TEST(test_captura_estudiante);
     //RUN_TEST(test_mas_vigilante);

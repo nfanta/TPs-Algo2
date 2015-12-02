@@ -113,7 +113,9 @@ namespace aed2 {
             }
 
         }else{
+            std::cout << _agentesOrdenados[0]._itAgente.SiguienteDatos()._posicion.x << " " << _agentesOrdenados[0]._itAgente.SiguienteDatos()._posicion.y << "\n";
             _HipYEst.DefinirHippie(nombre,p);
+            std::cout << _agentesOrdenados[0]._itAgente.SiguienteDatos()._posicion.x << " " << _agentesOrdenados[0]._itAgente.SiguienteDatos()._posicion.y << "\n";
             _posOcupadasHippies.Definir(p,nombre);
 //            Conj<Posicion> cjtoVec = _campus.Vecinos(p);
             Conj<Posicion> cjtoVec = Conj<Posicion>();
