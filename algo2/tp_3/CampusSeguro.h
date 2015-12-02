@@ -43,6 +43,10 @@ namespace aed2{
         struct aOrdenadoItem {
             Nat _placa;
             Agentes::Iterador _itAgente;
+
+			aOrdenadoItem (Nat pl, Agentes::Iterador it) : _itAgente(it){
+				_placa = pl;
+			}
         };
 
         Campus _campus;
@@ -57,7 +61,7 @@ namespace aed2{
         bool hippieRodeadoEst(const Posicion& p) const{
 //        	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
         	Conj<Posicion> cjtoVec = Conj<Posicion>();
-		   _campus.Vecinos(p, cjtoVec);
+		    _campus.Vecinos(p, cjtoVec);
         	Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
         	Nat cantEst = 0;
         	while(itvecinos.HaySiguiente()){

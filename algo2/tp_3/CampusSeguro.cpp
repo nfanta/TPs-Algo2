@@ -15,13 +15,19 @@ namespace aed2 {
         Nat i = 0;
         while(itAgentes.HaySiguiente()) {
             _posOcupadasAgentes.Definir(itAgentes.SiguienteDatos()._posicion, itAgentes);
-            _agentesOrdenados.Definir(i, {itAgentes.SiguientePlaca(), itAgentes});
+            _agentesOrdenados.Definir(i, aOrdenadoItem(itAgentes.SiguientePlaca(), itAgentes));
+            std::cout << itAgentes.SiguienteDatos()._posicion.x << " " << itAgentes.SiguienteDatos()._posicion.y << "\n";
+            std::cout << _agentesOrdenados[i]._itAgente.SiguienteDatos()._posicion.x << " " << _agentesOrdenados[i]._itAgente.SiguienteDatos()._posicion.y << "\n";
             i++;
             itAgentes.Avanzar();
         }
 
         Ordenar(_agentesOrdenados); //HACCER ALGUN SORT, NO IMPORTA LA COMPLEJIDAD
         //Los algoritmos no cambian, excepto moverAgente, que tiene que buscar el iterador del agente en _agentesOrdenados (busqueda binaria) en vez de en la matriz _posOcupadasAgentes
+
+        for (int j = 0; j < _agentesOrdenados.Tamanho(); ++j) {
+            std::cout << _agentesOrdenados[j]._itAgente.SiguienteDatos()._posicion.x << " " << _agentesOrdenados[j]._itAgente.SiguienteDatos()._posicion.y << "\n";
+        }
     }
 
     void CampusSeguro::IngresarEstudiante(String nombre, Posicion p){
