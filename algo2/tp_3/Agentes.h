@@ -3,6 +3,7 @@
 
 #include "Testing/aed2.h"
 #include "Testing/Tipos.h"
+#include "DiccRapido.h"
 
 namespace aed2{
     class Agentes{
@@ -13,9 +14,10 @@ namespace aed2{
 
         class Iterador;
 
+        Agentes();
         Agentes(const Dicc<Nat,Posicion>& d);
 
-        const Conj<Nat>& dameAgentes();
+        const Conj<Nat>& dameAgentes() const;
 
         void AgregarSancion(Nat placa);
         void AgregarSancion(Iterador agente);
@@ -24,12 +26,12 @@ namespace aed2{
         void AgregarCaptura(Nat placa);
         void AgregarCaptura(Iterador agente);
 
-        const Posicion& PosAgente(Nat placa) ;
-        const Nat& SancionesAgente(Nat placa) ;
-        const Nat& CapturasAgente(Nat placa) ;
+        const Posicion& PosAgente(Nat placa) const;
+        const Nat& SancionesAgente(Nat placa) const;
+        const Nat& CapturasAgente(Nat placa) const;
 
         Nat MasVigilante() const;
-        const Conj<Nat>& ConMismasSanciones(Nat placa);
+        const Conj<Nat>& ConMismasSanciones(Nat placa) const;
         const Conj<Nat>& ConKSanciones(Nat k);
 
         Iterador CrearIt();

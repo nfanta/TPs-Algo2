@@ -22,6 +22,7 @@ namespace aed2 {
         bool Def(Nat k) const;
 
         S& Obtener(Nat k);
+        const S& Obtener(Nat k) const;
 
         void Borrar(Nat k);
 
@@ -182,7 +183,7 @@ namespace aed2 {
     }
 
     template<class S>
-    S& DiccRapido<S>::Obtener(Nat k) {
+    S& DiccRapido<S>::Obtener(Nat k){
         #ifdef DEBUG
         assert(Def(k));
         #endif
@@ -192,6 +193,26 @@ namespace aed2 {
 
         posArreglo = Hash(k);
         typename Lista<DiccRapido<S>::tuplaSignificado>::Iterador itLista = _defs[posArreglo].CrearIt();
+
+        while(itLista.HaySiguiente()){
+            if (itLista.Siguiente()._key == k){
+                return itLista.Siguiente()._significado;
+            }
+            itLista.Avanzar();
+        }
+    }
+
+    template<class S>
+    const S& DiccRapido<S>::Obtener(Nat k) const{
+        #ifdef DEBUG
+        assert(Def(k));
+        #endif
+
+        Nat i = 0;
+        Nat posArreglo;
+
+        posArreglo = Hash(k);
+        typename Lista<DiccRapido<S>::tuplaSignificado>::const_Iterador itLista = _defs[posArreglo].CrearIt();
 
         while(itLista.HaySiguiente()){
             if (itLista.Siguiente()._key == k){

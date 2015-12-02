@@ -6,6 +6,8 @@
 
 namespace aed2 {
 
+    CampusSeguro::CampusSeguro() : _agentes(), _campus(0, 0), _posOcupadasAgentes(0, 0), _posOcupadasEstudiantes(0, 0), _posOcupadasHippies(0, 0) { }
+
     CampusSeguro::CampusSeguro(const Campus& c, const Dicc<Nat, Posicion>& dA) : _campus(c.Filas(), c.Columnas()), _agentes(dA), _HipYEst(), _posOcupadasAgentes(c.Filas(), c.Columnas()), _posOcupadasEstudiantes(c.Filas(), c.Columnas()), _posOcupadasHippies(c.Filas(), c.Columnas()), _agentesOrdenados(dA.CantClaves()) {
         Agentes::Iterador itAgentes = _agentes.CrearIt();
         _campus = c;
@@ -240,36 +242,36 @@ namespace aed2 {
         return _campus;
     }
 //TODO REVISAR QUE ONDA LO QUE DEVUELVEN ESTAS FUNCIONES XQ ENE L DISE�O DICEN QUE DEVUELVEN UN ITERADOR NO AL CONJUNTO
-     Conj<String>::const_Iterador CampusSeguro::Estudiantes(){
+     Conj<String>::const_Iterador CampusSeguro::Estudiantes() const{
         Conj<String>::const_Iterador itRes =  _HipYEst.Estudiantes().CrearIt();
         String tmp = itRes.Siguiente();
         //return _HipYEst.Estudiantes().CrearIt();
         return itRes;
     }
 
-     Conj<String>::const_Iterador CampusSeguro::Hippies(){
+     Conj<String>::const_Iterador CampusSeguro::Hippies() const{
          Conj<String>::const_Iterador itRes = _HipYEst.Hippies().CrearIt();
          return itRes;
     }
 
-     Conj<Nat>::const_Iterador CampusSeguro::dameAgentes(){
+     Conj<Nat>::const_Iterador CampusSeguro::dameAgentes() const{
          Conj<Nat>::const_Iterador itRes = _agentes.dameAgentes().CrearIt();
          return itRes;
     }
 
-    const Posicion& CampusSeguro::PosHippieYEstudiante(String nombre){
+    const Posicion& CampusSeguro::PosHippieYEstudiante(String nombre) const{
         return _HipYEst.PosHippieYEstudiante(nombre);
     }
 
-    const Posicion& CampusSeguro::PosAgente(Nat placa){
+    const Posicion& CampusSeguro::PosAgente(Nat placa) const{
         return _agentes.PosAgente(placa);
     }
 
-    const Nat& CampusSeguro::CantSanciones(Nat placa){
+    const Nat& CampusSeguro::CantSanciones(Nat placa) const{
         return _agentes.SancionesAgente(placa);
     }
 
-    const Nat& CampusSeguro::CantHippiesAtrapados(Nat placa){
+    const Nat& CampusSeguro::CantHippiesAtrapados(Nat placa) const{
         return _agentes.CapturasAgente(placa);
     }
 
@@ -281,11 +283,11 @@ namespace aed2 {
         return _HipYEst.Estudiantes().Cardinal();
     }
 
-    const Nat& CampusSeguro::MasVigilante(){
+    const Nat& CampusSeguro::MasVigilante() const{
         return  _agentes.MasVigilante();
     }
 
-    const Conj<Nat>& CampusSeguro::ConMismasSanciones(Nat placa){
+    const Conj<Nat>& CampusSeguro::ConMismasSanciones(Nat placa) const{
         return _agentes.ConMismasSanciones(placa);
     }
 
