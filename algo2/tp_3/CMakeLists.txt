@@ -14,9 +14,9 @@ set(SOURCE_FILES
 #        Testing/aed2/Vector.h
 #        Testing/aed2.h
 #        Testing/Driver.cpp
-        Agentes.cpp
-        HippiesYEstudiantes.cpp
-        CampusSeguro.cpp
+#        Agentes.cpp
+#        HippiesYEstudiantes.cpp
+#        CampusSeguro.cpp
 #        Testing/Driver.h
          Testing/mini_test.h
          Testing/test.cpp
