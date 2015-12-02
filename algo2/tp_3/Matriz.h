@@ -45,7 +45,7 @@ namespace aed2 {
         _alto = al;
         _ancho = an;
         _claves = Conj<Posicion>();
-        _tablero = Arreglo<Arreglo<info>>(al);
+        _tablero = Arreglo<Arreglo<info> >(al);
         for (int i = 0; i < al; ++i) {
             _tablero.Definir(i, Arreglo<info>(an));
         }
