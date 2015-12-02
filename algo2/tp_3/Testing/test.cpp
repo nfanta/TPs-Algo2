@@ -1,17 +1,17 @@
-#include "Driver.h"
+#include "Driver.cpp"
 #include "mini_test.h"
 #include "../Matriz.h"
 #include "../campus.h"
 #include "../DiccClavesRapidas.h"
 #include "../DiccRapido.h"
-#include "../Agentes.h"
-#include "../CampusSeguro.h"
-#include "../HippiesYEstudiantes.h"
-#include "Tipos.h"
-#include "aed2.h"
-
-#include <string>
-#include <iostream>
+#include "../Agentes.cpp"
+#include "../CampusSeguro.cpp"
+#include "../HippiesYEstudiantes.cpp"
+//#include "Tipos.h"
+//#include "aed2.h"
+//
+//#include <string>
+//#include <iostream>
 
 using namespace aed2;
 
