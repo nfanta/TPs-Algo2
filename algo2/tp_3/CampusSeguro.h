@@ -145,7 +145,7 @@ namespace aed2{
 
        void sumarCapturas(const Posicion& p){
     	   Conj<Posicion> cjtoVec = _campus.Vecinos(p);
-    	   Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
+    	   Conj<Posicion>::const_Iterador itvecinos = cjtoVec.CrearIt();
     	   while(itvecinos.HaySiguiente()){
     		   if(_posOcupadasAgentes.Def(itvecinos.Siguiente())){
     	          _agentes.AgregarCaptura(_posOcupadasAgentes.Obtener(itvecinos.Siguiente()));

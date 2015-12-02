@@ -8,7 +8,7 @@ namespace aed2{
 
     Agentes::Agentes() : _as(1){ }
 
-    Agentes::Agentes(const Dicc<Nat, Posicion> &d) : _as(d.CantClaves()){
+    Agentes::Agentes(const Dicc<Nat, Posicion> &d) : _as( d.CantClaves() > 0 ? d.CantClaves() : 1){
         Conj<Nat>::Iterador itAConjMismSanciones;
         Lista<itemMismSanciones>::Iterador itAMismSanciones;
         Dicc<Nat,Posicion>::const_Iterador itDicc;

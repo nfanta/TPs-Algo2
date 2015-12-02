@@ -9,8 +9,9 @@ namespace aed2 {
     CampusSeguro::CampusSeguro() : _agentes(), _campus(0, 0), _posOcupadasAgentes(0, 0), _posOcupadasEstudiantes(0, 0), _posOcupadasHippies(0, 0) { }
 
     CampusSeguro::CampusSeguro(const Campus& c, const Dicc<Nat, Posicion>& dA) : _campus(c.Filas(), c.Columnas()), _agentes(dA), _HipYEst(), _posOcupadasAgentes(c.Filas(), c.Columnas()), _posOcupadasEstudiantes(c.Filas(), c.Columnas()), _posOcupadasHippies(c.Filas(), c.Columnas()), _agentesOrdenados(dA.CantClaves()) {
-        Agentes::Iterador itAgentes = _agentes.CrearIt();
         _campus = c;
+
+        Agentes::Iterador itAgentes = _agentes.CrearIt();
         Nat i = 0;
         while(itAgentes.HaySiguiente()) {
             _posOcupadasAgentes.Definir(itAgentes.SiguienteDatos()._posicion, itAgentes);
@@ -244,8 +245,6 @@ namespace aed2 {
 //TODO REVISAR QUE ONDA LO QUE DEVUELVEN ESTAS FUNCIONES XQ ENE L DISE�O DICEN QUE DEVUELVEN UN ITERADOR NO AL CONJUNTO
      Conj<String>::const_Iterador CampusSeguro::Estudiantes() const{
         Conj<String>::const_Iterador itRes =  _HipYEst.Estudiantes().CrearIt();
-        String tmp = itRes.Siguiente();
-        //return _HipYEst.Estudiantes().CrearIt();
         return itRes;
     }
 
