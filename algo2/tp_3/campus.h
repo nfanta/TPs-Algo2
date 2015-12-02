@@ -33,13 +33,15 @@ namespace aed2 {
 
         bool  ingresoInferior(Posicion p)const;
 
-        Conj<Posicion> Vecinos(Posicion p)const;
+//        Conj<Posicion> Vecinos(Posicion p)const;
+        void Vecinos(Posicion p, Conj<Posicion>& res) const;
 
         Nat Distancia(Posicion p1,Posicion p2)const;
 
         Posicion ProxPosicion(Posicion p1,Direccion d)const;
 
-        Conj<Posicion> IngresoMasCercano(Posicion p)const;
+//        Conj<Posicion> IngresoMasCercano(Posicion p)const;
+        Posicion IngresoMasCercano(Posicion p)const;
 
     private:
 
@@ -105,8 +107,9 @@ namespace aed2 {
         return res;
     }
 
-    Conj<Posicion> Campus::Vecinos(Posicion p) const{
-        Conj<Posicion> res = Conj<Posicion>();
+//    Conj<Posicion> Campus::Vecinos(Posicion p) const{
+    void Campus::Vecinos(Posicion p, Conj<Posicion>& res) const{
+        //Conj<Posicion> res = Conj<Posicion>();
 
         Posicion v1, v2, v3, v4;
 
@@ -116,22 +119,22 @@ namespace aed2 {
         v4 = {p.x , p.y +1};
 
         if(posValida(v1)) {
-            res.Agregar(v1);
+            res.AgregarRapido(v1);
         }
 
         if(posValida(v2)) {
-            res.Agregar(v2);
+            res.AgregarRapido(v2);
         }
 
         if(posValida(v3)) {
-            res.Agregar(v3);
+            res.AgregarRapido(v3);
         }
 
         if(posValida(v4)) {
-            res.Agregar(v4);
+            res.AgregarRapido(v4);
         }
 
-        return res;
+        //return res;
     }
 
     Posicion Campus::ProxPosicion(Posicion p1, Direccion d) const{
@@ -168,7 +171,8 @@ namespace aed2 {
         return (ingresoInferior(p) || ingresoSuperior(p));
     }
 
-    Conj<Posicion> Campus::IngresoMasCercano(Posicion p) const{
+//    Conj<Posicion> Campus::IngresoMasCercano(Posicion p) const{
+    Posicion Campus::IngresoMasCercano(Posicion p) const{
         Conj<Posicion> res = Conj<Posicion>();
         Posicion v1, v2;
         if( p.x - 1 < _Alto - p.x ) {
@@ -186,7 +190,7 @@ namespace aed2 {
             }
 
         }
-        return res;
+        return res.CrearIt().Siguiente();
     }
 
     };

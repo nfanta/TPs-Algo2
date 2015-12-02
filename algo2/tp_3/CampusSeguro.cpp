@@ -28,7 +28,9 @@ namespace aed2 {
     	if(estudianteHippificado(p)){
     		_HipYEst.DefinirHippie(nombre,p);
     		_posOcupadasHippies.Definir(p,nombre);
-    		Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//    		Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+    		Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
     		Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
     		while(itvecinos.HaySiguiente()){
     			if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
@@ -49,7 +51,9 @@ namespace aed2 {
     	}else{
     		_HipYEst.DefinirEstudiante(nombre,p);
 			_posOcupadasEstudiantes.Definir(p,nombre);
-			Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//			Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+			Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
 			Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
 			while(itvecinos.HaySiguiente()){
 				if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
@@ -70,7 +74,9 @@ namespace aed2 {
 
     	}
     	if(estudianteSancionar(p)){
-    		Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//    		Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+    		Conj<Posicion> cjtoVec = Conj<Posicion>();
+    		_campus.Vecinos(p, cjtoVec);
     		Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
     		while(itvecinos.HaySiguiente()){
     			if(_posOcupadasAgentes.Def(itvecinos.Siguiente())){
@@ -88,7 +94,9 @@ namespace aed2 {
         if(hippieRodeadoEst(p)){
             _HipYEst.DefinirEstudiante(nombre,p);
             _posOcupadasEstudiantes.Definir(p,nombre);
-            Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//            Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+            Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
             Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
             while(itvecinos.HaySiguiente()){
                 if(estudianteSancionar(itvecinos.Siguiente())){
@@ -101,7 +109,9 @@ namespace aed2 {
         }else{
             _HipYEst.DefinirHippie(nombre,p);
             _posOcupadasHippies.Definir(p,nombre);
-            Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//            Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+            Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
             Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
             while(itvecinos.HaySiguiente()){
                 if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
@@ -141,7 +151,9 @@ namespace aed2 {
             Posicion posNueva = _HipYEst.PosHippieYEstudiante(nombre);
             if(estudianteHippificado(posNueva)){
                 hippificar(posNueva);
-                Conj<Posicion> cjtoVec = _campus.Vecinos(posNueva);
+//                Conj<Posicion> cjtoVec = _campus.Vecinos(posNueva);
+                Conj<Posicion> cjtoVec = Conj<Posicion>();
+			   _campus.Vecinos(posNueva, cjtoVec);
                 Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
                 while(itvecinos.HaySiguiente()){
                     if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
@@ -163,7 +175,9 @@ namespace aed2 {
                 }
 
             }else{
-                Conj<Posicion> cjtoVec = _campus.Vecinos(posNueva);
+//                Conj<Posicion> cjtoVec = _campus.Vecinos(posNueva);
+            	Conj<Posicion> cjtoVec = Conj<Posicion>();
+			   _campus.Vecinos(posNueva, cjtoVec);
                 Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
                 while(itvecinos.HaySiguiente()){
                     if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
@@ -190,7 +204,9 @@ namespace aed2 {
         Posicion proxPosicion = estMasCercano(posVieja);
         muevoHippie(posVieja,proxPosicion);
         Posicion posNueva = _HipYEst.PosHippieYEstudiante(nombre);
-        Conj<Posicion> cjtoVec = _campus.Vecinos(posNueva);
+//        Conj<Posicion> cjtoVec = _campus.Vecinos(posNueva);
+        Conj<Posicion> cjtoVec = Conj<Posicion>();
+	   _campus.Vecinos(posNueva, cjtoVec);
         Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
         while(itvecinos.HaySiguiente()){
             if(_posOcupadasHippies.Def(itvecinos.Siguiente())){
@@ -222,7 +238,9 @@ namespace aed2 {
         Posicion posDestino = hipMasCercano(posVieja);
         muevoAgente(posVieja,posDestino,itAgente);
         Posicion posNueva = itAgente.SiguienteDatos()._posicion;
-        Conj<Posicion> cjtoVec = _campus.Vecinos(posNueva);
+//        Conj<Posicion> cjtoVec = _campus.Vecinos(posNueva);
+        Conj<Posicion> cjtoVec = Conj<Posicion>();
+	   _campus.Vecinos(posNueva, cjtoVec);
         Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
         while(itvecinos.HaySiguiente()){
             if(_posOcupadasHippies.Def(itvecinos.Siguiente())){

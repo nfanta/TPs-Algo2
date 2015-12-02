@@ -55,7 +55,9 @@ namespace aed2{
         Arreglo<aOrdenadoItem> _agentesOrdenados;
 
         bool hippieRodeadoEst(const Posicion& p) const{
-        	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//        	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+        	Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
         	Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
         	Nat cantEst = 0;
         	while(itvecinos.HaySiguiente()){
@@ -68,7 +70,9 @@ namespace aed2{
         }
 
         bool bloqueado(const Posicion& p) const{
-         	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//         	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+        	Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
             Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
             Nat cosasBloqueando = 0;
             while(itvecinos.HaySiguiente()){
@@ -81,7 +85,9 @@ namespace aed2{
         }
 
         bool hippieCapturado(const Posicion& p) const{
-        	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//        	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+        	Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
         	Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
         	bool alMenos1Ag = false;
         	while(itvecinos.HaySiguiente()){
@@ -94,7 +100,9 @@ namespace aed2{
         }
 
         bool estudianteHippificado(const Posicion& p) const{
-        	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//        	Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+        	Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
         	Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
         	Nat CantHip = 0;
         	while(itvecinos.HaySiguiente()){
@@ -107,7 +115,9 @@ namespace aed2{
         }
 
        bool estudianteSancionar(const Posicion& p) const{
-        Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//        Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+		   Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
 		Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
 		bool alMenos1Ag = false;
 		while(itvecinos.HaySiguiente()){
@@ -127,7 +137,9 @@ namespace aed2{
        }
 
        void sancionar(const Posicion& p){
-           Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//           Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+    	   Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
            Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
            while(itvecinos.HaySiguiente()){
         	   if(_posOcupadasAgentes.Def(itvecinos.Siguiente())){
@@ -137,14 +149,16 @@ namespace aed2{
            }
        }
        void transformarHippie(const Posicion& p){
+    	   _HipYEst.Borrar(_posOcupadasHippies.Obtener(p));
     	   _HipYEst.DefinirEstudiante(_posOcupadasHippies.Obtener(p),p);
     	   _posOcupadasEstudiantes.Definir(p,_posOcupadasHippies.Obtener(p));
-    	   _HipYEst.Borrar(_posOcupadasHippies.Obtener(p));
     	   _posOcupadasHippies.Eliminar(p);
        }
 
        void sumarCapturas(const Posicion& p){
-    	   Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//    	   Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+    	   Conj<Posicion> cjtoVec = Conj<Posicion>();
+    	   _campus.Vecinos(p, cjtoVec);
     	   Conj<Posicion>::const_Iterador itvecinos = cjtoVec.CrearIt();
     	   while(itvecinos.HaySiguiente()){
     		   if(_posOcupadasAgentes.Def(itvecinos.Siguiente())){
@@ -162,7 +176,9 @@ namespace aed2{
 
 		Posicion damePosLibre(Posicion p){
 			Posicion res;
-			Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+//			Conj<Posicion> cjtoVec = _campus.Vecinos(p);
+			Conj<Posicion> cjtoVec = Conj<Posicion>();
+		   _campus.Vecinos(p, cjtoVec);
 			Conj<Posicion>::Iterador itvecinos = cjtoVec.CrearIt();
 			while(itvecinos.HaySiguiente()){
 				if(!estaOcupado(itvecinos.Siguiente())){
@@ -229,7 +245,7 @@ namespace aed2{
 				 res = posMasCercana;
 
 			}else{
-				res = _campus.IngresoMasCercano(p).CrearIt().Siguiente();
+				res = _campus.IngresoMasCercano(p); //.CrearIt().Siguiente();
 			}
 			return res;
 		}
@@ -249,7 +265,7 @@ namespace aed2{
 				res = posMasCercana;
 
 			}else{
-				res = _campus.IngresoMasCercano(p).CrearIt().Siguiente();
+				res = _campus.IngresoMasCercano(p); //.CrearIt().Siguiente();
 			}
 			return res;
 		}
@@ -260,7 +276,7 @@ namespace aed2{
 
 		void muevoHippie(Posicion posVieja, Posicion posDestino){
 			String nombrehip = _posOcupadasHippies.Obtener(posVieja);
-			if(CantEstudiantes() != 0){
+//			if(CantEstudiantes() != 0){
 				if(estaOcupado(_campus.ProxPosicion(posVieja,dameDireccion(posVieja,posDestino)))){
 					_HipYEst.DefinirHippie(nombrehip,damePosLibre(posVieja));
 					_posOcupadasHippies.Definir(damePosLibre(posVieja),nombrehip);
@@ -272,7 +288,7 @@ namespace aed2{
 					_posOcupadasHippies.Eliminar(posVieja);//TODO revisar si esta bien xq me parece que en el dise�o definia la poss y dsp la borraba
 
 				}
-			}
+//			}
 
 		}
 		void Ordenar(Arreglo<aOrdenadoItem>& arre){
@@ -316,25 +332,18 @@ namespace aed2{
 
 		void muevoAgente(Posicion p,Posicion pD, Agentes::Iterador itagente){
 			Nat nombreAg = itagente.SiguientePlaca();
-			if(CantEstudiantes() != 0){
+//			if(CantEstudiantes() != 0){
 				if(estaOcupado(_campus.ProxPosicion(p,dameDireccion(p,pD)))){
 					_agentes.CambiarPosicion(itagente,damePosLibre(p));
+					_posOcupadasAgentes.Eliminar(p);
 					_posOcupadasAgentes.Definir(damePosLibre(p),itagente);
-					_posOcupadasAgentes.Eliminar(p);//TODO CAMBIO DEL DISE�O XQ ME PARECE QUE ESTABA MAL EL MISMO ERRROR QUE EL DE ARRIBA
 				}else{
 					_agentes.CambiarPosicion(itagente,_campus.ProxPosicion(p,dameDireccion(p,pD)));
-					_posOcupadasAgentes.Definir(_campus.ProxPosicion(p,dameDireccion(p,pD)),itagente);
 					_posOcupadasAgentes.Eliminar(p);
+					_posOcupadasAgentes.Definir(_campus.ProxPosicion(p,dameDireccion(p,pD)),itagente);
 				}
-			}/*else{
-
-				if(){
-
-				}else{
-
-				}
-			}
-		}*/}
+//			}
+		}
 
     };
 }
