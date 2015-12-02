@@ -2,16 +2,16 @@
 
 namespace aed2 {
 
-Driver::Driver() : _cs(), _c(0,0)
+Driver::Driver()
 {
-    // TODO
-	assert(true);
+    _cs = new CampusSeguro();
+	_c = new Campus(0,0);
 }
 
 Driver::~Driver()
 {
-    // TODO
-	assert(true);
+    delete _cs;
+	delete _c;
 }
 
 
@@ -19,12 +19,14 @@ Driver::~Driver()
 
 void Driver::crearCampus(Nat ancho, Nat alto)
 {
-	_c = Campus(ancho, alto);
+	delete _c;
+	_c = new Campus(ancho, alto);
 }
 
 void Driver::agregarObstaculo(Posicion p)
 {
-    _c.AgregarObstaculo(p);
+	Posicion tmp = {p.y, p.x};
+    _c->AgregarObstaculo(tmp);
 }
 
 
@@ -32,48 +34,61 @@ void Driver::agregarObstaculo(Posicion p)
 
 Nat Driver::filas() const
 {
-	return _c.Filas();
+	return _c->Filas();
 }
 
 Nat Driver::columnas() const
 {
-	return _c.Columnas();
+	return _c->Columnas();
 }
 
 bool Driver::ocupada(Posicion p) const
 {
-	return _c.Ocupada(p);
+	Posicion tmp = {p.y, p.x};
+	return _c->Ocupada(tmp);
 }
 
 
 /// Generadores de CampusSeguro
 void  Driver::comenzarRastrillaje(const Dicc<Agente,Posicion>& d) {
-    _cs = CampusSeguro(_c, d);
+	Dicc<Agente, Posicion>::Iterador ittr = d.CrearIt();
+		Dicc<Agente, Posicion> dicc;
+
+		while (ittr.HaySiguiente()) {
+			dicc.Definir(ittr.Siguiente().clave, {ittr.Siguiente().significado.y, ittr.Siguiente().significado.x});
+			ittr.Avanzar();
+		}
+
+		delete _cs;
+    _cs = new CampusSeguro(*_c, dicc);
+
 }
 
 void Driver::ingresarEstudiante(Nombre n, Posicion p)
 {
-    _cs.IngresarEstudiante(n, p);
+	Posicion tmp = {p.y, p.x};
+    _cs->IngresarEstudiante(n, tmp);
 }
 
 void Driver::ingresarHippie(Nombre n, Posicion p)
 {
-	_cs.IngresarHippie(n, p);
+	Posicion tmp = {p.y, p.x};
+	_cs->IngresarHippie(n, tmp);
 }
 
 void Driver::moverEstudiante(Nombre n, Direccion d)
 {
-	_cs.MoverEstudiante(n, d);
+	_cs->MoverEstudiante(n, d);
 }
 
 void Driver::moverHippie(Nombre n)
 {
-	_cs.MoverHippie(n);
+	_cs->MoverHippie(n);
 }
 
 void Driver::moverAgente(Agente pl)
 {
-	_cs.MoverAgente(pl);
+	_cs->MoverAgente(pl);
 }
 
 
@@ -81,7 +96,7 @@ void Driver::moverAgente(Agente pl)
 
 Nombre Driver::iesimoEstudiante(Nat i) const
 {
-	Conj<String>::const_Iterador tmp = _cs.Estudiantes();
+	Conj<String>::const_Iterador tmp = _cs->Estudiantes();
 
 	for (int j = 0; j < i; ++j) {
 		tmp.Avanzar();
@@ -92,7 +107,7 @@ Nombre Driver::iesimoEstudiante(Nat i) const
 
 Nombre Driver::iesimoHippie(Nat i) const
 {
-	Conj<String>::const_Iterador tmp = _cs.Hippies();
+	Conj<String>::const_Iterador tmp = _cs->Hippies();
 
 	for (int j = 0; j < i; ++j) {
 		tmp.Avanzar();
@@ -103,7 +118,7 @@ Nombre Driver::iesimoHippie(Nat i) const
 
 Nat Driver::iesimoAgente(Nat i) const
 {
-	Conj<Nat>::const_Iterador tmp = _cs.dameAgentes();
+	Conj<Nat>::const_Iterador tmp = _cs->dameAgentes();
 
 	for (int j = 0; j < i; ++j) {
 		tmp.Avanzar();
@@ -113,7 +128,7 @@ Nat Driver::iesimoAgente(Nat i) const
 }
 
 Nat Driver::cantEstudiantes() const {
-	Conj<String>::const_Iterador tmp = _cs.Estudiantes();
+	Conj<String>::const_Iterador tmp = _cs->Estudiantes();
 	Nat i = 0;
 
 	while (tmp.HaySiguiente()) {
@@ -126,7 +141,7 @@ Nat Driver::cantEstudiantes() const {
 
 Nat Driver::cantHippies() const
 {
-	Conj<String>::const_Iterador tmp = _cs.Hippies();
+	Conj<String>::const_Iterador tmp = _cs->Hippies();
 	Nat i = 0;
 
 	while (tmp.HaySiguiente()) {
@@ -139,7 +154,7 @@ Nat Driver::cantHippies() const
 
 Nat Driver::cantAgentes() const
 {
-	Conj<Nat>::const_Iterador tmp = _cs.dameAgentes();
+	Conj<Nat>::const_Iterador tmp = _cs->dameAgentes();
 	Nat i = 0;
 
 	while (tmp.HaySiguiente()) {
@@ -152,22 +167,22 @@ Nat Driver::cantAgentes() const
 
 Posicion Driver::posEstudianteYHippie(Nombre n) const
 {
-	return _cs.PosHippieYEstudiante(n);
+	return {_cs->PosHippieYEstudiante(n).y, _cs->PosHippieYEstudiante(n).x};
 }
 
 Posicion Driver::posAgente(Agente pl) const
 {
-	return _cs.PosAgente(pl);
+	return {_cs->PosAgente(pl).y, _cs->PosAgente(pl).x};
 }
 
 Nat Driver::cantSanciones(Agente pl) const
 {
-	return _cs.CantSanciones(pl);
+	return _cs->CantSanciones(pl);
 }
 
 Nat Driver::cantHippiesAtrapados(Agente pl) const
 {
-    return _cs.CantHippiesAtrapados(pl);
+    return _cs->CantHippiesAtrapados(pl);
 }
 
 
@@ -175,17 +190,17 @@ Nat Driver::cantHippiesAtrapados(Agente pl) const
 
 Agente Driver::masVigilante() const
 {
-    return _cs.MasVigilante();
+    return _cs->MasVigilante();
 }
 
 const Conj<Agente> Driver::conMismasSanciones(Agente a) const
 {
-	return _cs.ConMismasSanciones(a);
+	return _cs->ConMismasSanciones(a);
 }
 
 const Conj<Agente> Driver::conKSanciones(Nat k)
 {
-    return _cs.ConKSanciones(k);
+    return _cs->ConKSanciones(k);
 }
 
 

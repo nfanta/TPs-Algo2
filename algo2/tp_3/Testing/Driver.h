@@ -56,8 +56,8 @@ class Driver
    
     private:
 
-	Campus _c;
-    CampusSeguro _cs;
+	Campus* _c;
+    CampusSeguro* _cs;
 
 }; // class Driver
 

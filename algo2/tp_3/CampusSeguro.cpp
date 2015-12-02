@@ -18,6 +18,11 @@ namespace aed2 {
             _agentesOrdenados.Definir(i, aOrdenadoItem(itAgentes.SiguientePlaca(), itAgentes));
             std::cout << itAgentes.SiguienteDatos()._posicion.x << " " << itAgentes.SiguienteDatos()._posicion.y << "\n";
             std::cout << _agentesOrdenados[i]._itAgente.SiguienteDatos()._posicion.x << " " << _agentesOrdenados[i]._itAgente.SiguienteDatos()._posicion.y << "\n";
+           // std::cout << "Pos 1" << &_posOcupadasAgentes.Obtener(itAgentes.SiguienteDatos()._posicion) << "\n";
+            std::cout << "pos 1" << & itAgentes << std::endl;
+            std::cout << "Pos 2" << &_agentesOrdenados[i]._itAgente << "\n";
+
+
             i++;
             itAgentes.Avanzar();
         }
