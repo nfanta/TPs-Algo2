@@ -51,7 +51,7 @@ bool Driver::ocupada(Posicion p) const
 
 /// Generadores de CampusSeguro
 void  Driver::comenzarRastrillaje(const Dicc<Agente,Posicion>& d) {
-	Dicc<Agente, Posicion>::Iterador ittr = d.CrearIt();
+	Dicc<Agente, Posicion>::const_Iterador ittr = d.CrearIt();
 		Dicc<Agente, Posicion> dicc;
 
 		while (ittr.HaySiguiente()) {
